@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+TODO: Add license header
+-->
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>io.github.bindul.junit-helper</groupId>
+	<artifactId>junit-helper</artifactId>
+	<packaging>pom</packaging>
+	<name>JUnit Helper Classes</name>
+	<version>1.0-SNAPSHOT</version>
+	<description>JUnit Helper Classes</description>
+	<url>https://github.com/bindul/junit-helper</url>
+	<prerequisites>
+		<maven>3.3</maven>
+	</prerequisites>
+	<inceptionYear>2015</inceptionYear>
+	<scm>
+		<connection>scm:git:https://github.com/bindul/junit-helper.git</connection>
+		<developerConnection>scm:git:https://github.com/bindul/junit-helper.git</developerConnection>
+		<url>https://github.com/bindul/junit-helper</url>
+	</scm>
+	<build>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-assembly-plugin</artifactId>
+					<version>2.5.5</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-changes-plugin</artifactId>
+					<version>2.11</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>2.6.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+					<version>2.10</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-enforcer-plugin</artifactId>
+					<version>1.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-gpg-plugin</artifactId>
+					<version>1.6</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.5.2</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>2.8</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-release-plugin</artifactId>
+					<version>2.5.2</version>
+					<configuration>
+						<addSchema>true</addSchema>
+						<autoVersionSubmodules>true</autoVersionSubmodules>
+						<releaseProfiles>oss-release,oss-release-prop,github-oss-release,github-oss-release-prop</releaseProfiles>
+					</configuration>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-scm-plugin</artifactId>
+					<version>1.9.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.codehaus.mojo</groupId>
+					<artifactId>versions-maven-plugin</artifactId>
+					<version>2.2</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+	<modules>
+		<!--<module>junit-helper-derby</module>-->
+	</modules>
+	<profiles>
+		<profile>
+			<!-- In your local settings.xml, make sure to have a profile oss-release-prop or github-oss-release-prop -->
+			<id>github-oss-release</id>
+			<activation>
+				<property>
+					<name>performRelease</name>
+					<value>true</value>
+				</property>
+			</activation>
+			<build>
+				<plugins>
+					<plugin>
+						<!-- Always sign release artifacts -->
+						<!-- Make sure the following properties are set in an active profile 
+							during release (can rely on property being set) or passed 
+							in the command line: - gpg.homedir - gpg.keyname - gpg.passphrase 
+							See plugin documentation for more information -->
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-gpg-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>sign-artifacts</id>
+								<phase>verify</phase>
+								<goals>
+									<goal>sign</goal>
+								</goals>
+							</execution>
+						</executions>
+						<configuration>
+							<homedir>${gpg.homedir}</homedir>
+							<keyname>${gpg.keyname}</keyname>
+							<passphrase>${gpg.passphrase}</passphrase>
+						</configuration>
+					</plugin>
+					<plugin>
+						<groupId>org.apache.maven.plugins</groupId>
+						<artifactId>maven-enforcer-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>enforce-versions-parent</id>
+								<goals>
+									<goal>enforce</goal>
+								</goals>
+								<configuration>
+									<rules>
+										<requireMavenVersion>
+											<version>[3.3,)</version>
+										</requireMavenVersion>
+										<!-- <requirePluginVersions> <message>Best Practice is to always 
+											define plugin versions!</message> <banLatest>true</banLatest> <banRelease>true</banRelease> 
+											<banSnapshots>true</banSnapshots> <phases>clean,deploy,site</phases> </requirePluginVersions> -->
+										<requireReleaseDeps>
+											<message>No Snapshots Allowed!</message>
+											<onlyWhenRelease>true</onlyWhenRelease>
+										</requireReleaseDeps>
+										<requireUpperBoundDeps>
+											<!-- 'uniqueVersions' (default:false) can be set to true if you 
+												want to compare the timestamped SNAPSHOTs -->
+											<uniqueVersions>true</uniqueVersions>
+										</requireUpperBoundDeps>
+									</rules>
+									<fail>true</fail>
+								</configuration>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+		<profile>
+			<id>version-check</id>
+			<build>
+				<plugins>
+					<plugin>
+						<groupId>org.codehaus.mojo</groupId>
+						<artifactId>versions-maven-plugin</artifactId>
+						<executions>
+							<execution>
+								<id>check-version-upgrades</id>
+								<phase>validate</phase>
+								<goals>
+									<goal>display-dependency-updates</goal>
+									<goal>display-plugin-updates</goal>
+									<goal>display-property-updates</goal>
+								</goals>
+							</execution>
+						</executions>
+					</plugin>
+				</plugins>
+			</build>
+		</profile>
+	</profiles>
+</project>
