@@ -15,31 +15,23 @@
  */
 package io.github.bindul.junithelper.derby;
 
-import java.io.Closeable;
-import java.io.IOException;
-
-import org.junit.rules.ExternalResource;
-
 /**
- * Provides an in-memory Derby resource
- * 
- * TODO Complete docs and examples
- * 
+ * Derby error logging <code>(derby.log)</code> modes supported by the JUnit Derby helper
+ *  
  * @author Bindul Bhowmik
  */
-public class EmbeddedInMemoryDerbyResource extends ExternalResource implements Closeable {
-	
-	public EmbeddedInMemoryDerbyResource (EmbeddedInMemoryDerbyConfig config) {
-		
-	}
+public enum ErrorLoggingMode {
 
-	/* (non-Javadoc)
-	 * @see java.io.Closeable#close()
+	/**
+	 * No special config; derby will write to <code>derby.log</code> file in the <code>derby.system.directory</code> 
 	 */
-	@Override
-	public void close() throws IOException {
-		// TODO Auto-generated method stub
-		
-	}
-
+	Default,
+	
+	/**
+	 * No logging; equivalent to redirecting logs to <code>/dev/null</code>
+	 */
+	Null;
+	
+	//TODO See properties around http://db.apache.org/derby/docs/10.12/ref/rrefproper13217.html
+	
 }

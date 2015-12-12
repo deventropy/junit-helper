@@ -21,6 +21,10 @@ package io.github.bindul.junithelper.utils;
  * @author Bindul Bhowmik
  */
 public class ArgumentCheck {
+	
+	private ArgumentCheck () {
+		// Utility class
+	}
 
 	/**
 	 * Checks to make sure a string is not null or empty. Throws IllegalArgument exception if expectation is not met.

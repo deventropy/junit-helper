@@ -20,7 +20,7 @@ limitations under the License.
 	<parent>
 		<groupId>io.github.bindul.junit-helper</groupId>
 		<artifactId>junit-helper</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>0.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>junit-helper-derby</artifactId>
 	<name>JUnit Helper :: Derby</name>
@@ -56,6 +56,6 @@ limitations under the License.
 		</dependency>
 	</dependencies>
 	<properties>
-		<derby.version>10.11.1.1</derby.version>
+		<derby.version>10.12.1.1</derby.version>
 	</properties>
 </project>
