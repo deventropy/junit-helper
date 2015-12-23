@@ -7,6 +7,23 @@ jdk:
     - oraclejdk8
     - oraclejdk7
 
+env:
+    global:
+        - DENT_TRAVIS_MVN_SETTINGS_REPO=https://github.com/deventropy/deventropy-parent.git
+
+# We use JFrog OSS Repository not available in the stock Travis CI environment; so custom settings.xml
+# See https://coderwall.com/p/9b_lfq/deploying-maven-artifacts-from-travis
+
+branches:
+    except:
+        - travis
+
+before_install: "git clone -b travis ${DENT_TRAVIS_MVN_SETTINGS_REPO} target/travis"
+
+install: "mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V --settings target/travis/travis-mvn-settings.xml"
+
+script: "mvn test -B --settings target/travis/travis-mvn-settings.xml"
+
 # Speed up builds
 cache:
     directories:
