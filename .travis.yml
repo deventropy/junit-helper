@@ -1,4 +1,16 @@
+# Run container based
+sudo: false
+
 language: java
+
 jdk:
     - oraclejdk8
     - oraclejdk7
+
+# Speed up builds
+cache:
+    directories:
+        - $HOME/.m2/repository
+
+before_cache:
+    - rm -rf $HOME/.m2/repository/org/deventropy/junit-helper

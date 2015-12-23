@@ -1,11 +1,13 @@
 # JUnit Helper Utilities / Resources
 
-[![Build Status](https://travis-ci.org/bindul/junit-helper.svg?branch=master)](https://travis-ci.org/bindul/junit-helper)
+[![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
 
-JUnit Helper Classes
+JUnit Helper Classes.
 
-## Derby Junit Test Resources
+See Documentation at [Project Website](http://www.deventropy.org/junit-helper/)
 
-[![Build Status](https://travis-ci.org/bindul/junit-helper.svg?branch=feature%2Fderby-unit-test)](https://travis-ci.org/bindul/junit-helper)
+## Derby Junit Test Resources Development
 
-Use Apache Derby as a resource for DB testing
+[![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=feature%2Fderby-unit-test)](https://travis-ci.org/deventropy/junit-helper)
+
+Use Apache Derby as a resource for DB testing. See [Project Documentation](http://www.deventropy.org/junit-helper/junit-helper-derby/) for more information.
