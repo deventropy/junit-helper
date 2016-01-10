@@ -14,8 +14,21 @@
  * limitations under the License.
  */
 /**
- * Utility classes shared across JUnit Helper modules.
- * TODO Add documentation
+ * JUnit Helper Utils is a shared library of utility classes used by various JUnit Helper libraries. It does not contain
+ * any public use APIs in itself.
+ * 
+ * <p>This library aims to have a minimal set of dependencies to keep the *import impact* minimal.
+ * 
+ * <p>The library has the following utilities:
+ * <ul>
+ * <li><em>{@link org.deventropy.junithelper.utils.ArgumentCheck ArgumentCheck}:</em> Methods to validate parameters to
+ * methods (`null` checks, etc.)</li>
+ * <li><em>{@link org.deventropy.junithelper.utils.ClassUtil ClassUtil}:</em> Utility to find appropriate class loaders/
+ * resources in the classpath.</li>
+ * <li><em>{@link org.deventropy.junithelper.utils.UrlResourceUtil UrlResourceUtil}:</em> Methods to normalize access to
+ * resources across multiple sources (classpath, file system, etc.).</li>
+ * </ul>
+ * 
  * @author Bindul Bhowmik
  */
 package org.deventropy.junithelper.utils;

@@ -40,8 +40,8 @@ limitations under the License.
 			</brand>
 			<slogan>Utility JUnit resource / libraries to ease testing</slogan>
 			<titleTemplate>%2$s | %1$s</titleTemplate>
-			<!-- Use Table of Contents at the top of the page (max 6 elements) -->
-			<toc>top</toc>
+			<!-- Use Table of Contents at the side of the page (max 6 elements) -->
+			<toc>sidebar</toc>
 			<tocTopMax>6</tocTopMax>
 			<!-- Include the documentation and tools in the top navigation (in addition to links) -->
 			<topNav>Modules|Development</topNav>
@@ -49,7 +49,7 @@ limitations under the License.
 			<bottomNav maxSpan="9">
 				<column>Main|Modules</column>
 				<column>Development</column>
-				<column>reports</column>
+				<column>reports|Legal</column>
 			</bottomNav>
 			<bottomDescription>
 		        <![CDATA[
@@ -85,18 +85,21 @@ limitations under the License.
 		<menu name="Main" inherit="top">
 			<item name="Home" href="./" />
 			<item name="GitHub project" href="https://github.com/deventropy/junit-helper" />
-			<item name="License" href="license.html" />
 		</menu>
 		<menu name="Modules" inherit="top">
 			<item name="JUnit Helper :: Derby" href="junit-helper-derby/index.html" />
 			<item name="JUnit Helper :: Shared Utils" href="junit-helper-utils/index.html" />
 		</menu>
 		<menu name="Development" inherit="bottom">
-			<item name="Contribute" href="#" />
+			<item name="Development Guide" href="./development.html" />
 			<item name="Issues" href="https://github.com/deventropy/junit-helper/issues" />
 			<item name="Fork on GitHub" href="https://github.com/deventropy/junit-helper#fork-destination-box" />
 			<item name="Continuous Integration" href="https://travis-ci.org/deventropy/junit-helper" />
 			<item name="Development Entropy" href="https://www.deventropy.org/" />
+		</menu>
+		<menu name="Legal" inherit="bottom">
+			<item name="License" href="license.html" />
+			<item name="Privacy Policy" href="privacy.html"/>
 		</menu>
 		<menu name="Maven documentation" ref="reports" inherit="bottom"/>
 	</body>

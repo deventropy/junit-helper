@@ -15,12 +15,17 @@
  */
 package org.deventropy.junithelper.utils;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 /**
  * Utility methods around classes and class loaders.
  * 
  * @author Bindul Bhowmik
  */
 public final class ClassUtil {
+	
+	private static final Logger LOG = LogManager.getLogger(ClassUtil.class);
 
 	private ClassUtil () {
 		// Util class
@@ -45,7 +50,7 @@ public final class ClassUtil {
 		try {
 			cl = Thread.currentThread().getContextClassLoader();
 		} catch (SecurityException e) {
-			// log.catching(e); // Cannot get to the context
+			LOG.catching(e); // Cannot get to the context
 		}
 
 		if (null == cl) {

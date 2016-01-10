@@ -25,19 +25,23 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.deventropy.junithelper.derby.DerbyResourceConfig;
+import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 
+import net.jcip.annotations.NotThreadSafe;
+
 /**
  * @author Bindul Bhowmik
- *
  */
-public class SimpleInMemoryDatabaseTest {
+@NotThreadSafe
+public class InMemoryDbTempDirTest {
 	
-	private static final String DB_NAME = "my-test-database-simple01";
+	private static final String DB_NAME = "my-test-database-simple01-tmpfolder-nulllog";
 	
 	private TemporaryFolder tempFolder = new TemporaryFolder();
 	private EmbeddedDerbyResource embeddedDerbyResource =
@@ -49,6 +53,15 @@ public class SimpleInMemoryDatabaseTest {
 	
 	@Rule
 	public RuleChain derbyRuleChain = RuleChain.outerRule(tempFolder).around(embeddedDerbyResource);
+	
+	/**
+	 * Cleanup stuff.
+	 */
+	@AfterClass
+	public static void cleanupDerbySystem () {
+		// Cleanup for next test
+		DerbyUtils.shutdownDerbySystemQuitely(true);
+	}
 
 	@Test
 	public void testSimpleInMemoryDatabase () throws SQLException {
@@ -74,22 +87,13 @@ public class SimpleInMemoryDatabaseTest {
 			assertEquals("john.doe@example.com", rs.getString("EMAIL"));
 
 		} finally {
-			closeQuitely(rs);
-			closeQuitely(stmt);
-			closeQuitely(connection);
+			DerbyUtils.closeQuietly(rs);
+			DerbyUtils.closeQuietly(stmt);
+			DerbyUtils.closeQuietly(connection);
 		}
 
+		// This test will fail in eclipse; see https://bugs.eclipse.org/bugs/show_bug.cgi?id=298061
 		final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 		assertTrue(logFile.exists());
-	}
-
-	private void closeQuitely (final AutoCloseable resource) {
-		try {
-			if (null != resource) {
-				resource.close();
-			}
-		} catch (Exception e) {
-			// Ignore
-		}
 	}
 }

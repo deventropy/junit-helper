@@ -1,5 +1,5 @@
 /* 
- * Copyright 2015 JUnit Helper Contributors
+ * Copyright 2015 Development Entropy (deventropy.org) Contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -17,7 +17,6 @@ package org.deventropy.junithelper.utils;
 
 import static org.junit.Assert.*;
 
-import org.deventropy.junithelper.utils.ArgumentCheck;
 import org.junit.Test;
 
 /**

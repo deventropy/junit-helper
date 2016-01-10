@@ -17,6 +17,7 @@ env:
 branches:
     except:
         - travis
+        - gh-pages
 
 before_install: "git clone -b travis ${DENT_TRAVIS_MVN_SETTINGS_REPO} target/travis"
 

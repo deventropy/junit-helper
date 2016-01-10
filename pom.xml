@@ -25,7 +25,7 @@ limitations under the License.
 	<artifactId>junit-helper</artifactId>
 	<packaging>pom</packaging>
 	<name>JUnit Helper</name>
-	<version>0.1-SNAPSHOT</version>
+	<version>1.0-alpha.1-SNAPSHOT</version>
 	<description>JUnit Helper Classes</description>
 	<url>http://www.deventropy.org/junit-helper/</url>
 	<inceptionYear>2015</inceptionYear>
@@ -36,7 +36,7 @@ limitations under the License.
 	</scm>
 	<issueManagement>
 		<system>GitHub</system>
-		<url>https://github.com/deventropy/junit-helper/issues</url>
+		<url>https://github.com/deventropy/junit-helper/issues/</url>
 	</issueManagement>
 	<build>
 		<plugins>
@@ -87,6 +87,19 @@ limitations under the License.
 					<threadCount>10</threadCount>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<executions>
+					<execution>
+						<id>attach-site-descriptor</id>
+						<phase>package</phase>
+						<goals>
+							<goal>attach-descriptor</goal>
+						</goals>
+					</execution>
+				</executions>
 			</plugin>
 		</plugins>
 		<pluginManagement>
@@ -139,6 +152,26 @@ limitations under the License.
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-javadoc-plugin</artifactId>
+				<configuration>
+					<bottom><![CDATA[Copyright &#169; {inceptionYear}-{currentYear} Development Entropy (deventropy.org) Contributors]]></bottom>
+					<charset>${project.build.sourceEncoding}</charset>
+					<javadocVersion>1.7</javadocVersion>
+					<keywords>true</keywords>
+					<quiet>true</quiet>
+					<encoding>${project.build.sourceEncoding}</encoding>
+					<docEncoding>${project.build.sourceEncoding}</docEncoding>
+					<links>
+						<link>http://docs.oracle.com/javase/7/docs/api/</link>
+						<link>http://junit.org/javadoc/latest/</link>
+						<link>http://db.apache.org/derby/docs/${derby.version.major}/publishedapi/</link>
+					</links>
+					<archive>
+						<manifest>
+							<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
+							<addDefaultSpecificationEntries>true</addDefaultSpecificationEntries>
+						</manifest>
+					</archive>
+				</configuration>
 				<reportSets>
 					<reportSet>
 						<reports>
@@ -161,6 +194,24 @@ limitations under the License.
 					<!-- Sets the path to the file which contains the execution data. -->
 					<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
 				</configuration>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-changes-plugin</artifactId>
+				<reportSets>
+					<reportSet>
+						<reports>
+							<report>changes-report</report>
+						</reports>
+					</reportSet>
+				</reportSets>
 			</plugin>
 		</plugins>
 	</reporting>
@@ -174,10 +225,17 @@ limitations under the License.
 			</dependency>
 		</dependencies>
 	</dependencyManagement>
+	<properties>
+		<derby.version.major>10.12</derby.version.major>
+	</properties>
 	<modules>
 		<module>junit-helper-derby</module>
 		<module>junit-helper-utils</module>
 	</modules>
+	<ciManagement>
+		<system>Travis CI</system>
+		<url>https://travis-ci.org/deventropy/junit-helper</url>
+	</ciManagement>
 	<!-- Distribution Management, see http://veithen.github.io/2013/05/26/github-bintray-maven-release-plugin.html -->
 	<distributionManagement>
 		<site>

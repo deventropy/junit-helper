@@ -24,7 +24,7 @@ public enum ErrorLoggingMode {
 
 	/**
 	 * No special config; derby will write to <code>derby.log</code> file in the
-	 * <code>derby.system.directory</code>.
+	 * <code>derby.system.home</code>.
 	 */
 	Default,
 	

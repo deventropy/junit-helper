@@ -14,13 +14,12 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
 		<groupId>org.deventropy.junit-helper</groupId>
 		<artifactId>junit-helper</artifactId>
-		<version>0.1-SNAPSHOT</version>
+		<version>1.0-alpha.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>junit-helper-derby</artifactId>
 	<name>JUnit Helper :: Derby</name>
@@ -39,7 +38,6 @@ limitations under the License.
 		<dependency>
 			<groupId>junit</groupId>
 			<artifactId>junit</artifactId>
-			<scope>provided</scope>
 		</dependency>
 		<dependency>
 			<groupId>org.apache.derby</groupId>
@@ -56,11 +54,23 @@ limitations under the License.
 			<artifactId>log4j-api</artifactId>
 		</dependency>
 		<dependency>
+			<groupId>org.apache.logging.log4j</groupId>
+			<artifactId>log4j-core</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>net.jcip</groupId>
+			<artifactId>jcip-annotations</artifactId>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
 			<groupId>commons-io</groupId>
 			<artifactId>commons-io</artifactId>
 		</dependency>
 	</dependencies>
 	<properties>
-		<derby.version>10.12.1.1</derby.version>
+		<!-- The Derby Major version is defined in the parent so it can be reused with the Javadoc URLs -->
+		<derby.version>${derby.version.major}.1.1</derby.version>
+		<test.reuse.forks>false</test.reuse.forks>
 	</properties>
 </project>

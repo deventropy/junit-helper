@@ -17,13 +17,8 @@ package org.deventropy.junithelper.derby;
 
 import java.io.Closeable;
 import java.io.File;
-import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.net.URL;
-import java.nio.charset.Charset;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -31,44 +26,80 @@ import java.util.Properties;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
-import org.apache.derby.tools.ij;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.deventropy.junithelper.utils.ArgumentCheck;
-import org.deventropy.junithelper.utils.UrlResourceUtil;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TemporaryFolder;
 
 /**
- * Provides an in-memory Derby resource.
+ * Provides an in-memory Derby resource. An instance of this class is initialized with the
+ * {@link DerbyResourceConfig configuration} and a {@link #getDerbySystemHome() Derby System Home}.
  * 
- * <p>TODO Complete docs and examples
+ * <p>The class can be used either as a JUnit {@link org.junit.Rule Rule} / {@link org.junit.ClassRule ClassRule} OR
+ * directly by the user. Initialization and de-initialization of an instance of this class (and the embedded Derby
+ * instance) is handed by the {@link #start()} and {@link #close()} methods respectively. When used as a
+ * <code>Rule</code> or <code>ClassRule</code>, the {@link #before()} and {@link #after()} mdthods from those interfaces
+ * handle the initialization and de-initialization for the user (internally using the <code>#start()</code> and
+ * <code>#close()</code> methods.
+ * 
+ * <p>Derby does not allow running multiple instances in the same JVM, so external protection should be provided to
+ * protect against that.
+ * 
+ * <p>Example of usage:
+ * <pre>
+ * public class SimpleDerbyTest {
+ * 
+ * 	private TemporaryFolder tempFolder = new TemporaryFolder();
+ * 	private EmbeddedDerbyResource embeddedDerbyResource =
+ * 		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault().useDevNullErrorLogging(),
+ * 		tempFolder);
+ * 
+ * 	&#064;Rule
+ * 	public RuleChain derbyRuleChain = RuleChain.outerRule(tempFolder).around(embeddedDerbyResource);
+ * 
+ * 	&#064;Test
+ * 	public void test () throws SQLException {
+ * 		final String jdbcUrl = embeddedDerbyResource.getJdbcUrl();
+ * 		Connection connection = null;
+ * 		Statement stmt = null;
+ * 		ResultSet rs = null;
+ * 
+ * 		try {
+ * 			connection = DriverManager.getConnection(jdbcUrl);
+ * 
+ * 			// Check a value
+ * 			stmt = connection.createStatement();
+ * 			rs = stmt.executeQuery("SELECT 1 FROM SYSIBM.SYSDUMMY1");
+ * 
+ * 			assertTrue(rs.next());
+ * 		} finally {
+ * 			// Close resources
+ * 		}
+ * 	}
+ * }
+ * </pre>
+ * 
+ * <p>For further information and examples, see
+ * <a href="http://www.deventropy.org/junit-helper/junit-helper-derby/manual/">User Manual on the Project Website</a>.
  * 
  * @author Bindul Bhowmik
  */
 public class EmbeddedDerbyResource extends ExternalResource implements Closeable {
 
-	/**
-	 * Stream used for DEV_NULL logging.
-	 */
-	public static final OutputStream DEV_NULL = new OutputStream() {
-		@Override
-		public void write (final int b) throws IOException {
-			// Derby log > /dev/null
-		}
-	};
-	
 	private static final String PROP_FILE_DERBY_PROPERTIES = "derby.properties";
 	private static final String PROP_DERBY_SYSTEM_HOME = "derby.system.home";
+	private static final String PROP_DERBY_STREAM_ERROR_FILE = "derby.stream.error.file";
 	private static final String PROP_DERBY_STREAM_ERROR_FIELD = "derby.stream.error.field";
 	
 	private static final String URLPROP_DERBY_CREATE = ";create=true";
 	private static final String URLPROP_DERBY_SHUTDOWN = ";shutdown=true";
+	private static final String URLPROP_DERBY_DROP = ";drop=true";
 	
 	private static final String DERBY_EMBEDDED_DRIVER_CLASS = "org.apache.derby.jdbc.EmbeddedDriver";
 	
-	private final Logger log = LogManager.getLogger(getClass());
+	private final Logger log = LogManager.getLogger();
 	
 	private final DerbyResourceConfig config;
 	private File derbySystemHome;
@@ -125,7 +156,19 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	@Override
 	protected void before () throws Throwable {
 		super.before();
-
+		this.start();
+	}
+	
+	/**
+	 * Starts the Embedded derby instance.
+	 * 
+	 * <p><em>Note:</em> If using this instance as a JUnit {@linkplain org.junit.Rule}, do not call this method;
+	 * initialization is already handled from the {@linkplain org.junit.rules.ExternalResource#before()}.
+	 * 
+	 * @throws IOException IO exception creating or setting derby home
+	 * @throws SQLException SQL exception starting derby or running the init scripts
+	 */
+	public void start () throws IOException, SQLException {
 		// Validate and setup
 		if (null != derbySystemHomeParent) {
 			this.derbySystemHome = derbySystemHomeParent.newFolder();
@@ -138,50 +181,41 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		// Start the database
 		// Recommended Derby startup process,
 		// see https://db.apache.org/derby/docs/10.12/publishedapi/org/apache/derby/jdbc/EmbeddedDriver.html
-		Class.forName(DERBY_EMBEDDED_DRIVER_CLASS).newInstance();
+		try {
+			Class.forName(DERBY_EMBEDDED_DRIVER_CLASS).newInstance();
+		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// Reset the Derby System Home property
+			resetDerbyHome();
+			throw new SQLException("Unable to initialize Derby driver class: " + DERBY_EMBEDDED_DRIVER_CLASS, e);
+		}
 		// Create / Connect to the database
 		final Connection conn = DriverManager.getConnection(buildCreateJDBCUrl());
-		// Post init scripts
-		executePostInitScripts(conn);
-		conn.close();
+		try {
+			// Post init scripts
+			executePostInitScripts(conn);
+		} finally {
+			DerbyUtils.closeQuietly(conn);
+		}
 	}
 
 	private void executePostInitScripts (final Connection conn) throws IOException {
+		final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(conn);
 		for (String postInitScript : config.getPostInitScripts()) {
-			runScript(postInitScript, conn);
-		}
-	}
-	
-	private void runScript (final String script, final Connection conn) throws IOException {
-
-		InputStream scriptStream = null;
-		OutputStream scriptLogStream = null;
-
-		try {
-
-			final String charset = Charset.defaultCharset().name();
-			final URL scriptUrl = UrlResourceUtil.getUrl(script);
-			scriptStream = scriptUrl.openStream();
-	
 			final File scriptLogFile = new File(derbySystemHome, "post-init-"
-					+ scriptUrl.getPath().replaceAll("/", "_") + ".log");
-			scriptLogStream = new FileOutputStream(scriptLogFile, true);
-	
-	
-			log.debug("Executing script: {}", script);
-			final int exceptionCount = ij.runScript(conn, scriptStream, charset, scriptLogStream, charset);
-			if (exceptionCount > 0) {
-				log.warn("Error executing script {}", script);
+					+ postInitScript.replaceAll("/", "_") + ".log");
+			try {
+				final int result = scriptRunner.executeScript(postInitScript, scriptLogFile);
+				if (result != 0) {
+					log.warn(FileUtils.readFileToString(scriptLogFile));
+					throw new IOException("Exceptions exist in script. See output for details");
+				}
+			} catch (IOException e) {
 				log.warn(FileUtils.readFileToString(scriptLogFile));
 				throw new IOException("Exceptions exist in script. See output for details");
 			}
-
-		} finally {
-			IOUtils.closeQuietly(scriptLogStream);
-			IOUtils.closeQuietly(scriptStream);
 		}
 	}
-
+	
 	private String buildCreateJDBCUrl () {
 		// TODO Will handle things here to restore from a backup, etc.
 		return new StringBuilder().append(jdbcUrl).append(URLPROP_DERBY_CREATE).toString();
@@ -193,12 +227,12 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		// Logging
 		switch (config.getErrorLoggingMode()) {
 			case Null:
-				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FIELD,
-						getClass().getName() + ".DEV_NULL");
+				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FIELD, DerbyUtils.DEV_NULL_FIELD_ID);
 				break;
 			case Default:
 			default:
-				// Do nothing
+				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FILE, "derby.log");
+				break;
 		}
 
 		// Write it
@@ -220,12 +254,6 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 			// Ignore
 			log.catching(Level.TRACE, e);
 		}
-		// Reset the Derby System Home property
-		if (null != oldDerbySystemHomeValue && !oldDerbySystemHomeValue.isEmpty()) {
-			System.setProperty(PROP_DERBY_SYSTEM_HOME, oldDerbySystemHomeValue);
-		} else {
-			System.clearProperty(PROP_DERBY_SYSTEM_HOME);
-		}
 	}
 
 	/* (non-Javadoc)
@@ -233,11 +261,32 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 */
 	@Override
 	public void close () throws IOException {
+		Connection conn = null;
 		try {
-			final Connection conn = DriverManager.getConnection(jdbcUrl + URLPROP_DERBY_SHUTDOWN);
-			conn.close();
+			final StringBuilder shutdownUrl = new StringBuilder(jdbcUrl);
+			if (JdbcDerbySubSubProtocol.Memory == config.getSubSubProtocol()) {
+				shutdownUrl.append(URLPROP_DERBY_DROP);
+			} else {
+				shutdownUrl.append(URLPROP_DERBY_SHUTDOWN);
+			}
+			conn = DriverManager.getConnection(shutdownUrl.toString());
 		} catch (SQLException e) {
-			// Ignore
+			// Ignore - there will always be an exception
+			log.catching(Level.TRACE, e);
+		} finally {
+			DerbyUtils.closeQuietly(conn);
+		}
+		// Reset the Derby System Home property
+		resetDerbyHome();
+	}
+
+	private void resetDerbyHome () {
+		// Reset the Derby System Home property
+		if (null != oldDerbySystemHomeValue && !oldDerbySystemHomeValue.isEmpty()) {
+			System.setProperty(PROP_DERBY_SYSTEM_HOME, oldDerbySystemHomeValue);
+			oldDerbySystemHomeValue = null;
+		} else {
+			System.clearProperty(PROP_DERBY_SYSTEM_HOME);
 		}
 	}
 
