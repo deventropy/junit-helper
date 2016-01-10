@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DerbyResourceConfig.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JUnit Helper :: Derby</a> &gt; <a href="index.source.html" class="el_package">org.deventropy.junithelper.derby</a> &gt; <span class="el_source">DerbyResourceConfig.java</span></div><h1>DerbyResourceConfig.java</h1><pre class="source lang-java linenums">/* 
+ * Copyright 2015 Development Entropy (deventropy.org) Contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.deventropy.junithelper.derby;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
+
+import org.deventropy.junithelper.utils.ArgumentCheck;
+
+/**
+ * Configurations to control the {@link EmbeddedDerbyResource}.
+ * 
+ * &lt;p&gt;This class provides a fluid interface to build the config object to pass to the constructor of the resource.
+ * Example usage:
+ * 
+ * &lt;pre&gt;
+ * EmbeddedDerbyResource derbyResource = new EmbeddedDerbyResource(
+ * 		DerbyResourceConfig.buildDefault().);
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;
+ * Some methods in this class, for example the methods setting the subSubProtocol, can be mutually exclusive and unset /
+ * alter values set by other methods. Certain configuration values have valid values as &lt;code&gt;null&lt;/code&gt; and do not
+ * have corresponding &lt;code&gt;getDefaultXXX&lt;/code&gt; methods.
+ * &lt;/p&gt;
+ * 
+ * @author Bindul Bhowmik
+ */
+<span class="fc" id="L44">public class DerbyResourceConfig {</span>
+	
+	private String databaseName;
+	
+	// TODO have combined setters for the sub protocols (with other required values)
+	private JdbcDerbySubSubProtocol subSubProtocol;
+	
+	// TODO Complete configuring logging
+	private ErrorLoggingMode errorLoggingMode;
+	
+	private List&lt;String&gt; postInitScripts;
+	
+	/**
+	 * Sets up a default config that can be used as is to start a database. See the appropriate
+	 * &lt;code&gt;getDefaultXXX&lt;/code&gt; methods to see the default values.
+	 * 
+	 * @return A config setup with defaults.
+	 */
+	public static DerbyResourceConfig buildDefault () {
+<span class="fc" id="L63">		final DerbyResourceConfig config = new DerbyResourceConfig();</span>
+<span class="fc" id="L64">		config.databaseName = getDefaultDatabaseName();</span>
+<span class="fc" id="L65">		config.subSubProtocol = getDefaultSubSubProtocol();</span>
+<span class="fc" id="L66">		config.errorLoggingMode = getDefaultErrorLoggingMode();</span>
+		// TODO Complete setting defaults
+<span class="fc" id="L68">		return config;</span>
+	}
+	
+	/**
+	 * Sets the database name to use.
+	 * @param dbName Database name
+	 * @return current instance
+	 * @throws IllegalArgumentException if the database name is null or empty
+	 */
+	public DerbyResourceConfig setDatabaseName (final String dbName) {
+<span class="fc" id="L78">		ArgumentCheck.notNullOrEmpty(dbName, &quot;databaseName&quot;);</span>
+<span class="fc" id="L79">		this.databaseName = dbName;</span>
+<span class="fc" id="L80">		return this;</span>
+	}
+	
+	/**
+	 * Returns the name of the database to use.
+	 * 
+	 * &lt;p&gt;Consult the documentation for Derby Sub Sub Protocols on database name formats and use.
+	 * 
+	 * @return The database name.
+	 * @see #getDefaultDatabaseName()
+	 * @see &lt;a href=&quot;http://db.apache.org/derby/docs/10.11/ref/rrefjdbc37352.html&quot;&gt;Syntax of db connection URLs&lt;/a&gt;
+	 */
+	public String getDatabaseName () {
+<span class="fc" id="L93">		return databaseName;</span>
+	}
+	
+	/**
+	 * Returns the default database name value, which is a UUID string.
+	 * @return The default database name.
+	 */
+	public static String getDefaultDatabaseName () {
+<span class="fc" id="L101">		return UUID.randomUUID().toString();</span>
+	}
+	
+	/**
+	 * Will have the database start up as an in-memory database.
+	 * 
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useInMemoryDatabase () {
+<span class="fc" id="L110">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
+		// TODO null out other values?
+<span class="fc" id="L112">		return this;</span>
+	}
+	
+	/**
+	 * The JDBC sub-sub protocol to use for the embedded database.
+	 * 
+	 * @return A valid Derby sub-sub protocol
+	 */
+	public JdbcDerbySubSubProtocol getSubSubProtocol () {
+<span class="fc" id="L121">		return this.subSubProtocol;</span>
+	}
+	
+	/**
+	 * The default sub-sub protocol value.
+	 * @return {@link JdbcDerbySubSubProtocol#Memory}
+	 */
+	public static JdbcDerbySubSubProtocol getDefaultSubSubProtocol () {
+<span class="fc" id="L129">		return JdbcDerbySubSubProtocol.Memory;</span>
+	}
+	
+	/**
+	 * Sets the {@link #getErrorLoggingMode()} value to {@link ErrorLoggingMode#Null}; and clears other logging
+	 * properties.
+	 * 
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDevNullErrorLogging () {
+<span class="fc" id="L139">		this.errorLoggingMode = ErrorLoggingMode.Null;</span>
+		//TODO clean out other values?
+<span class="fc" id="L141">		return this;</span>
+	}
+	
+	/**
+	 * Sets the {@link #getErrorLoggingMode()} value to {@link ErrorLoggingMode#Default}; and clears other logging
+	 * properties.
+	 * 
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDefaultErrorLogging () {
+<span class="fc" id="L151">		this.errorLoggingMode = ErrorLoggingMode.Default;</span>
+		//TODO clean out other values?
+<span class="fc" id="L153">		return this;</span>
+	}
+	
+	/**
+	 * The configured error logging mode.
+	 * @return the configured error logging mode
+	 */
+	public ErrorLoggingMode getErrorLoggingMode () {
+<span class="fc" id="L161">		return errorLoggingMode;</span>
+	}
+	
+	/**
+	 * The default logging setup.
+	 * @return {@link ErrorLoggingMode#Default}
+	 */
+	public static ErrorLoggingMode getDefaultErrorLoggingMode () {
+<span class="fc" id="L169">		return ErrorLoggingMode.Default;</span>
+	}
+	
+	/**
+	 * Gets the configured post init scripts in the config; or an empty list.
+	 * @return Post init scripts to execute
+	 */
+	public List&lt;String&gt; getPostInitScripts () {
+<span class="fc bfc" id="L177" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
+<span class="fc" id="L178">			return Collections.emptyList();</span>
+		}
+<span class="fc" id="L180">		return postInitScripts;</span>
+	}
+	
+	/**
+	 * Adds a post init script to the config.
+	 * 
+	 * &lt;p&gt;A post init script should refer to a file containing SQL DDL or DML statements that will be executed
+	 * against the new derby instance. Script locations can be on the classpath or file system or on a HTTP(s)
+	 * location, for format, see {@linkplain org.deventropy.junithelper.utils.UrlResourceUtil}.
+	 * 
+	 * @param postInitScript A post init script to add
+	 * @return this object
+	 */
+	public DerbyResourceConfig addPostInitScript (final String postInitScript) {
+<span class="fc" id="L194">		ArgumentCheck.notNullOrEmpty(postInitScript, &quot;Post Init Script&quot;);</span>
+<span class="fc bfc" id="L195" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
+<span class="fc" id="L196">			postInitScripts = new ArrayList&lt;&gt;();</span>
+		}
+<span class="fc" id="L198">		postInitScripts.add(postInitScript);</span>
+<span class="fc" id="L199">		return this;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

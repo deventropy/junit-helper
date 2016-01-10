@@ -8,22 +8,22 @@
 
 	<head>
 		<meta charset="UTF-8" />
-		<title>JUnit Helper Tools | JUnit Helper</title>
+		<title>Project Build Plugins | JUnit Helper :: Shared Utils</title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<meta name="description" content="" />
 		<meta http-equiv="content-language" content="en" />
  
 		<link href="http://netdna.bootstrapcdn.com/bootswatch/2.3.2/cosmo/bootstrap.min.css" rel="stylesheet" />
 		<link href="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-responsive.min.css" rel="stylesheet" />
-		<link href=".//css/bootswatch.css" rel="stylesheet" />
-		<link href=".//css/reflow-skin.css" rel="stylesheet" />
+		<link href="..//css/bootswatch.css" rel="stylesheet" />
+		<link href="..//css/reflow-skin.css" rel="stylesheet" />
 
 		<link href="http://yandex.st/highlightjs/7.5/styles/github.min.css" rel="stylesheet" />
 
-		<link href=".//css/lightbox.css" rel="stylesheet" />
+		<link href="..//css/lightbox.css" rel="stylesheet" />
 
-		<link href=".//css/site.css" rel="stylesheet" />
-		<link href=".//css/print.css" rel="stylesheet" media="print" />
+		<link href="..//css/site.css" rel="stylesheet" />
+		<link href="..//css/print.css" rel="stylesheet" media="print" />
 
 		<!-- Le HTML5 shim, for IE6-8 support of HTML5 elements -->
 		<!--[if lt IE 9]>
@@ -35,7 +35,7 @@
 <link rel="author" href="http://blog.bindul.name/"/>
 	</head>
 
-	<body class="page-index project-junit-helper" data-spy="scroll" data-offset="60" data-target="#toc-scroll-target">
+	<body class="page-plugins project-junit-helper-utils" data-spy="scroll" data-offset="60" data-target="#toc-scroll-target">
 
 		<div class="navbar navbar-fixed-top">
 			<div class="navbar-inner">
@@ -45,22 +45,22 @@
 						<span class="icon-bar"></span>
 						<span class="icon-bar"></span>
 					</a>
-					<a class="brand" href="./"><span class="color-highlight">JUnit Helper</span> Utils</a>
+					<a class="brand" href="../"><span class="color-highlight">JUnit Helper</span> Utils</a>
 					<div class="nav-collapse collapse" id="top-nav-collapse">
 						<ul class="nav pull-right">
-							<li ><a href="../" title="Development Entropy">Development Entropy</a></li>
+							<li ><a href="../../" title="Development Entropy">Development Entropy</a></li>
 							<li ><a href="https://github.com/deventropy/junit-helper" title="JUnit Helper @ GitHub" class="externalLink">JUnit Helper @ GitHub</a></li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Modules <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li ><a href="junit-helper-derby/index.html" title="JUnit Helper :: Derby">JUnit Helper :: Derby</a></li>
-									<li ><a href="junit-helper-utils/index.html" title="JUnit Helper :: Shared Utils">JUnit Helper :: Shared Utils</a></li>
+									<li ><a href="../junit-helper-derby/index.html" title="JUnit Helper :: Derby">JUnit Helper :: Derby</a></li>
+									<li ><a href="index.html" title="JUnit Helper :: Shared Utils">JUnit Helper :: Shared Utils</a></li>
 								</ul>
 							</li>
 							<li class="dropdown">
 								<a href="#" class="dropdown-toggle" data-toggle="dropdown">Development <b class="caret"></b></a>
 								<ul class="dropdown-menu">
-									<li ><a href="development.html" title="Development Guide">Development Guide</a></li>
+									<li ><a href="../development.html" title="Development Guide">Development Guide</a></li>
 									<li ><a href="https://github.com/deventropy/junit-helper/issues" title="Issues" class="externalLink">Issues</a></li>
 									<li ><a href="https://github.com/deventropy/junit-helper#fork-destination-box" title="Fork on GitHub" class="externalLink">Fork on GitHub</a></li>
 									<li ><a href="https://travis-ci.org/deventropy/junit-helper" title="Continuous Integration" class="externalLink">Continuous Integration</a></li>
@@ -83,7 +83,7 @@
 		<div class="row" id="banner">
 			<div class="span12">
 				<div class="pull-left">
-					<a href="./" id="bannerLeft"><h1><span class="color-highlight">JUnit Helper</span> Utils</h1></a>
+					<a href="./" id="bannerLeft"><h1>JUnit Helper <span class="color-highlight">Shared Utils</span></h1></a>
 					<p class="lead">Utility JUnit resource / libraries to ease testing</p>
 				</div>
 				<div class="pull-right">
@@ -93,9 +93,11 @@
 	</div>
 		<div>
 			<ul class="breadcrumb">
-				<li><a href="./" title="JUnit Helper">JUnit Helper</a></li>
+				<li><a href="../" title="JUnit Helper">JUnit Helper</a></li>
 				<li class="divider">/</li>
-				<li>JUnit Helper Tools</li>
+				<li><a href="./" title="JUnit Helper :: Shared Utils">JUnit Helper :: Shared Utils</a></li>
+				<li class="divider">/</li>
+				<li>Project Build Plugins</li>
 			</ul>
 		</div>
 	</header>
@@ -104,71 +106,117 @@
 	<div class="row">
 		<div class="span8">
 			<div class="body-content">
-<!-- Copyright 2015 JUnit Helper Contributors
-
-Licensed under the Apache License, Version 2.0 (the "License");
-you may not use this file except in compliance with the License.
-You may obtain a copy of the License at
-
-    http://www.apache.org/licenses/LICENSE-2.0
-
-Unless required by applicable law or agreed to in writing, software
-distributed under the License is distributed on an "AS IS" BASIS,
-WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-See the License for the specific language governing permissions and
-limitations under the License. --> 
-<div class="page-header">
- <h1 id="junit_helper_tools">JUnit Helper Tools</h1>
-</div> 
-<p>This project started as a collection of JUnit 4 tools / resources that I have created / used over the years for testing various personal and open source projects and scenarios. The modules in this project have been cleaned up a bit, made a little more configurable and reusable (hopefully).</p> 
 <div class="section"> 
- <h2 id="Source_Code_Issue_Tracker_Binary_Distribution_etc">Source Code, Issue Tracker, Binary Distribution etc.</h2> 
- <p><a class="externalLink" href="https://travis-ci.org/deventropy/junit-helper"><img src="https://travis-ci.org/deventropy/junit-helper.svg?branch=master" alt="Build Status" /></a> <a class="externalLink" href="https://coveralls.io/github/deventropy/junit-helper?branch=master"><img src="https://coveralls.io/repos/deventropy/junit-helper/badge.svg?branch=master&amp;service=github" alt="Coverage Status" /></a> <a class="externalLink" href="https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper"><img src="https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper/badge.svg" alt="Maven Central" /></a></p> 
- <p>The <a class="externalLink" href="http://www.deventropy.org/">Development Entropy</a> <a href="./">Junit Helper</a> project is hosted on GitHub. See the <a class="externalLink" href="http://github.com/deventropy/junit-helper">GitHub project</a> for source code, <a class="externalLink" href="https://github.com/deventropy/junit-helper/issues">issue tracker</a>, etc.</p> 
- <p>The project uses <a class="externalLink" href="http://travis-ci.org/">Travis CI’s</a> free service for open source projects for continuous integration. See the <a class="externalLink" href="https://travis-ci.org/deventropy/junit-helper">project’s Travis CI page</a> for build status and details.</p> 
- <p>The project also uses <a class="externalLink" href="http://coveralls.io/">Coveralls’</a> free service for open source projects for tracking unit test coverage. See the <a class="externalLink" href="https://coveralls.io/github/deventropy/junit-helper">project’s Coveralls page</a> for build status and details. </p> 
- <div class="section"> 
-  <h3 id="Binary_Distribution_Repository"><a name="repository"></a>Binary Distribution Repository</h3> 
-  <p>The project is built using <a class="externalLink" href="http://maven.apache.org/">Apache Maven&reg;</a> and binaries are available through the <a class="externalLink" href="https://oss.jfrog.org/webapp/#/home">JFrog Open Source Software</a> service.</p> 
-  <p>To get the Snapshot and Release artifacts for this project, you may have to add the JFrog OSS repositories (below) to your project’s POM or local settings or as a proxy in a local repository manager.</p> 
-  <ul> 
-   <li><b>Snapshot Repository:</b> <a class="externalLink" href="https://oss.jfrog.org/artifactory/libs-snapshot">https://oss.jfrog.org/artifactory/libs-snapshot</a></li> 
-   <li><b>Release Repository:</b> <a class="externalLink" href="https://oss.jfrog.org/artifactory/libs-release">https://oss.jfrog.org/artifactory/libs-release</a></li> 
-  </ul> 
+ <div class="page-header">
+  <h2 id="Project_Build_Plugins">Project Build Plugins</h2>
  </div> 
-</div> 
-<div class="section"> 
- <h2 id="Modules">Modules</h2> 
- <p>The following modules are currently available in the project:</p> 
+ <a name="Project_Build_Plugins"></a> 
  <table border="0" class="bodyTable table table-striped table-hover"> 
   <thead> 
    <tr class="a"> 
-    <th>Project </th> 
-    <th>Summary </th> 
-    <th>Artifact Id </th> 
-    <th>Issues Component </th> 
+    <th>GroupId</th> 
+    <th>ArtifactId</th> 
+    <th>Version</th> 
    </tr> 
   </thead> 
   <tbody> 
    <tr class="b"> 
-    <td><a href="./junit-helper-derby/">Derby</a> </td> 
-    <td>Initialize and run embedded <a class="externalLink" href="http://db.apache.org/derby/" title="Apache Derby">Apache Derby</a> instances from Junit tests </td> 
-    <td><tt>junit-helper-derby</tt> </td> 
-    <td><a class="externalLink" href="https://github.com/deventropy/junit-helper/labels/component%3Aderby">component:derby</a> </td> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-checkstyle-plugin/">maven-checkstyle-plugin</a></td> 
+    <td>2.17</td> 
    </tr> 
    <tr class="a"> 
-    <td><a href="./junit-helper-utils/">Helper Utils</a> </td> 
-    <td>Shared Utils for other modules. </td> 
-    <td><tt>junit-helper-utils</tt> </td> 
-    <td><a class="externalLink" href="https://github.com/deventropy/junit-helper/labels/component%3Autils">component:utils</a> </td> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-clean-plugin/">maven-clean-plugin</a></td> 
+    <td>3.0.0</td> 
+   </tr> 
+   <tr class="b"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-compiler-plugin/">maven-compiler-plugin</a></td> 
+    <td>3.3</td> 
+   </tr> 
+   <tr class="a"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-deploy-plugin/">maven-deploy-plugin</a></td> 
+    <td>2.8.2</td> 
+   </tr> 
+   <tr class="b"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-install-plugin/">maven-install-plugin</a></td> 
+    <td>2.5.2</td> 
+   </tr> 
+   <tr class="a"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-jar-plugin/">maven-jar-plugin</a></td> 
+    <td>2.6</td> 
+   </tr> 
+   <tr class="b"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-resources-plugin/">maven-resources-plugin</a></td> 
+    <td>2.7</td> 
+   </tr> 
+   <tr class="a"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-site-plugin/">maven-site-plugin</a></td> 
+    <td>3.4</td> 
+   </tr> 
+   <tr class="b"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/surefire/maven-surefire-plugin/">maven-surefire-plugin</a></td> 
+    <td>2.19.1</td> 
+   </tr> 
+   <tr class="a"> 
+    <td>org.jacoco</td> 
+    <td>http://jacoco-maven-plugin</td> 
+    <td>0.7.5.201505241946</td> 
    </tr> 
   </tbody> 
  </table> 
 </div> 
 <div class="section"> 
- <h2 id="Attributions">Attributions</h2> 
- <p>JUnit is a simple framework to write repeatable tests. It is an instance of the xUnit architecture for unit testing frameworks. Copyright owned by <a class="externalLink" href="http://junit.org/" title="JUnit">JUnit</a>.</p> 
- <p>Additional attributions are also present on the individual module homepages.</p> 
+ <h2 id="Project_Report_Plugins">Project Report Plugins</h2> 
+ <a name="Project_Report_Plugins"></a> 
+ <table border="0" class="bodyTable table table-striped table-hover"> 
+  <thead> 
+   <tr class="a"> 
+    <th>GroupId</th> 
+    <th>ArtifactId</th> 
+    <th>Version</th> 
+   </tr> 
+  </thead> 
+  <tbody> 
+   <tr class="b"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-changes-plugin/">maven-changes-plugin</a></td> 
+    <td>2.11</td> 
+   </tr> 
+   <tr class="a"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-checkstyle-plugin/">maven-checkstyle-plugin</a></td> 
+    <td>2.17</td> 
+   </tr> 
+   <tr class="b"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-javadoc-plugin/">maven-javadoc-plugin</a></td> 
+    <td>2.10.3</td> 
+   </tr> 
+   <tr class="a"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/plugins/maven-pmd-plugin/">maven-pmd-plugin</a></td> 
+    <td>3.6</td> 
+   </tr> 
+   <tr class="b"> 
+    <td>org.apache.maven.plugins</td> 
+    <td><a class="externalLink" href="http://maven.apache.org/surefire/maven-surefire-report-plugin/">maven-surefire-report-plugin</a></td> 
+    <td>2.19.1</td> 
+   </tr> 
+   <tr class="a"> 
+    <td>org.jacoco</td> 
+    <td>http://jacoco-maven-plugin</td> 
+    <td>0.7.5.201505241946</td> 
+   </tr> 
+  </tbody> 
+ </table> 
 </div>
 			</div>
 		</div>
@@ -177,19 +225,8 @@ limitations under the License. -->
 				<div class="well">
 					<ul class="nav nav-list">
 						<li class="nav-header">Table of Contents</li>
-		<li class="dropdown"><a href="#junit_helper_tools" title="JUnit Helper Tools">JUnit Helper Tools <b class="caret"></b></a>
-			<ul class="nav nav-list">
-		<li class="dropdown"><a href="#Source_Code_Issue_Tracker_Binary_Distribution_etc" title="Source Code, Issue Tracker, Binary Distribution etc.">Source Code, Issue Tracker, Binary Distribution etc. <b class="caret"></b></a>
-			<ul class="nav nav-list">
-		<li><a href="#Binary_Distribution_Repository" title="Binary Distribution Repository">Binary Distribution Repository</a>
-				<li class="divider"></li>
-			</ul>
-		</li>
-		<li><a href="#Modules" title="Modules">Modules</a>
-		<li><a href="#Attributions" title="Attributions">Attributions</a>
-				<li class="divider"></li>
-			</ul>
-		</li>
+		<li><a href="#Project_Build_Plugins" title="Project Build Plugins">Project Build Plugins</a>
+		<li><a href="#Project_Report_Plugins" title="Project Report Plugins">Project Report Plugins</a>
 					</ul>
 				</div>
 			</div>
@@ -207,26 +244,33 @@ limitations under the License. -->
 				<div class="span3 bottom-nav">
 					<ul class="nav nav-list">
 						<li class="nav-header">Main</li>
-						<li class="active">
-							<a href="#" title="Home">Home</a>
+						<li >
+							<a href="../" title="Home">Home</a>
 						</li>
 						<li >
 							<a href="https://github.com/deventropy/junit-helper" title="GitHub project" class="externalLink">GitHub project</a>
 						</li>
-						<li class="nav-header">Modules</li>
+						<li class="nav-header">Junit Helper Utils</li>
 						<li >
-							<a href="junit-helper-derby/index.html" title="JUnit Helper :: Derby">JUnit Helper :: Derby</a>
+							<a href="index.html" title="Home">Home</a>
 						</li>
 						<li >
-							<a href="junit-helper-utils/index.html" title="JUnit Helper :: Shared Utils">JUnit Helper :: Shared Utils</a>
+							<a href="url-resource-formats.html" title="URL Resource Formats">URL Resource Formats</a>
 						</li>
 					</ul>
 				</div>
 				<div class="span3 bottom-nav">
 					<ul class="nav nav-list">
+						<li class="nav-header">Modules</li>
+						<li >
+							<a href="../junit-helper-derby/index.html" title="JUnit Helper :: Derby">JUnit Helper :: Derby</a>
+						</li>
+						<li >
+							<a href="index.html" title="JUnit Helper :: Shared Utils">JUnit Helper :: Shared Utils</a>
+						</li>
 						<li class="nav-header">Development</li>
 						<li >
-							<a href="development.html" title="Development Guide">Development Guide</a>
+							<a href="../development.html" title="Development Guide">Development Guide</a>
 						</li>
 						<li >
 							<a href="https://github.com/deventropy/junit-helper/issues" title="Issues" class="externalLink">Issues</a>
@@ -246,10 +290,10 @@ limitations under the License. -->
 					<ul class="nav nav-list">
 						<li class="nav-header">Legal</li>
 						<li >
-							<a href="license.html" title="License">License</a>
+							<a href="../license.html" title="License">License</a>
 						</li>
 						<li >
-							<a href="privacy.html" title="Privacy Policy">Privacy Policy</a>
+							<a href="../privacy.html" title="Privacy Policy">Privacy Policy</a>
 						</li>
 						<li class="nav-header">Maven documentation</li>
 						<li >
@@ -259,7 +303,7 @@ limitations under the License. -->
 							<a href="integration.html" title="Continuous Integration">Continuous Integration</a>
 						</li>
 						<li >
-							<a href="dependency-convergence.html" title="Dependency Convergence">Dependency Convergence</a>
+							<a href="dependencies.html" title="Dependencies">Dependencies</a>
 						</li>
 						<li >
 							<a href="dependency-info.html" title="Dependency Information">Dependency Information</a>
@@ -270,8 +314,8 @@ limitations under the License. -->
 						<li >
 							<a href="distribution-management.html" title="Distribution Management">Distribution Management</a>
 						</li>
-						<li class="active">
-							<a href="#" title="About">About</a>
+						<li >
+							<a href="index.html" title="About">About</a>
 						</li>
 						<li >
 							<a href="issue-tracking.html" title="Issue Tracking">Issue Tracking</a>
@@ -280,13 +324,10 @@ limitations under the License. -->
 							<a href="license.html" title="Project License">Project License</a>
 						</li>
 						<li >
-							<a href="modules.html" title="Project Modules">Project Modules</a>
-						</li>
-						<li >
 							<a href="plugin-management.html" title="Plugin Management">Plugin Management</a>
 						</li>
-						<li >
-							<a href="plugins.html" title="Project Plugins">Project Plugins</a>
+						<li class="active">
+							<a href="#" title="Project Plugins">Project Plugins</a>
 						</li>
 						<li >
 							<a href="team-list.html" title="Project Team">Project Team</a>
@@ -330,11 +371,11 @@ limitations under the License. -->
 	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
 
 	<script src="http://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.2/js/bootstrap.min.js"></script>
-	<script src=".//js/lightbox.min.js"></script>
-	<script src=".//js/reflow-scroll.js"></script>
+	<script src="..//js/lightbox.min.js"></script>
+	<script src="..//js/reflow-scroll.js"></script>
 	<script src="http://yandex.st/highlightjs/7.5/highlight.min.js"></script>
 
-	<script src=".//js/reflow-skin.js"></script>
+	<script src="..//js/reflow-skin.js"></script>
 
 	</body>
 </html>
