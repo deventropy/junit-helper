@@ -27,9 +27,9 @@ install: "mvn install -DskipTests=true -Dmaven.javadoc.skip=true -B -V --setting
 
 script: "mvn test -B --settings target/travis/travis-mvn-settings.xml"
 
-# Coverage report to coveralls.io
+# Coverage report to coveralls.io (but not for pull requests)
 after_success:
-    - mvn clean test jacoco:report coveralls:report
+    - '[ "${TRAVIS_PULL_REQUEST}" = "false" ] && mvn clean test jacoco:report coveralls:report'
 
 # Speed up builds
 cache:
