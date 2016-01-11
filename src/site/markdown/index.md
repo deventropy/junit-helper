@@ -22,14 +22,20 @@ little more configurable and reusable (hopefully).
 
 ## Source Code, Issue Tracker, Binary Distribution etc.
 
+[![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master "JUnit Helper master Build Status")](https://travis-ci.org/deventropy/junit-helper)
+[![Coverage Status](https://coveralls.io/repos/deventropy/junit-helper/badge.svg?branch=master&service=github "JUnit Helper master Coverage Report")](https://coveralls.io/github/deventropy/junit-helper?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper)
+
 The [Development Entropy](http://www.deventropy.org/) [Junit Helper](./) project is hosted on
 GitHub. See the [GitHub project](http://github.com/deventropy/junit-helper) for source code,
 [issue tracker](https://github.com/deventropy/junit-helper/issues), etc.
 
 The project uses [Travis CI's](http://travis-ci.org/) free service for open source projects for continuous integration.
-See the [project's Travis CI page](https://travis-ci.org/deventropy/junit-helper) for build status and details. The
-current build status for the master branch is
-[![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master "JUnit Helper master Build Status")](https://travis-ci.org/deventropy/junit-helper).
+See the [project's Travis CI page](https://travis-ci.org/deventropy/junit-helper) for build status and details.
+
+The project also uses [Coveralls'](http://coveralls.io/) free service for open source projects for tracking unit test
+coverage. See the [project's Coveralls page](https://coveralls.io/github/deventropy/junit-helper) for build status and
+details.  
 
 ### <a name="repository"></a>Binary Distribution Repository
 
@@ -49,7 +55,7 @@ The following modules are currently available in the project:
 | Project | Summary | Artifact Id | Issues Component |
 |---------|---------|-------------|------------------|
 | [Derby](./junit-helper-derby/) | Initialize and run embedded [Apache Derby][derby] instances from Junit tests | `junit-helper-derby` | [component:derby](https://github.com/deventropy/junit-helper/labels/component%3Aderby) |
-| [Helper Utils](./junit-helper-utils/) | Shared Utils for other modules. | `junit-helper-utils` | [component:utils](https://github.com/deventropy/junit-helper/labels/component%3Aderby) |
+| [Helper Utils](./junit-helper-utils/) | Shared Utils for other modules. | `junit-helper-utils` | [component:utils](https://github.com/deventropy/junit-helper/labels/component%3Autils) |
 
 
 ## Attributions

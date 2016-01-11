@@ -123,6 +123,21 @@ limitations under the License.
 						</dependency>
 					</dependencies>
 				</plugin>
+				<plugin>
+					<groupId>org.eluder.coveralls</groupId>
+					<artifactId>coveralls-maven-plugin</artifactId>
+					<configuration>
+						<repoToken>${env.JUNIT_HELPER_COVERALLS_REPO_KEY}</repoToken>
+					</configuration>
+				</plugin>
+				<!-- Probably will need to change this to a merge goal or something when running UT and IT -->
+				<plugin>
+					<groupId>org.jacoco</groupId>
+					<artifactId>jacoco-maven-plugin</artifactId>
+					<configuration>
+						<dataFile>${project.build.directory}/coverage-reports/jacoco-ut.exec</dataFile>
+					</configuration>
+				</plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

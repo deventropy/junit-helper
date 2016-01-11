@@ -1,13 +1,12 @@
 # JUnit Helper Utilities / Resources
 
 [![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
+[![Coverage Status](https://coveralls.io/repos/deventropy/junit-helper/badge.svg?branch=master&service=github)](https://coveralls.io/github/deventropy/junit-helper?branch=master)
+[![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper)
 
 JUnit Helper Classes.
 
 See Documentation at [Project Website](http://www.deventropy.org/junit-helper/)
 
-## Derby Junit Test Resources Development
-
-[![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=feature%2Fderby-unit-test)](https://travis-ci.org/deventropy/junit-helper)
-
-Use Apache Derby as a resource for DB testing. See [Project Documentation](http://www.deventropy.org/junit-helper/junit-helper-derby/) for more information.
+The badges at the top of the page only show the CI and coverage status of the `master` branch; for other branches click
+on the link then select the appropriate branch for branch specific values..
