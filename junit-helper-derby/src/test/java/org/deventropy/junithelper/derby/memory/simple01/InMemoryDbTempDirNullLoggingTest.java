@@ -45,11 +45,10 @@ public class InMemoryDbTempDirNullLoggingTest {
 	
 	private TemporaryFolder tempFolder = new TemporaryFolder();
 	private EmbeddedDerbyResource embeddedDerbyResource =
-		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault()
-			.setDatabaseName(DB_NAME)
+		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault().useInMemoryDatabase(DB_NAME)
 			.useDevNullErrorLogging()
-			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/ddl.sql")
-			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/dml.sql"),
+			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql")
+			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql"),
 		tempFolder);
 	
 	@Rule

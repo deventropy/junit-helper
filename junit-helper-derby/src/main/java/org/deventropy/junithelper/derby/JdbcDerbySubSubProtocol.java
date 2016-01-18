@@ -27,14 +27,16 @@ public enum JdbcDerbySubSubProtocol {
 	/**
 	 * In Memory database.
 	 */
-	Memory ("memory");
+	Memory ("memory"),
+	
+	/**
+	 * Database in a directory.
+	 */
+	Directory ("directory");
 	
 	/*
 	 * Future support:
-	 * /**
-		 * Database is a directory
-		 * /
-		directory,
+	 * 
 		/**
 		 * Read only database on the classpath
 		 * /

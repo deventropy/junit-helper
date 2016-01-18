@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby.memory.simple01;
+package org.deventropy.junithelper.derby;
 
 import static org.junit.Assert.*;
 
@@ -26,10 +26,6 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.commons.io.output.WriterOutputStream;
-import org.deventropy.junithelper.derby.DerbyResourceConfig;
-import org.deventropy.junithelper.derby.DerbyScriptRunner;
-import org.deventropy.junithelper.derby.DerbyUtils;
-import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -46,8 +42,7 @@ private static final String DB_NAME = "my-test-database-simple01-tmpfolder-nulll
 	
 	private TemporaryFolder tempFolder = new TemporaryFolder();
 	private EmbeddedDerbyResource embeddedDerbyResource =
-		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault()
-			.setDatabaseName(DB_NAME),
+		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault().useInMemoryDatabase(DB_NAME),
 		tempFolder);
 	
 	@Rule
@@ -82,13 +77,13 @@ private static final String DB_NAME = "my-test-database-simple01-tmpfolder-nulll
 			scriptRunner.setDefaultScriptLogStream(wos1);
 
 			// Run one with a output stream here
-			scriptRunner.executeScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/ddl.sql",
+			scriptRunner.executeScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql",
 					wos2, true);
 			logData2.flush();
 			assertTrue("Expected log doesnt exist", logData2.toString().contains("rows inserted/updated/deleted"));
 			assertTrue("Should have nothing in the default", logData1.toString().isEmpty());
 
-			scriptRunner.executeScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/dml.sql");
+			scriptRunner.executeScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql");
 
 			wos1.flush();
 			logData1.flush();
@@ -107,7 +102,7 @@ private static final String DB_NAME = "my-test-database-simple01-tmpfolder-nulll
 			connection = DriverManager.getConnection(embeddedDerbyResource.getJdbcUrl());
 			final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(connection, "UTF-64");
 
-			scriptRunner.executeScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/dml.sql");
+			scriptRunner.executeScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql");
 
 		} finally {
 			DerbyUtils.closeQuietly(connection);

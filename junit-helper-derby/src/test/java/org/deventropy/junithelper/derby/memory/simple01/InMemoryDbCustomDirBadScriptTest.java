@@ -66,11 +66,10 @@ public class InMemoryDbCustomDirBadScriptTest {
 
 			System.setProperty(PROP_DERBY_SYSTEM_HOME, dummyDerbySystemHome);
 			embeddedDerbyResource =
-				new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault()
-					.setDatabaseName(DB_NAME)
-					.addPostInitScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/ddl.sql")
-					.addPostInitScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/dml.sql")
-					.addPostInitScript("classpath:/org/deventropy/junithelper/derby/memory/simple01/bad-script.sql"),
+				new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault().useInMemoryDatabase(DB_NAME)
+					.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql")
+					.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql")
+					.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/bad-script.sql"),
 				tempFile);
 			IOException expected = null;
 			try {

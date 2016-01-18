@@ -123,6 +123,7 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		this.derbySystemHome = derbySystemHomeDir;
 
 		this.jdbcUrl = buildJdbcUrl();
+		System.out.println(jdbcUrl);
 	}
 	
 	/**
@@ -145,9 +146,8 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	}
 	
 	private String buildJdbcUrl () {
-		// TODO Check if this needs to be different for certain sub-sub protocols
 		return new StringBuilder().append(config.getSubSubProtocol().jdbcConnectionPrefix())
-				.append(config.getDatabaseName()).toString();
+				.append(config.getDatabasePath()).toString();
 	}
 
 	/* (non-Javadoc)
@@ -304,4 +304,12 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		return jdbcUrl;
 	}
 
+	/**
+	 * Returns the database path of the JDBC URL.
+	 * @see DerbyResourceConfig#getDatabasePath()
+	 * @return The database path
+	 */
+	public String getDatabasePath () {
+		return config.getDatabasePath();
+	}
 }

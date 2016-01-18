@@ -21,7 +21,10 @@ limitations under the License.
 		<author email="http://goo.gl/J8TIhH">Bindul Bhowmik</author>
 	</properties>
 	<body>
-		<release version="1.0" date="2099-12-31" description="Initial Release">
+		<release version="1.0-alpha.1" date="2099-12-31" description="Initial Release">
+			<action dev="bindul" type="add" issue="8">
+				Project setup: coveralls.io solution
+			</action>
 			<action dev="bindul" type="add" issue="1">
 				Setup JUnit Helper :: Derby
 			</action>

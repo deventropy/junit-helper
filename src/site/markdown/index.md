@@ -22,6 +22,8 @@ little more configurable and reusable (hopefully).
 
 ## Source Code, Issue Tracker, Binary Distribution etc.
 
+[![Coverity Scan Status](https://scan.coverity.com/projects/7581/badge.svg)](https://scan.coverity.com/projects/deventropy-junit-helper)
+
 The [Development Entropy](http://www.deventropy.org/) [Junit Helper](./) project is hosted on
 GitHub. See the [GitHub project](http://github.com/deventropy/junit-helper) for source code,
 [issue tracker](https://github.com/deventropy/junit-helper/issues), etc.

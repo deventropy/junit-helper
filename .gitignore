@@ -11,3 +11,5 @@ buildNumber.properties
 .pmd
 .checkstyle
 .settings/
+cov-int/
+junit-helper.tgz

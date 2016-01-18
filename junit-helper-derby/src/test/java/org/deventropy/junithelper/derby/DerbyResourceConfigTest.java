@@ -31,7 +31,7 @@ public class DerbyResourceConfigTest {
 	@Test
 	public void testDefaultMethodsDirect () {
 		assertNotNull("Default database name should be a UUID",
-				UUID.fromString(DerbyResourceConfig.getDefaultDatabaseName()));
+				UUID.fromString(DerbyResourceConfig.getDefaultDatabasePathName()));
 		assertEquals("Default sub-sub protocol should be In Memory", JdbcDerbySubSubProtocol.Memory,
 				DerbyResourceConfig.getDefaultSubSubProtocol());
 		assertEquals("Default error logging mode should be dev null", ErrorLoggingMode.Default,
@@ -42,20 +42,29 @@ public class DerbyResourceConfigTest {
 	public void testDatabaseName () {
 		// Should be a default Database name
 		final DerbyResourceConfig resourceConfig = DerbyResourceConfig.buildDefault();
-		assertNotNull("Should have a default database name", resourceConfig.getDatabaseName());
+		assertNotNull("Should have a default database name", resourceConfig.getDatabasePath());
 		// Default should be a UUID
 		assertNotNull("Default database name should be a UUID",
-				UUID.fromString(resourceConfig.getDatabaseName()));
+				UUID.fromString(resourceConfig.getDatabasePath()));
+	}
+	
+	public void testInMemoryDatabaseName () {
+		final DerbyResourceConfig resourceConfig = DerbyResourceConfig.buildDefault();
 
 		// Should be able to set a database name
-		resourceConfig.setDatabaseName("test-database");
-		assertEquals("Database name should be the same", "test-database", resourceConfig.getDatabaseName());
+		resourceConfig.useInMemoryDatabase("test-database");
+		assertEquals("Database name should be the same", "test-database", resourceConfig.getDatabasePath());
+
+		// Should reset the database name
+		resourceConfig.useInMemoryDatabase();
+		// Default should be a UUID
+		assertNotNull("Default database name should be a UUID", UUID.fromString(resourceConfig.getDatabasePath()));
 	}
 	
 	@Test(expected = IllegalArgumentException.class)
 	public void testDatabaseNameNegative () {
 		// Should not be able to set null database name
-		DerbyResourceConfig.buildDefault().setDatabaseName(null);
+		DerbyResourceConfig.buildDefault().useInMemoryDatabase(null);
 	}
 	
 	@Test
@@ -65,14 +74,32 @@ public class DerbyResourceConfigTest {
 		assertEquals("Default sub-sub protocol should be In Memory", JdbcDerbySubSubProtocol.Memory,
 				resourceConfig.getSubSubProtocol());
 
-		// Save values from before switching to in-memory; some stuff should not change others will
-		final String preSwitchDbName = resourceConfig.getDatabaseName();
-
 		// Switch to in-memory
 		resourceConfig.useInMemoryDatabase();
-		assertEquals("Database name should not change", preSwitchDbName, resourceConfig.getDatabaseName());
 		assertEquals("Should be using in-memory sub sub protocol now", JdbcDerbySubSubProtocol.Memory,
 				resourceConfig.getSubSubProtocol());
+	}
+	
+	@Test
+	public void testDirectoryProtocol () {
+		final DerbyResourceConfig resourceConfig = DerbyResourceConfig.buildDefault().useDatabaseInDirectory();
+		assertEquals("Sub-sub protocol should be Directory", JdbcDerbySubSubProtocol.Directory,
+				resourceConfig.getSubSubProtocol());
+		assertNotNull("Database path should be a random UUID", UUID.fromString(resourceConfig.getDatabasePath()));
+
+		final String oldUuid = resourceConfig.getDatabasePath();
+		// Reset the config
+		resourceConfig.useDatabaseInDirectory();
+		assertEquals("Sub-sub protocol should be Directory", JdbcDerbySubSubProtocol.Directory,
+				resourceConfig.getSubSubProtocol());
+		assertNotNull("Database path should be a random UUID", UUID.fromString(resourceConfig.getDatabasePath()));
+		assertNotEquals("Database path should be reset", oldUuid, resourceConfig.getDatabasePath());
+
+		final String dbPath = "/tmp/testdir";
+		resourceConfig.useDatabaseInDirectory(dbPath);
+		assertEquals("Sub-sub protocol should be Directory", JdbcDerbySubSubProtocol.Directory,
+				resourceConfig.getSubSubProtocol());
+		assertEquals("Database path should be test directory", dbPath, resourceConfig.getDatabasePath());
 	}
 	
 	@Test

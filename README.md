@@ -1,6 +1,7 @@
 # JUnit Helper Utilities / Resources
 
 [![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
+[![Coverity Scan Status](https://scan.coverity.com/projects/7581/badge.svg)](https://scan.coverity.com/projects/deventropy-junit-helper)
 
 JUnit Helper Classes.
 

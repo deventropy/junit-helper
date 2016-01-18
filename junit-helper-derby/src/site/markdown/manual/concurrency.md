@@ -50,9 +50,6 @@ to achieve that: `#shutdownDerbySystemQuitely(boolean)`. This may be wired up in
 running all tests in the method. An example:
 
 ```java
-/**
- * Cleanup stuff.
- */
 @AfterClass
 public static void cleanupDerbySystem () {
 	// Cleanup for next test

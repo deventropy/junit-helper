@@ -1,5 +1,5 @@
 /* 
- * Copyright 2015 Development Entropy (deventropy.org) Contributors
+ * Copyright 2016 Development Entropy (deventropy.org) Contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby.memory.simple01;
+package org.deventropy.junithelper.derby.directory.simple01;
 
 import static org.junit.Assert.*;
 
@@ -33,26 +33,23 @@ import org.junit.Test;
 import org.junit.rules.RuleChain;
 import org.junit.rules.TemporaryFolder;
 
-import net.jcip.annotations.NotThreadSafe;
-
 /**
  * @author Bindul Bhowmik
  */
-@NotThreadSafe
-public class InMemoryDbTempDirTest {
+public class DatabaseDbTempDirTest {
 	
-	private static final String DB_NAME = "my-test-database-simple01-tmpfolder-nulllog";
+	private static final String DB_NAME = "test-db-dir-simple01-tmpfolder-nulllog";
 	
 	private TemporaryFolder tempFolder = new TemporaryFolder();
 	private EmbeddedDerbyResource embeddedDerbyResource =
-		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault().useInMemoryDatabase(DB_NAME)
+		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault().useDatabaseInDirectory(DB_NAME)
 			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql")
 			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql"),
 		tempFolder);
 	
 	@Rule
 	public RuleChain derbyRuleChain = RuleChain.outerRule(tempFolder).around(embeddedDerbyResource);
-	
+
 	/**
 	 * Cleanup stuff.
 	 */
@@ -61,9 +58,9 @@ public class InMemoryDbTempDirTest {
 		// Cleanup for next test
 		DerbyUtils.shutdownDerbySystemQuitely(true);
 	}
-
+	
 	@Test
-	public void testSimpleInMemoryDatabase () throws SQLException {
+	public void testSimpleDirectoryDb () throws SQLException {
 		// Make sure derby loads up
 		final String jdbcUrl = embeddedDerbyResource.getJdbcUrl();
 		assertNotNull(jdbcUrl);
@@ -94,5 +91,7 @@ public class InMemoryDbTempDirTest {
 		// This test will fail in eclipse; see https://bugs.eclipse.org/bugs/show_bug.cgi?id=298061
 		final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 		assertTrue(logFile.exists());
+		
 	}
+
 }

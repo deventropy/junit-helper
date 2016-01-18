@@ -101,15 +101,13 @@ To set the selected database directory on Derby, the `EmbeddedDerbyResource` doe
 The additional consequence of this behavior of Derby is that only a single instance of Derby (and `EmbeddedDerbyResource`)
 can be running in a single JVM. See [Managing Concurrency](./concurrency.html) for options of running multiple instances.
 
-## <a name="db-name"></a>Database Name
+## <a name="db-path"></a>Database Path
 
-*This configuration is optional*
+*This configuration is optional for some sub-sub protocols (see specific sub-sub protocol for details).*
 
-The `DerbyResourceConfig` lets you set the [Database Name](https://db.apache.org/derby/docs/10.12/ref/rrefattrib17246.html)
-using the `#setDatabaseName(String)` method.
-
-If the database name is not set, an automatic database name is generated using a `java.util.UUID` object. The method
-`#getDefaultDatabaseName()` is used internally, which generates a new UUID value on every call.
+The sub-sub protocol dependent path at which the database is running (database name for in memory database, relative
+or absolute database path for directory database) is available from the configuration using the
+`#getDatabasePath()` method.
 
 ## <a name="db-logging"></a>Database Error Logging
 
@@ -150,12 +148,62 @@ set for any other sub-sub protocol.
 
 ### <a name="in-memory"></a>In Memory Database
 
-*Method to enable:* `#useInMemoryDatabase()`
+*Method to enable:* `#useInMemoryDatabase() or #useInMemoryDatabase(String)`
 *Enumeration Value:* Memory
 *Derby JDBC URL prefix:* jdbc:derby:memory:
-*Additional Configurations:* None
+*Additional Configurations:* Database Name
 
 Databases exist only in main memory and are not written to disk.
+
+#### <a name="in-memory-db-path"></a>Database Path
+
+The `DerbyResourceConfig` lets you set the [Database Path](https://db.apache.org/derby/docs/10.12/ref/rrefattrib17246.html)
+using the `#useInMemoryDatabase(String)` method.
+
+If the database name is not set, an automatic database name is generated using a `java.util.UUID` object. The method
+`#getDefaultDatabasePathName()` is used internally, which generates a new UUID value on every call.
+
+### <a name="directory"></a>Database in Directory
+
+*Method to enable:* `#useDatabaseInDirectory() or #useDatabaseInDirectory(String)`
+*Enumeration Value:* Directory
+*Derby JDBC URL prefix:* jdbc:derby:directory:
+*Additional Configurations:* Database Path
+
+The database runs in a specified directory, either a relative directory under the `Derby System Directory` or an
+absolute directory outside the system directory. See [Connecting to databases](http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp34964.html)
+in the Derby Development Reference for more information.
+
+#### <a name="directory-db-path"></a>Database Path
+
+The `DerbyResourceConfig` lets you set the database path using the `#useDatabaseInDirectory(String)` method. If a path
+is not set, an automatic database path is generated using a `java.util.UUID` object. The method `#getDefaultDatabasePathName()`
+is used internally, which generates a new UUID value on every call. This will be a sub directory under the `Derby System
+Directory`.
+
+#### Non empty database directory
+
+*This behavior may change with the resolution of [Issue #15](https://github.com/deventropy/junit-helper/issues/15)*
+
+The `EmbeddedDerbyResource` starts the database with the `;create=true` JDBC URL parameter, and it seems like Derby
+[likes to create its own directory](http://mail-archives.apache.org/mod_mbox/db-derby-user/200912.mbox/%3C4B3C845A.3050104@gmx.ch%3E).
+If the directory (relative or absolute) specified as the `#getDatabasePath()` already exists, the Derby startup will
+fail with an error similar to:
+
+```
+java.sql.SQLException: Failed to create database 'directory:/path/to/database', see the next exception for details.
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.getSQLException(Unknown Source)
+	... NN more
+Caused by: ERROR XJ041: Failed to create database 'directory:/path/to/database', see the next exception for details.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	at org.apache.derby.impl.jdbc.SQLExceptionFactory.wrapArgsForTransportAcrossDRDA(Unknown Source)
+	... 41 more
+Caused by: ERROR XBM0J: Directory /derby/system/home//path/to/database already exists.
+	at org.apache.derby.iapi.error.StandardException.newException(Unknown Source)
+	... NN more
+```
+
+So, if a directory path is specified in `#useDatabaseInDirectory(String)`, ensure that database does not exist.
 
 ## <a name="post-init-script"></a>Post Init Scripts
 
@@ -167,4 +215,4 @@ method.
 *Note:* Exceptions when executing these scripts may cause the database to fail to start up.
 
 The script URLs configured in this method should be in formats supported by
-[UrlResourceUtil](../../junit-helper-utils/apidocs/org/deventropy/junithelper/utils?UrlResourceUtil.html).
+[UrlResourceUtil](../../junit-helper-utils/apidocs/index.html?org/deventropy/junithelper/utils/UrlResourceUtil.html).

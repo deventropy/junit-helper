@@ -43,7 +43,11 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
  */
 public class DerbyResourceConfig {
 	
-	private String databaseName;
+	/**
+	 * This is a multi purpose field; it is used as the end of the JDBC URL. For a memory database it is the database
+	 * name, for a directory it is the absolute / relative directory path.
+	 */
+	private String databasePath;
 	
 	// TODO have combined setters for the sub protocols (with other required values)
 	private JdbcDerbySubSubProtocol subSubProtocol;
@@ -61,54 +65,86 @@ public class DerbyResourceConfig {
 	 */
 	public static DerbyResourceConfig buildDefault () {
 		final DerbyResourceConfig config = new DerbyResourceConfig();
-		config.databaseName = getDefaultDatabaseName();
-		config.subSubProtocol = getDefaultSubSubProtocol();
+		config.useInMemoryDatabase();
 		config.errorLoggingMode = getDefaultErrorLoggingMode();
 		// TODO Complete setting defaults
 		return config;
 	}
 	
 	/**
-	 * Sets the database name to use.
-	 * @param dbName Database name
-	 * @return current instance
-	 * @throws IllegalArgumentException if the database name is null or empty
-	 */
-	public DerbyResourceConfig setDatabaseName (final String dbName) {
-		ArgumentCheck.notNullOrEmpty(dbName, "databaseName");
-		this.databaseName = dbName;
-		return this;
-	}
-	
-	/**
-	 * Returns the name of the database to use.
+	 * Returns the name/path of the database to use. This is a multi purpose field; it is used as the end of the JDBC
+	 * URL. For a memory database it is the database name, for a directory it is the absolute / relative directory path.
 	 * 
 	 * <p>Consult the documentation for Derby Sub Sub Protocols on database name formats and use.
 	 * 
 	 * @return The database name.
-	 * @see #getDefaultDatabaseName()
+	 * @see #getDefaultDatabasePathName()
 	 * @see <a href="http://db.apache.org/derby/docs/10.11/ref/rrefjdbc37352.html">Syntax of db connection URLs</a>
 	 */
-	public String getDatabaseName () {
-		return databaseName;
+	public String getDatabasePath () {
+		return databasePath;
 	}
 	
 	/**
 	 * Returns the default database name value, which is a UUID string.
 	 * @return The default database name.
 	 */
-	public static String getDefaultDatabaseName () {
+	public static String getDefaultDatabasePathName () {
 		return UUID.randomUUID().toString();
 	}
 	
 	/**
-	 * Will have the database start up as an in-memory database.
+	 * Will have the database start up as an in-memory database with a database name generated using
+	 * {@link #getDefaultDatabasePathName()}.
 	 * 
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useInMemoryDatabase () {
+		resetSubSubProtocolSpecificValues();
 		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;
-		// TODO null out other values?
+		this.databasePath = getDefaultDatabasePathName();
+		return this;
+	}
+	
+	/**
+	 * Will have the database start up as an in-memory database with the specified database name.
+	 * 
+	 * @param databaseName The name of the database
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useInMemoryDatabase (final String databaseName) {
+		ArgumentCheck.notNullOrEmpty(databaseName, "database name");
+		resetSubSubProtocolSpecificValues();
+		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;
+		this.databasePath = databaseName;
+		return this;
+	}
+
+	/**
+	 * Use the <code>:directory:</code> Derby sub sub protocol. The database will be created in a directory named
+	 * with the {@link #getDefaultDatabasePathName()} as the directory name.
+	 * 
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDatabaseInDirectory () {
+		resetSubSubProtocolSpecificValues();
+		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;
+		this.databasePath = getDefaultDatabasePathName();
+		return this;
+	}
+
+	/**
+	 * Use the <code>:directory:</code> Derby sub sub protocol, with the database in the specified
+	 * <code>directorpyDbPath</code>. The path is either relative or absolute as interpreted by the Derby engine.
+	 * 
+	 * @param directorpyDbPath The relative or absolute path where the database is created.
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDatabaseInDirectory (final String directorpyDbPath) {
+		ArgumentCheck.notNullOrEmpty(directorpyDbPath, "database path");
+		resetSubSubProtocolSpecificValues();
+		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;
+		this.databasePath = directorpyDbPath;
 		return this;
 	}
 	
@@ -127,6 +163,10 @@ public class DerbyResourceConfig {
 	 */
 	public static JdbcDerbySubSubProtocol getDefaultSubSubProtocol () {
 		return JdbcDerbySubSubProtocol.Memory;
+	}
+
+	private void resetSubSubProtocolSpecificValues () {
+		this.databasePath = null;
 	}
 	
 	/**
