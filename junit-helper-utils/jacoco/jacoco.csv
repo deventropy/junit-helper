@@ -1,4 +1,4 @@
 GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
 JUnit Helper :: Shared Utils,org.deventropy.junithelper.utils,ArgumentCheck,3,39,1,7,2,6,2,5,1,2
-JUnit Helper :: Shared Utils,org.deventropy.junithelper.utils,ClassUtil,25,15,7,1,10,6,5,2,1,2
+JUnit Helper :: Shared Utils,org.deventropy.junithelper.utils,ClassUtil,5,35,1,7,3,13,2,5,1,2
 JUnit Helper :: Shared Utils,org.deventropy.junithelper.utils,UrlResourceUtil,3,142,1,15,2,31,2,12,1,5

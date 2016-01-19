@@ -123,7 +123,8 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 <span class="fc" id="L123">		this.derbySystemHome = derbySystemHomeDir;</span>
 
 <span class="fc" id="L125">		this.jdbcUrl = buildJdbcUrl();</span>
-<span class="fc" id="L126">	}</span>
+<span class="fc" id="L126">		System.out.println(jdbcUrl);</span>
+<span class="fc" id="L127">	}</span>
 	
 	/**
 	 * Creates a new Derby resource. All configurable parameters for this resource come from the config object
@@ -133,21 +134,20 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 * @param derbySystemHomeParentTmpFolder A temporary folder to use as the derby system home
 	 */
 	public EmbeddedDerbyResource (final DerbyResourceConfig dbResourceConfig,
-<span class="fc" id="L136">			final TemporaryFolder derbySystemHomeParentTmpFolder) {</span>
+<span class="fc" id="L137">			final TemporaryFolder derbySystemHomeParentTmpFolder) {</span>
 
-<span class="fc" id="L138">		ArgumentCheck.notNull(dbResourceConfig, &quot;Embedded derby config&quot;);</span>
-<span class="fc" id="L139">		this.config = dbResourceConfig;</span>
-<span class="fc" id="L140">		ArgumentCheck.notNull(derbySystemHomeParentTmpFolder, &quot;Derby System Home Parent Directory&quot;);</span>
+<span class="fc" id="L139">		ArgumentCheck.notNull(dbResourceConfig, &quot;Embedded derby config&quot;);</span>
+<span class="fc" id="L140">		this.config = dbResourceConfig;</span>
+<span class="fc" id="L141">		ArgumentCheck.notNull(derbySystemHomeParentTmpFolder, &quot;Derby System Home Parent Directory&quot;);</span>
 		// This can be a TemporaryFolder, so make sure it is not touched before #before()
-<span class="fc" id="L142">		this.derbySystemHomeParent = derbySystemHomeParentTmpFolder;</span>
+<span class="fc" id="L143">		this.derbySystemHomeParent = derbySystemHomeParentTmpFolder;</span>
 
-<span class="fc" id="L144">		this.jdbcUrl = buildJdbcUrl();</span>
-<span class="fc" id="L145">	}</span>
+<span class="fc" id="L145">		this.jdbcUrl = buildJdbcUrl();</span>
+<span class="fc" id="L146">	}</span>
 	
 	private String buildJdbcUrl () {
-		// TODO Check if this needs to be different for certain sub-sub protocols
 <span class="fc" id="L149">		return new StringBuilder().append(config.getSubSubProtocol().jdbcConnectionPrefix())</span>
-<span class="fc" id="L150">				.append(config.getDatabaseName()).toString();</span>
+<span class="fc" id="L150">				.append(config.getDatabasePath()).toString();</span>
 	}
 
 	/* (non-Javadoc)
@@ -264,10 +264,10 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 <span class="fc" id="L264">		Connection conn = null;</span>
 		try {
 <span class="fc" id="L266">			final StringBuilder shutdownUrl = new StringBuilder(jdbcUrl);</span>
-<span class="pc bpc" id="L267" title="1 of 2 branches missed.">			if (JdbcDerbySubSubProtocol.Memory == config.getSubSubProtocol()) {</span>
+<span class="fc bfc" id="L267" title="All 2 branches covered.">			if (JdbcDerbySubSubProtocol.Memory == config.getSubSubProtocol()) {</span>
 <span class="fc" id="L268">				shutdownUrl.append(URLPROP_DERBY_DROP);</span>
 			} else {
-<span class="nc" id="L270">				shutdownUrl.append(URLPROP_DERBY_SHUTDOWN);</span>
+<span class="fc" id="L270">				shutdownUrl.append(URLPROP_DERBY_SHUTDOWN);</span>
 			}
 <span class="nc" id="L272">			conn = DriverManager.getConnection(shutdownUrl.toString());</span>
 <span class="fc" id="L273">		} catch (SQLException e) {</span>
@@ -304,5 +304,13 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 <span class="fc" id="L304">		return jdbcUrl;</span>
 	}
 
+	/**
+	 * Returns the database path of the JDBC URL.
+	 * @see DerbyResourceConfig#getDatabasePath()
+	 * @return The database path
+	 */
+	public String getDatabasePath () {
+<span class="fc" id="L313">		return config.getDatabasePath();</span>
+	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

@@ -49,17 +49,17 @@ public final class ClassUtil {
 
 		try {
 <span class="fc" id="L51">			cl = Thread.currentThread().getContextClassLoader();</span>
-<span class="nc" id="L52">		} catch (SecurityException e) {</span>
-<span class="nc" id="L53">			LOG.catching(e); // Cannot get to the context</span>
+<span class="fc" id="L52">		} catch (SecurityException e) {</span>
+<span class="fc" id="L53">			LOG.catching(e); // Cannot get to the context</span>
 <span class="fc" id="L54">		}</span>
 
-<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		if (null == cl) {</span>
-<span class="nc bnc" id="L57" title="All 2 branches missed.">			if (null != caller) {</span>
-<span class="nc" id="L58">				cl = caller.getClass().getClassLoader();</span>
+<span class="fc bfc" id="L56" title="All 2 branches covered.">		if (null == cl) {</span>
+<span class="fc bfc" id="L57" title="All 2 branches covered.">			if (null != caller) {</span>
+<span class="fc" id="L58">				cl = caller.getClass().getClassLoader();</span>
 			}
-<span class="nc bnc" id="L60" title="All 2 branches missed.">			if (null == cl) {</span>
-<span class="nc" id="L61">				cl = ClassUtil.class.getClassLoader();</span>
-<span class="nc bnc" id="L62" title="All 2 branches missed.">				if (null == cl) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">			if (null == cl) {</span>
+<span class="fc" id="L61">				cl = ClassUtil.class.getClassLoader();</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">				if (null == cl) {</span>
 <span class="nc" id="L63">					cl = ClassLoader.getSystemClassLoader();</span>
 				}
 			}

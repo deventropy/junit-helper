@@ -43,7 +43,11 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
  */
 <span class="fc" id="L44">public class DerbyResourceConfig {</span>
 	
-	private String databaseName;
+	/**
+	 * This is a multi purpose field; it is used as the end of the JDBC URL. For a memory database it is the database
+	 * name, for a directory it is the absolute / relative directory path.
+	 */
+	private String databasePath;
 	
 	// TODO have combined setters for the sub protocols (with other required values)
 	private JdbcDerbySubSubProtocol subSubProtocol;
@@ -60,56 +64,88 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return A config setup with defaults.
 	 */
 	public static DerbyResourceConfig buildDefault () {
-<span class="fc" id="L63">		final DerbyResourceConfig config = new DerbyResourceConfig();</span>
-<span class="fc" id="L64">		config.databaseName = getDefaultDatabaseName();</span>
-<span class="fc" id="L65">		config.subSubProtocol = getDefaultSubSubProtocol();</span>
-<span class="fc" id="L66">		config.errorLoggingMode = getDefaultErrorLoggingMode();</span>
+<span class="fc" id="L67">		final DerbyResourceConfig config = new DerbyResourceConfig();</span>
+<span class="fc" id="L68">		config.useInMemoryDatabase();</span>
+<span class="fc" id="L69">		config.errorLoggingMode = getDefaultErrorLoggingMode();</span>
 		// TODO Complete setting defaults
-<span class="fc" id="L68">		return config;</span>
+<span class="fc" id="L71">		return config;</span>
 	}
 	
 	/**
-	 * Sets the database name to use.
-	 * @param dbName Database name
-	 * @return current instance
-	 * @throws IllegalArgumentException if the database name is null or empty
-	 */
-	public DerbyResourceConfig setDatabaseName (final String dbName) {
-<span class="fc" id="L78">		ArgumentCheck.notNullOrEmpty(dbName, &quot;databaseName&quot;);</span>
-<span class="fc" id="L79">		this.databaseName = dbName;</span>
-<span class="fc" id="L80">		return this;</span>
-	}
-	
-	/**
-	 * Returns the name of the database to use.
+	 * Returns the name/path of the database to use. This is a multi purpose field; it is used as the end of the JDBC
+	 * URL. For a memory database it is the database name, for a directory it is the absolute / relative directory path.
 	 * 
 	 * &lt;p&gt;Consult the documentation for Derby Sub Sub Protocols on database name formats and use.
 	 * 
 	 * @return The database name.
-	 * @see #getDefaultDatabaseName()
+	 * @see #getDefaultDatabasePathName()
 	 * @see &lt;a href=&quot;http://db.apache.org/derby/docs/10.11/ref/rrefjdbc37352.html&quot;&gt;Syntax of db connection URLs&lt;/a&gt;
 	 */
-	public String getDatabaseName () {
-<span class="fc" id="L93">		return databaseName;</span>
+	public String getDatabasePath () {
+<span class="fc" id="L85">		return databasePath;</span>
 	}
 	
 	/**
 	 * Returns the default database name value, which is a UUID string.
 	 * @return The default database name.
 	 */
-	public static String getDefaultDatabaseName () {
-<span class="fc" id="L101">		return UUID.randomUUID().toString();</span>
+	public static String getDefaultDatabasePathName () {
+<span class="fc" id="L93">		return UUID.randomUUID().toString();</span>
 	}
 	
 	/**
-	 * Will have the database start up as an in-memory database.
+	 * Will have the database start up as an in-memory database with a database name generated using
+	 * {@link #getDefaultDatabasePathName()}.
 	 * 
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useInMemoryDatabase () {
-<span class="fc" id="L110">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
-		// TODO null out other values?
-<span class="fc" id="L112">		return this;</span>
+<span class="fc" id="L103">		resetSubSubProtocolSpecificValues();</span>
+<span class="fc" id="L104">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
+<span class="fc" id="L105">		this.databasePath = getDefaultDatabasePathName();</span>
+<span class="fc" id="L106">		return this;</span>
+	}
+	
+	/**
+	 * Will have the database start up as an in-memory database with the specified database name.
+	 * 
+	 * @param databaseName The name of the database
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useInMemoryDatabase (final String databaseName) {
+<span class="fc" id="L116">		ArgumentCheck.notNullOrEmpty(databaseName, &quot;database name&quot;);</span>
+<span class="fc" id="L117">		resetSubSubProtocolSpecificValues();</span>
+<span class="fc" id="L118">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
+<span class="fc" id="L119">		this.databasePath = databaseName;</span>
+<span class="fc" id="L120">		return this;</span>
+	}
+
+	/**
+	 * Use the &lt;code&gt;:directory:&lt;/code&gt; Derby sub sub protocol. The database will be created in a directory named
+	 * with the {@link #getDefaultDatabasePathName()} as the directory name.
+	 * 
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDatabaseInDirectory () {
+<span class="fc" id="L130">		resetSubSubProtocolSpecificValues();</span>
+<span class="fc" id="L131">		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;</span>
+<span class="fc" id="L132">		this.databasePath = getDefaultDatabasePathName();</span>
+<span class="fc" id="L133">		return this;</span>
+	}
+
+	/**
+	 * Use the &lt;code&gt;:directory:&lt;/code&gt; Derby sub sub protocol, with the database in the specified
+	 * &lt;code&gt;directorpyDbPath&lt;/code&gt;. The path is either relative or absolute as interpreted by the Derby engine.
+	 * 
+	 * @param directorpyDbPath The relative or absolute path where the database is created.
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDatabaseInDirectory (final String directorpyDbPath) {
+<span class="fc" id="L144">		ArgumentCheck.notNullOrEmpty(directorpyDbPath, &quot;database path&quot;);</span>
+<span class="fc" id="L145">		resetSubSubProtocolSpecificValues();</span>
+<span class="fc" id="L146">		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;</span>
+<span class="fc" id="L147">		this.databasePath = directorpyDbPath;</span>
+<span class="fc" id="L148">		return this;</span>
 	}
 	
 	/**
@@ -118,7 +154,7 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return A valid Derby sub-sub protocol
 	 */
 	public JdbcDerbySubSubProtocol getSubSubProtocol () {
-<span class="fc" id="L121">		return this.subSubProtocol;</span>
+<span class="fc" id="L157">		return this.subSubProtocol;</span>
 	}
 	
 	/**
@@ -126,8 +162,12 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return {@link JdbcDerbySubSubProtocol#Memory}
 	 */
 	public static JdbcDerbySubSubProtocol getDefaultSubSubProtocol () {
-<span class="fc" id="L129">		return JdbcDerbySubSubProtocol.Memory;</span>
+<span class="fc" id="L165">		return JdbcDerbySubSubProtocol.Memory;</span>
 	}
+
+	private void resetSubSubProtocolSpecificValues () {
+<span class="fc" id="L169">		this.databasePath = null;</span>
+<span class="fc" id="L170">	}</span>
 	
 	/**
 	 * Sets the {@link #getErrorLoggingMode()} value to {@link ErrorLoggingMode#Null}; and clears other logging
@@ -136,9 +176,9 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useDevNullErrorLogging () {
-<span class="fc" id="L139">		this.errorLoggingMode = ErrorLoggingMode.Null;</span>
+<span class="fc" id="L179">		this.errorLoggingMode = ErrorLoggingMode.Null;</span>
 		//TODO clean out other values?
-<span class="fc" id="L141">		return this;</span>
+<span class="fc" id="L181">		return this;</span>
 	}
 	
 	/**
@@ -148,9 +188,9 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useDefaultErrorLogging () {
-<span class="fc" id="L151">		this.errorLoggingMode = ErrorLoggingMode.Default;</span>
+<span class="fc" id="L191">		this.errorLoggingMode = ErrorLoggingMode.Default;</span>
 		//TODO clean out other values?
-<span class="fc" id="L153">		return this;</span>
+<span class="fc" id="L193">		return this;</span>
 	}
 	
 	/**
@@ -158,7 +198,7 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return the configured error logging mode
 	 */
 	public ErrorLoggingMode getErrorLoggingMode () {
-<span class="fc" id="L161">		return errorLoggingMode;</span>
+<span class="fc" id="L201">		return errorLoggingMode;</span>
 	}
 	
 	/**
@@ -166,7 +206,7 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return {@link ErrorLoggingMode#Default}
 	 */
 	public static ErrorLoggingMode getDefaultErrorLoggingMode () {
-<span class="fc" id="L169">		return ErrorLoggingMode.Default;</span>
+<span class="fc" id="L209">		return ErrorLoggingMode.Default;</span>
 	}
 	
 	/**
@@ -174,10 +214,10 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return Post init scripts to execute
 	 */
 	public List&lt;String&gt; getPostInitScripts () {
-<span class="fc bfc" id="L177" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
-<span class="fc" id="L178">			return Collections.emptyList();</span>
+<span class="fc bfc" id="L217" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
+<span class="fc" id="L218">			return Collections.emptyList();</span>
 		}
-<span class="fc" id="L180">		return postInitScripts;</span>
+<span class="fc" id="L220">		return postInitScripts;</span>
 	}
 	
 	/**
@@ -191,12 +231,12 @@ import org.deventropy.junithelper.utils.ArgumentCheck;
 	 * @return this object
 	 */
 	public DerbyResourceConfig addPostInitScript (final String postInitScript) {
-<span class="fc" id="L194">		ArgumentCheck.notNullOrEmpty(postInitScript, &quot;Post Init Script&quot;);</span>
-<span class="fc bfc" id="L195" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
-<span class="fc" id="L196">			postInitScripts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L234">		ArgumentCheck.notNullOrEmpty(postInitScript, &quot;Post Init Script&quot;);</span>
+<span class="fc bfc" id="L235" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
+<span class="fc" id="L236">			postInitScripts = new ArrayList&lt;&gt;();</span>
 		}
-<span class="fc" id="L198">		postInitScripts.add(postInitScript);</span>
-<span class="fc" id="L199">		return this;</span>
+<span class="fc" id="L238">		postInitScripts.add(postInitScript);</span>
+<span class="fc" id="L239">		return this;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
