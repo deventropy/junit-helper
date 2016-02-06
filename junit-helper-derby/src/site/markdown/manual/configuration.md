@@ -167,4 +167,4 @@ method.
 *Note:* Exceptions when executing these scripts may cause the database to fail to start up.
 
 The script URLs configured in this method should be in formats supported by
-[UrlResourceUtil](../../junit-helper-utils/apidocs/org/deventropy/junithelper/utils?UrlResourceUtil.html).
+[UrlResourceUtil](../../../shared-utils/shared-utils-java/apidocs/org/deventropy/junithelper/utils?UrlResourceUtil.html).

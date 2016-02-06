@@ -19,7 +19,7 @@ limitations under the License.
 	<parent>
 		<groupId>org.deventropy.parent</groupId>
 		<artifactId>deventropy-parent</artifactId>
-		<version>1.0-SNAPSHOT</version>
+		<version>1.0-beta.1-SNAPSHOT</version>
 	</parent>
 	<groupId>org.deventropy.junit-helper</groupId>
 	<artifactId>junit-helper</artifactId>
@@ -47,7 +47,7 @@ limitations under the License.
 					<dependency>
 						<groupId>org.deventropy.parent</groupId>
 						<artifactId>deventropy-cq-config</artifactId>
-						<version>1.0-SNAPSHOT</version>
+						<version>1.0-beta.1-SNAPSHOT</version>
 					</dependency>
 				</dependencies>
 			</plugin>
@@ -238,6 +238,11 @@ limitations under the License.
 				<version>2.4</version>
 				<type>jar</type>
 			</dependency>
+			<dependency>
+				<groupId>org.deventropy.shared-utils</groupId>
+				<artifactId>shared-utils-java</artifactId>
+				<version>1.0-alpha.1-SNAPSHOT</version>
+			</dependency>
 		</dependencies>
 	</dependencyManagement>
 	<properties>
@@ -245,7 +250,6 @@ limitations under the License.
 	</properties>
 	<modules>
 		<module>junit-helper-derby</module>
-		<module>junit-helper-utils</module>
 	</modules>
 	<ciManagement>
 		<system>Travis CI</system>

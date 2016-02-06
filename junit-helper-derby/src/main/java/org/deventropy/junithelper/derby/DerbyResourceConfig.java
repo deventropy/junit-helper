@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import org.deventropy.junithelper.utils.ArgumentCheck;
+import org.deventropy.shared.utils.ArgumentCheck;
 
 /**
  * Configurations to control the {@link EmbeddedDerbyResource}.

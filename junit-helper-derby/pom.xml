@@ -31,9 +31,8 @@ limitations under the License.
 	</scm>
 	<dependencies>
 		<dependency>
-			<groupId>${project.groupId}</groupId>
-			<artifactId>junit-helper-utils</artifactId>
-			<version>${project.version}</version>
+			<groupId>org.deventropy.shared-utils</groupId>
+			<artifactId>shared-utils-java</artifactId>
 		</dependency>
 		<dependency>
 			<groupId>junit</groupId>
