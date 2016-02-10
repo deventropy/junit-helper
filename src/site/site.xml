@@ -36,7 +36,7 @@ limitations under the License.
 			          <span class="color-highlight">JUnit Helper</span> Utils
 			          ]]>
 				</name>
-				<href>http://www.deventropy.org/junit-helper/</href>
+				<href>./</href>
 			</brand>
 			<slogan>Utility JUnit resource / libraries to ease testing</slogan>
 			<titleTemplate>%2$s | %1$s</titleTemplate>
@@ -63,7 +63,7 @@ limitations under the License.
     
 	<bannerLeft>
 		<name><![CDATA[<span class="color-highlight">JUnit Helper</span> Utils]]></name>
-		<href>http://www.deventropy.org/junit-helper/</href>
+		<href>./</href>
 	</bannerLeft>
 	<publishDate position="bottom" format="dd MMM yyyy" />
 	<version position="bottom" />
@@ -74,7 +74,7 @@ limitations under the License.
 		</head>
 		
 		<links>
-			<item name="Development Entropy" href="http://www.deventropy.org/" />
+			<item name="Development Entropy" href="../" />
 			<item name="JUnit Helper @ GitHub" href="https://github.com/deventropy/junit-helper" />
 		</links>
 		
@@ -88,18 +88,16 @@ limitations under the License.
 		</menu>
 		<menu name="Modules" inherit="top">
 			<item name="JUnit Helper :: Derby" href="junit-helper-derby/index.html" />
-			<item name="JUnit Helper :: Shared Utils" href="junit-helper-utils/index.html" />
 		</menu>
 		<menu name="Development" inherit="bottom">
-			<item name="Development Guide" href="./development.html" />
+			<item name="Development Guide" href="../development.html" />
 			<item name="Issues" href="https://github.com/deventropy/junit-helper/issues" />
 			<item name="Fork on GitHub" href="https://github.com/deventropy/junit-helper#fork-destination-box" />
 			<item name="Continuous Integration" href="https://travis-ci.org/deventropy/junit-helper" />
-			<item name="Development Entropy" href="https://www.deventropy.org/" />
 		</menu>
 		<menu name="Legal" inherit="bottom">
 			<item name="License" href="license.html" />
-			<item name="Privacy Policy" href="privacy.html"/>
+			<item name="Privacy Policy" href="../privacy.html"/>
 		</menu>
 		<menu name="Maven documentation" ref="reports" inherit="bottom"/>
 	</body>

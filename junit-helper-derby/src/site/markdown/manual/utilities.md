@@ -68,7 +68,7 @@ is initialized with `DerbyUtils#DEV_NULL` stream, which simply discards all log 
 ### Scripts
 
 Scripts sent to this utility should be identified as resources in a format supported by
-[UrlResourceUtil](../../junit-helper-utils/apidocs/org/deventropy/junithelper/utils?UrlResourceUtil.html).
+[UrlResourceUtil](../../../shared-utils/shared-utils-java/apidocs/org/deventropy/junithelper/utils?UrlResourceUtil.html).
 
 ## <a name="derby-utils"></a>Derby Utils
 

@@ -42,16 +42,10 @@ The project uses [Coverity's](http://www.coverity.com/) free static analysis ser
 issues. See the [project's Coverity scan page](https://scan.coverity.com/projects/deventropy-junit-helper) for scan
 status.
 
-### <a name="repository"></a>Binary Distribution Repository
+### Binary Distribution Repository
 
-The project is built using [Apache Maven&reg;](http://maven.apache.org/) and binaries are available through the
-[JFrog Open Source Software](https://oss.jfrog.org/webapp/#/home) service.
-
-To get the Snapshot and Release artifacts for this project, you may have to add the JFrog OSS repositories (below) to
-your project's POM or local settings or as a proxy in a local repository manager.
-
-* **Snapshot Repository:** https://oss.jfrog.org/artifactory/libs-snapshot
-* **Release Repository:** https://oss.jfrog.org/artifactory/libs-release
+See Deventropy's [Binary Distribution Repository](../index.html#repository) for current Maven repository information from
+where the project is available.
 
 ## Modules
 
@@ -60,7 +54,6 @@ The following modules are currently available in the project:
 | Project | Summary | Artifact Id | Issues Component |
 |---------|---------|-------------|------------------|
 | [Derby](./junit-helper-derby/) | Initialize and run embedded [Apache Derby][derby] instances from Junit tests | `junit-helper-derby` | [component:derby](https://github.com/deventropy/junit-helper/labels/component%3Aderby) |
-| [Helper Utils](./junit-helper-utils/) | Shared Utils for other modules. | `junit-helper-utils` | [component:utils](https://github.com/deventropy/junit-helper/labels/component%3Autils) |
 
 ## Attributions
 

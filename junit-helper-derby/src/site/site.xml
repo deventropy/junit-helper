@@ -63,7 +63,7 @@ limitations under the License.
     
 	<bannerLeft>
 		<name><![CDATA[<span class="color-highlight">Derby</span> JUnit Helper Utils]]></name>
-		<href>http://www.deventropy.org/junit-helper/junit-helper-derby/</href>
+		<href>./</href>
 	</bannerLeft>
 <!-- 	<publishDate position="bottom" format="dd MMM yyyy" /> -->
 <!-- 	<version position="bottom" /> -->

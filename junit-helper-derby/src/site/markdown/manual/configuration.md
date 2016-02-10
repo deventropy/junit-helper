@@ -216,3 +216,4 @@ method.
 
 The script URLs configured in this method should be in formats supported by
 [UrlResourceUtil](../../junit-helper-utils/apidocs/index.html?org/deventropy/junithelper/utils/UrlResourceUtil.html).
+

@@ -20,7 +20,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-import org.deventropy.junithelper.utils.ArgumentCheck;
+import org.deventropy.shared.utils.ArgumentCheck;
 
 /**
  * Configurations to control the {@link EmbeddedDerbyResource}.
@@ -225,7 +225,7 @@ public class DerbyResourceConfig {
 	 * 
 	 * <p>A post init script should refer to a file containing SQL DDL or DML statements that will be executed
 	 * against the new derby instance. Script locations can be on the classpath or file system or on a HTTP(s)
-	 * location, for format, see {@linkplain org.deventropy.junithelper.utils.UrlResourceUtil}.
+	 * location, for format, see {@linkplain org.deventropy.shared.utils.UrlResourceUtil}.
 	 * 
 	 * @param postInitScript A post init script to add
 	 * @return this object
