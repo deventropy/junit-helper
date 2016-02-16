@@ -38,6 +38,7 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 	protected void simpleDb01Check01 (final String jdbcUrl) throws SQLException {
 		Connection connection = null;
 		PreparedStatement stmt = null;
+		ResultSet rs = null;
 
 		try {
 			connection = DriverManager.getConnection(jdbcUrl);
@@ -46,12 +47,16 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 			// Check a value
 			stmt = connection.prepareStatement("SELECT * FROM PEOPLE WHERE PERSON = ?");
 			stmt.setString(1, "John Doe");
-			final ResultSet rs = stmt.executeQuery();
-	
-			assertTrue(rs.next());
-			assertEquals("john.doe@example.com", rs.getString("EMAIL"));
-			DerbyUtils.closeQuietly(rs);
+			rs = stmt.executeQuery();
+
+			if (rs.next()) {
+				assertEquals("john.doe@example.com", rs.getString("EMAIL"));
+			} else {
+				fail("Should have had at least one row");
+			}
+
 		} finally {
+			DerbyUtils.closeQuietly(rs);
 			DerbyUtils.closeQuietly(stmt);
 			DerbyUtils.closeQuietly(connection);
 		}
