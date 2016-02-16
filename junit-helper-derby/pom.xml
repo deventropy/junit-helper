@@ -29,6 +29,24 @@ limitations under the License.
 		<developerConnection>${project.parent.scm.developerConnection}</developerConnection>
 		<url>${project.parent.scm.url}</url>
 	</scm>
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-surefire-plugin</artifactId>
+				<configuration>
+					<!-- Sets the VM argument line used when unit tests are run for jacoco-maven-plugin. -->
+					<argLine>${surefireArgLine}</argLine>
+					<parallel>classes</parallel>
+					<!-- Between Surefire, JaCoCo and Travis CI, parallel tests seem to fail; force almost sequential -->
+					<threadCount>2</threadCount>
+					<forkCount>2</forkCount>
+					<reuseForks>false</reuseForks>
+					<redirectTestOutputToFile>true</redirectTestOutputToFile>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
 	<dependencies>
 		<dependency>
 			<groupId>org.deventropy.shared-utils</groupId>
