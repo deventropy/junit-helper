@@ -56,3 +56,41 @@ public static void cleanupDerbySystem () {
 	DerbyUtils.shutdownDerbySystemQuitely(true);
 }
 ```
+
+## Multiple Derby Instances per Test Class / Method
+
+In cases where it is absolutely necessary, it is possible to use multiple Derby instances in a single test class or
+method. There are a few caveats though:
+
+* Only a single instance of Derby should be active at any time.
+* Unless there is a single test concurrency; the initialization and shutdown of Derby instances or `EmbeddedDerbyResource`
+	should be controlled by a single test method or thread.
+
+A sample flow case for this behavior is shown below:
+
+```java
+
+	// Set up and start the first instance
+	final DerbyResourceConfig derbyResourceConfig1 = DerbyResourceConfig.buildDefault();	// Add other setup
+	final EmbeddedDerbyResource embeddedDerbyResource1 = new EmbeddedDerbyResource(derbyResourceConfig1,
+			derbySystemHomeDir);
+	embeddedDerbyResource1.start();
+	
+	// Execute test steps with the first database
+	
+	// Shutdown and clean up the first instance
+	embeddedDerbyResource1.close();
+	DerbyUtils.shutdownDerbySystemQuitely(true);
+	
+	// Set up and start the second instance
+	final DerbyResourceConfig derbyResourceConfig2 = DerbyResourceConfig.buildDefault();	// Add other setup
+	final EmbeddedDerbyResource embeddedDerbyResource2 = new EmbeddedDerbyResource(derbyResourceConfig2,
+			derbySystemHomeDir);
+	embeddedDerbyResource2.start();
+	
+	// Execute test steps with the second database
+	
+	// Shutdown and clean up the second instance
+	embeddedDerbyResource2.close();
+	DerbyUtils.shutdownDerbySystemQuitely(true);
+```

@@ -19,16 +19,13 @@ import static org.junit.Assert.*;
 
 import java.io.File;
 import java.io.IOException;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.deventropy.junithelper.derby.AbstractEmbeddedDerbyResourceTest;
 import org.deventropy.junithelper.derby.DerbyResourceConfig;
 import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
@@ -41,7 +38,7 @@ import org.junit.Test;
  * @author Bindul Bhowmik
  *
  */
-public class DatabaseDbCustomDirAllTest {
+public class DatabaseDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTest {
 	
 	private static final String DB_NAME = "test-database-directory-test01-customdirectory";
 	private Logger log = LogManager.getFormatterLogger();
@@ -78,27 +75,7 @@ public class DatabaseDbCustomDirAllTest {
 		assertNotNull(jdbcUrl);
 		assertTrue(jdbcUrl.contains(DB_NAME));
 
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-
-		try {
-			connection = DriverManager.getConnection(jdbcUrl);
-			assertNotNull(connection);
-
-			// Check a value
-			stmt = connection.prepareStatement("SELECT * FROM PEOPLE WHERE PERSON = ?");
-			stmt.setString(1, "John Doe");
-			rs = stmt.executeQuery();
-
-			assertTrue(rs.next());
-			assertEquals("john.doe@example.com", rs.getString("EMAIL"));
-
-		} finally {
-			DerbyUtils.closeQuietly(rs);
-			DerbyUtils.closeQuietly(stmt);
-			DerbyUtils.closeQuietly(connection);
-		}
+		simpleDb01Check01(jdbcUrl);
 
 		final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 		assertTrue(logFile.exists());

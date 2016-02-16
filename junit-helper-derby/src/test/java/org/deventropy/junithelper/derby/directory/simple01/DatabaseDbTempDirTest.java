@@ -18,12 +18,9 @@ package org.deventropy.junithelper.derby.directory.simple01;
 import static org.junit.Assert.*;
 
 import java.io.File;
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.deventropy.junithelper.derby.AbstractEmbeddedDerbyResourceTest;
 import org.deventropy.junithelper.derby.DerbyResourceConfig;
 import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
@@ -36,7 +33,7 @@ import org.junit.rules.TemporaryFolder;
 /**
  * @author Bindul Bhowmik
  */
-public class DatabaseDbTempDirTest {
+public class DatabaseDbTempDirTest extends AbstractEmbeddedDerbyResourceTest {
 	
 	private static final String DB_NAME = "test-db-dir-simple01-tmpfolder-nulllog";
 	
@@ -66,32 +63,12 @@ public class DatabaseDbTempDirTest {
 		assertNotNull(jdbcUrl);
 		assertTrue(jdbcUrl.contains(DB_NAME));
 
-		Connection connection = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
-
-		try {
-			connection = DriverManager.getConnection(jdbcUrl);
-			assertNotNull(connection);
-	
-			// Check a value
-			stmt = connection.prepareStatement("SELECT * FROM PEOPLE WHERE PERSON = ?");
-			stmt.setString(1, "John Doe");
-			rs = stmt.executeQuery();
-	
-			assertTrue(rs.next());
-			assertEquals("john.doe@example.com", rs.getString("EMAIL"));
-
-		} finally {
-			DerbyUtils.closeQuietly(rs);
-			DerbyUtils.closeQuietly(stmt);
-			DerbyUtils.closeQuietly(connection);
-		}
+		simpleDb01Check01(jdbcUrl);
 
 		// This test will fail in eclipse; see https://bugs.eclipse.org/bugs/show_bug.cgi?id=298061
 		final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 		assertTrue(logFile.exists());
-		
+
 	}
 
 }

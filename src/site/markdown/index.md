@@ -22,10 +22,13 @@ little more configurable and reusable (hopefully).
 
 ## Source Code, Issue Tracker, Binary Distribution etc.
 
-[![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master "JUnit Helper master Build Status")](https://travis-ci.org/deventropy/junit-helper)
-[![Coverage Status](https://coveralls.io/repos/deventropy/junit-helper/badge.svg?branch=master&amp;service=github "JUnit Helper master Coverage Report")](https://coveralls.io/github/deventropy/junit-helper?branch=master)
+[![License](https://img.shields.io/github/license/deventropy/junit-helper.svg)](./license.html)
+[![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
+[![Coverage Status](https://coveralls.io/repos/github/deventropy/junit-helper/badge.svg?branch=master)](https://coveralls.io/github/deventropy/junit-helper)
 [![Coverity Scan Status](https://scan.coverity.com/projects/7581/badge.svg)](https://scan.coverity.com/projects/deventropy-junit-helper)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper)
+[![Bintray](https://img.shields.io/bintray/v/deventropy/repository/junit-helper.svg)](https://dl.bintray.com/deventropy/repository/)
+[![Dependency Status](https://www.versioneye.com/user/projects/56b160c93d82b9003761e470/badge.svg?style=flat)](https://www.versioneye.com/user/projects/56b160c93d82b9003761e470)
 
 The [Development Entropy](http://www.deventropy.org/) [Junit Helper](./) project is hosted on
 GitHub. See the [GitHub project](http://github.com/deventropy/junit-helper) for source code,

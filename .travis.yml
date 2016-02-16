@@ -41,9 +41,10 @@ before_cache:
 
 # Build Notifications (and avoid emails from forks)
 # Set the variable DENT_TRAVIS_NOTIFY_EMAIL in the web interface
+# Pending https://github.com/travis-ci/travis-ci/issues/1094, then use ${DENT_TRAVIS_NOTIFY_EMAIL}
 notifications:
   email:
     recipients:
-      - ${DENT_TRAVIS_NOTIFY_EMAIL}
+      - deventropy-commits@lists.sourceforge.net
     on_success: always # [always|never|change] default: change
     on_failure: always # [always|never|change] default: always

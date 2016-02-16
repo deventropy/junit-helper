@@ -27,11 +27,13 @@ limitations under the License.
 	* [Sub Sub Protocols](./configuration.html#sub-sub-protocol)
 		* [In Memory database](./configuration.html#in-memory)
 		* [Database in Directory](./configuration.html#directory)
+		* [Database in a Jar](./configuration.html#jar)
 	* [Post Init Scripts](./configuration.html#post-init-script)
 * [Managing Concurrency](./concurrency.html)
 * [Utilities](./utilities.html)
 	* [Script Runner](./utilities.html#script-runner)
 	* [Derby Utils](./utilities.html#derby-utils)
+* [Common Errors](#common-errors)
 
 <!-- TODO Document internals? DB URL parameters, Derby Home reset, etc. -->
 
@@ -143,3 +145,19 @@ Derby JUnit Helper uses [Log4j2 API](http://logging.apache.org/log4j/2.x/manual/
 it sends. It does not have a default log configuration with the distribution, neither does it come with a runtime logger.
 Users are free to provide their own configuration and runtime logger as a dependency; or live with no logging and a 2
 line Log4j warning on each JVM run.
+
+## <a name="common-errors"></a>Common Errors
+
+A few common errors to look out for
+
+### No suitable driver found
+
+The most common cause of the following exception is that the `EmbeddedDerbyResource` is not started. If the resource is
+configured as a *Junit Rule* make sure the correct annotation (`@Rule`) and runner are in use. Otherwise, make sure
+`EmbeddedDerbyResource#start()` has been invoked.
+
+```
+java.sql.SQLException: No suitable driver found for jdbc:derby:...
+	at java.sql.DriverManager.getConnection(DriverManager.java:596)
+	at java.sql.DriverManager.getConnection(DriverManager.java:233)
+```

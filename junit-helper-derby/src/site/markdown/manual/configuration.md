@@ -106,8 +106,8 @@ can be running in a single JVM. See [Managing Concurrency](./concurrency.html) f
 *This configuration is optional for some sub-sub protocols (see specific sub-sub protocol for details).*
 
 The sub-sub protocol dependent path at which the database is running (database name for in memory database, relative
-or absolute database path for directory database) is available from the configuration using the
-`#getDatabasePath()` method.
+or absolute database path for directory database, path to the database directory in a jar file for a jar database) is
+available from the configuration using the `#getDatabasePath()` method.
 
 ## <a name="db-logging"></a>Database Error Logging
 
@@ -204,6 +204,34 @@ Caused by: ERROR XBM0J: Directory /derby/system/home//path/to/database already e
 ```
 
 So, if a directory path is specified in `#useDatabaseInDirectory(String)`, ensure that database does not exist.
+
+### <a name="jar"></a>Database in a Jar
+
+*Method to enable:* `#useJarSubSubProtocol(String, String)`
+*Enumeration Value:* Jar
+*Derby JDBC URL prefix:* jdbc:derby:jar:
+*Additional Configurations:* Path to Jar file &amp; Database Path
+
+Derby supports creating and using Read Only databases; which may be pre-existing database setup and data that is used
+in tests. For instructions on how to create read only database, see the Derby documentation
+[Creating Derby databases for read-only use](https://db.apache.org/derby/docs/10.12/devguide/cdevdeploy15325.html).
+Though not required, but a read only database in a jar file may be created during a test execution and used in a future
+test as well; just make sure to completely shut down the derby system before creating the archive.
+
+The read only database is run from the jar file specified in the `jarFilePath` location. The path may be absolute or
+relative. The relative path is resolved by the Derby system relative to the `Derby System Directory`.
+
+The `databasePath` is thepath of the database directory inside the `jar` file archive.
+
+For further information on read only databases, see the Derby documentation at [Accessing a read-only database in a
+zip/jar file](http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html).
+
+If a `jar` database is configured with values of `jarFilePath` and `databasePath` as `/tmp/test/db.jar` and
+`/sample/product` respectively, it will open a read-only database `product` in the directory `sample` in the jar file.
+The effective JDBC URL generated with these parameters is `jdbc:derby:jar:(/tmp/test/db.jar)sample/product`.
+
+Due to lack of documentation on how to implement this, the tool currently does not support an `empty` or `null`
+`databasePath`; setting such a value will cause a `IllegalArgumentException` from the configuration class.
 
 ## <a name="post-init-script"></a>Post Init Scripts
 

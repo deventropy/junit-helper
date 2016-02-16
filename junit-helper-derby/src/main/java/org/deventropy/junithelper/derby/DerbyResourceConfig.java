@@ -44,10 +44,19 @@ import org.deventropy.shared.utils.ArgumentCheck;
 public class DerbyResourceConfig {
 	
 	/**
-	 * This is a multi purpose field; it is used as the end of the JDBC URL. For a memory database it is the database
-	 * name, for a directory it is the absolute / relative directory path.
+	 * This is a multi purpose field; it is used as the end of the JDBC URL.
+	 * <ul>
+	 * <li>For a memory database, it is the database name;</li>
+	 * <li>For a directory, it is the absolute / relative directory path;</li>
+	 * <li>For a jar database, it is the path of the database inside the jar file;</li>
+	 * </ul>
 	 */
 	private String databasePath;
+
+	/**
+	 * Right now only used for the :jar: protocol for the jar file.
+	 */
+	private String jarDatabaseJarFile;
 	
 	// TODO have combined setters for the sub protocols (with other required values)
 	private JdbcDerbySubSubProtocol subSubProtocol;
@@ -70,10 +79,28 @@ public class DerbyResourceConfig {
 		// TODO Complete setting defaults
 		return config;
 	}
+
+	/**
+	 * Returns the Jar database jar file path. Right now only used for the <code>:jar:</code> protocol for the jar file.
+	 * Returns the file path of the jar file with the read only database.
+	 * 
+	 * @return The jar file path
+	 * @see #useJarSubSubProtocol(String, String)
+	 * @see <a href="http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html">Accessing a read-only database
+	 * in a zip/jar file</a>
+	 */
+	public String getJarDatabaseJarFile () {
+		return jarDatabaseJarFile;
+	}
 	
 	/**
 	 * Returns the name/path of the database to use. This is a multi purpose field; it is used as the end of the JDBC
-	 * URL. For a memory database it is the database name, for a directory it is the absolute / relative directory path.
+	 * URL.
+	 * <ul>
+	 * <li>For a memory database, it is the database name;</li>
+	 * <li>For a directory, it is the absolute / relative directory path;</li>
+	 * <li>For a jar database, it is the path of the database inside the jar file;</li>
+	 * </ul>
 	 * 
 	 * <p>Consult the documentation for Derby Sub Sub Protocols on database name formats and use.
 	 * 
@@ -147,6 +174,27 @@ public class DerbyResourceConfig {
 		this.databasePath = directorpyDbPath;
 		return this;
 	}
+
+	/**
+	 * Use the <code>:jar:</code> Derby sub sub protocol. The jar file containing the read only database is a relative
+	 * or absolute path in <code>jarFilePath</code> and the database path in the <code>dbPath</code> parameter. The
+	 * <code>jarFilePath</code> is either relative or absolute as interpreted by the Derby engine.
+	 * 
+	 * <p>For more format information see <a href="http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html">
+	 * Accessing a read-only database in a zip/jar file</a>
+	 * 
+	 * @param jarFilePath The relative or absolute path where the jar file with the read-only database.
+	 * @param dbPath The path of the database inside the jar file.
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useJarSubSubProtocol (final String jarFilePath, final String dbPath) {
+		ArgumentCheck.notNullOrEmpty(jarFilePath, "Jar database path");
+		ArgumentCheck.notNullOrEmpty(dbPath, "database path");
+		this.subSubProtocol = JdbcDerbySubSubProtocol.Jar;
+		this.jarDatabaseJarFile = jarFilePath;
+		this.databasePath = dbPath;
+		return this;
+	}
 	
 	/**
 	 * The JDBC sub-sub protocol to use for the embedded database.
@@ -167,6 +215,7 @@ public class DerbyResourceConfig {
 
 	private void resetSubSubProtocolSpecificValues () {
 		this.databasePath = null;
+		this.jarDatabaseJarFile = null;
 	}
 	
 	/**

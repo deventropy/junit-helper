@@ -68,7 +68,7 @@ is initialized with `DerbyUtils#DEV_NULL` stream, which simply discards all log 
 ### Scripts
 
 Scripts sent to this utility should be identified as resources in a format supported by
-[UrlResourceUtil](../../../shared-utils/shared-utils-java/apidocs/org/deventropy/junithelper/utils?UrlResourceUtil.html).
+[UrlResourceUtil](../../junit-helper-utils/apidocs/index.html?org/deventropy/junithelper/utils/UrlResourceUtil.html).
 
 ## <a name="derby-utils"></a>Derby Utils
 
@@ -89,3 +89,4 @@ The `#closeQuietly(java.lang.AutoCloseable)` tries to close any non-null objects
 Shuts down the derby system so it can be reloaded; per Derby developer guide. For more information see
 [Derby System](https://db.apache.org/derby/docs/10.12/devguide/tdevdvlp20349.html). This method also ignores any
 exception generated (which always is).
+

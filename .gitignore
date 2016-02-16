@@ -13,3 +13,4 @@ buildNumber.properties
 .settings/
 cov-int/
 junit-helper.tgz
+**/.*.md.html

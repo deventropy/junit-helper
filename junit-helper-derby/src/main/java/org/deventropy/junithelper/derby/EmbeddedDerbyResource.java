@@ -123,7 +123,6 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		this.derbySystemHome = derbySystemHomeDir;
 
 		this.jdbcUrl = buildJdbcUrl();
-		System.out.println(jdbcUrl);
 	}
 	
 	/**
@@ -146,8 +145,13 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	}
 	
 	private String buildJdbcUrl () {
-		return new StringBuilder().append(config.getSubSubProtocol().jdbcConnectionPrefix())
-				.append(config.getDatabasePath()).toString();
+		final StringBuilder jdbcUrlBldr = new StringBuilder().append(config.getSubSubProtocol().jdbcConnectionPrefix());
+		if (JdbcDerbySubSubProtocol.Jar == config.getSubSubProtocol()) {
+			// for :jar: protocol, see http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html
+			jdbcUrlBldr.append('(').append(config.getJarDatabaseJarFile()).append(')');
+		}
+		jdbcUrlBldr.append(config.getDatabasePath());
+		return jdbcUrlBldr.toString();
 	}
 
 	/* (non-Javadoc)
