@@ -3,6 +3,7 @@
 [![License](https://img.shields.io/github/license/deventropy/junit-helper.svg)](./LICENSE)
 [![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
 [![Coverage Status](https://coveralls.io/repos/github/deventropy/junit-helper/badge.svg?branch=master)](https://coveralls.io/github/deventropy/junit-helper)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/8f5779cce1c9479fa87316349321e9dd)](https://www.codacy.com/app/deventropy/junit-helper)
 [![Coverity Scan Status](https://scan.coverity.com/projects/7581/badge.svg)](https://scan.coverity.com/projects/deventropy-junit-helper)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper)
 [![Bintray](https://img.shields.io/bintray/v/deventropy/repository/junit-helper.svg)](https://dl.bintray.com/deventropy/repository/)

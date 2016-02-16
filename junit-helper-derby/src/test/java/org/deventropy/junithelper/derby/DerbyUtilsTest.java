@@ -101,12 +101,14 @@ public class DerbyUtilsTest {
 	public void testCloseQuietly () throws SQLException {
 
 		final Connection conn = DriverManager.getConnection(embeddedDerbyResource.getJdbcUrl());
-
 		// First time - no failures
 		DerbyUtils.closeQuietly(conn);
+		assertTrue("Connection should be closed", conn.isClosed());
 
+		final Connection conn2 = DriverManager.getConnection(embeddedDerbyResource.getJdbcUrl());
 		// Calling connection twice is a No-Op (per documentation), so getting creative here
-		DerbyUtils.closeQuietly(new ExceptionOnCloseConnectionWrapper(conn));
+		DerbyUtils.closeQuietly(new ExceptionOnCloseConnectionWrapper(conn2));
+		assertTrue("Connection should be closed", conn2.isClosed());
 	}
 	
 	/**

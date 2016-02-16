@@ -25,6 +25,7 @@ little more configurable and reusable (hopefully).
 [![License](https://img.shields.io/github/license/deventropy/junit-helper.svg)](./license.html)
 [![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
 [![Coverage Status](https://coveralls.io/repos/github/deventropy/junit-helper/badge.svg?branch=master)](https://coveralls.io/github/deventropy/junit-helper)
+[![Codacy Badge](https://api.codacy.com/project/badge/grade/8f5779cce1c9479fa87316349321e9dd)](https://www.codacy.com/app/deventropy/junit-helper)
 [![Coverity Scan Status](https://scan.coverity.com/projects/7581/badge.svg)](https://scan.coverity.com/projects/deventropy-junit-helper)
 [![Maven Central](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper/badge.svg)](https://maven-badges.herokuapp.com/maven-central/org.deventropy.junit-helper/junit-helper)
 [![Bintray](https://img.shields.io/bintray/v/deventropy/repository/junit-helper.svg)](https://dl.bintray.com/deventropy/repository/)
@@ -34,16 +35,11 @@ The [Development Entropy](http://www.deventropy.org/) [Junit Helper](./) project
 GitHub. See the [GitHub project](http://github.com/deventropy/junit-helper) for source code,
 [issue tracker](https://github.com/deventropy/junit-helper/issues), etc.
 
-The project uses [Travis CI's](http://travis-ci.org/) free service for open source projects for continuous integration.
-See the [project's Travis CI page](https://travis-ci.org/deventropy/junit-helper) for build status and details.
-
-The project uses [Coveralls'](http://coveralls.io/) free service for open source projects for tracking unit test
-coverage. See the [project's Coveralls page](https://coveralls.io/github/deventropy/junit-helper) for build status and
-details.
-
-The project uses [Coverity's](http://www.coverity.com/) free static analysis service for tracking static code analysis
-issues. See the [project's Coverity scan page](https://scan.coverity.com/projects/deventropy-junit-helper) for scan
-status.
+The project uses multiple online tools for Continuous Integration ([Travis CI](http://travis-ci.org/)), Unit Test
+Coverage ([Coveralls](http://coveralls.io/)), Static Code analysis ([Coverity](http://www.coverity.com/),
+[Codacy](https://www.codacy.com/)), Dependency and Build Plug-in version tracking ([VersionEye](https://www.versioneye.com/)).
+The services used are provided free of charge to open source projects by the owners of the services. **The badges above
+link to the project's pages on these tools.**
 
 ### Binary Distribution Repository
 
