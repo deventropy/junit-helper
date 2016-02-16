@@ -29,7 +29,7 @@ import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.deventropy.junithelper.utils.ArgumentCheck;
+import org.deventropy.shared.utils.ArgumentCheck;
 import org.junit.rules.ExternalResource;
 import org.junit.rules.TemporaryFolder;
 
@@ -123,8 +123,7 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 <span class="fc" id="L123">		this.derbySystemHome = derbySystemHomeDir;</span>
 
 <span class="fc" id="L125">		this.jdbcUrl = buildJdbcUrl();</span>
-<span class="fc" id="L126">		System.out.println(jdbcUrl);</span>
-<span class="fc" id="L127">	}</span>
+<span class="fc" id="L126">	}</span>
 	
 	/**
 	 * Creates a new Derby resource. All configurable parameters for this resource come from the config object
@@ -134,20 +133,25 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 * @param derbySystemHomeParentTmpFolder A temporary folder to use as the derby system home
 	 */
 	public EmbeddedDerbyResource (final DerbyResourceConfig dbResourceConfig,
-<span class="fc" id="L137">			final TemporaryFolder derbySystemHomeParentTmpFolder) {</span>
+<span class="fc" id="L136">			final TemporaryFolder derbySystemHomeParentTmpFolder) {</span>
 
-<span class="fc" id="L139">		ArgumentCheck.notNull(dbResourceConfig, &quot;Embedded derby config&quot;);</span>
-<span class="fc" id="L140">		this.config = dbResourceConfig;</span>
-<span class="fc" id="L141">		ArgumentCheck.notNull(derbySystemHomeParentTmpFolder, &quot;Derby System Home Parent Directory&quot;);</span>
+<span class="fc" id="L138">		ArgumentCheck.notNull(dbResourceConfig, &quot;Embedded derby config&quot;);</span>
+<span class="fc" id="L139">		this.config = dbResourceConfig;</span>
+<span class="fc" id="L140">		ArgumentCheck.notNull(derbySystemHomeParentTmpFolder, &quot;Derby System Home Parent Directory&quot;);</span>
 		// This can be a TemporaryFolder, so make sure it is not touched before #before()
-<span class="fc" id="L143">		this.derbySystemHomeParent = derbySystemHomeParentTmpFolder;</span>
+<span class="fc" id="L142">		this.derbySystemHomeParent = derbySystemHomeParentTmpFolder;</span>
 
-<span class="fc" id="L145">		this.jdbcUrl = buildJdbcUrl();</span>
-<span class="fc" id="L146">	}</span>
+<span class="fc" id="L144">		this.jdbcUrl = buildJdbcUrl();</span>
+<span class="fc" id="L145">	}</span>
 	
 	private String buildJdbcUrl () {
-<span class="fc" id="L149">		return new StringBuilder().append(config.getSubSubProtocol().jdbcConnectionPrefix())</span>
-<span class="fc" id="L150">				.append(config.getDatabasePath()).toString();</span>
+<span class="fc" id="L148">		final StringBuilder jdbcUrlBldr = new StringBuilder().append(config.getSubSubProtocol().jdbcConnectionPrefix());</span>
+<span class="fc bfc" id="L149" title="All 2 branches covered.">		if (JdbcDerbySubSubProtocol.Jar == config.getSubSubProtocol()) {</span>
+			// for :jar: protocol, see http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html
+<span class="fc" id="L151">			jdbcUrlBldr.append('(').append(config.getJarDatabaseJarFile()).append(')');</span>
+		}
+<span class="fc" id="L153">		jdbcUrlBldr.append(config.getDatabasePath());</span>
+<span class="fc" id="L154">		return jdbcUrlBldr.toString();</span>
 	}
 
 	/* (non-Javadoc)
@@ -155,9 +159,9 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 */
 	@Override
 	protected void before () throws Throwable {
-<span class="fc" id="L158">		super.before();</span>
-<span class="fc" id="L159">		this.start();</span>
-<span class="fc" id="L160">	}</span>
+<span class="fc" id="L162">		super.before();</span>
+<span class="fc" id="L163">		this.start();</span>
+<span class="fc" id="L164">	}</span>
 	
 	/**
 	 * Starts the Embedded derby instance.
@@ -170,138 +174,138 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 */
 	public void start () throws IOException, SQLException {
 		// Validate and setup
-<span class="fc bfc" id="L173" title="All 2 branches covered.">		if (null != derbySystemHomeParent) {</span>
-<span class="fc" id="L174">			this.derbySystemHome = derbySystemHomeParent.newFolder();</span>
+<span class="fc bfc" id="L177" title="All 2 branches covered.">		if (null != derbySystemHomeParent) {</span>
+<span class="fc" id="L178">			this.derbySystemHome = derbySystemHomeParent.newFolder();</span>
 		}
-<span class="fc" id="L176">		FileUtils.forceMkdir(derbySystemHome);</span>
-<span class="fc" id="L177">		oldDerbySystemHomeValue = System.getProperty(PROP_DERBY_SYSTEM_HOME); // Saving it to reset it later</span>
-<span class="fc" id="L178">		System.setProperty(PROP_DERBY_SYSTEM_HOME, derbySystemHome.getAbsolutePath());</span>
-<span class="fc" id="L179">		setupDerbyProperties();</span>
+<span class="fc" id="L180">		FileUtils.forceMkdir(derbySystemHome);</span>
+<span class="fc" id="L181">		oldDerbySystemHomeValue = System.getProperty(PROP_DERBY_SYSTEM_HOME); // Saving it to reset it later</span>
+<span class="fc" id="L182">		System.setProperty(PROP_DERBY_SYSTEM_HOME, derbySystemHome.getAbsolutePath());</span>
+<span class="fc" id="L183">		setupDerbyProperties();</span>
 
 		// Start the database
 		// Recommended Derby startup process,
 		// see https://db.apache.org/derby/docs/10.12/publishedapi/org/apache/derby/jdbc/EmbeddedDriver.html
 		try {
-<span class="fc" id="L185">			Class.forName(DERBY_EMBEDDED_DRIVER_CLASS).newInstance();</span>
-<span class="nc" id="L186">		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {</span>
+<span class="fc" id="L189">			Class.forName(DERBY_EMBEDDED_DRIVER_CLASS).newInstance();</span>
+<span class="nc" id="L190">		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {</span>
 			// Reset the Derby System Home property
-<span class="nc" id="L188">			resetDerbyHome();</span>
-<span class="nc" id="L189">			throw new SQLException(&quot;Unable to initialize Derby driver class: &quot; + DERBY_EMBEDDED_DRIVER_CLASS, e);</span>
-<span class="fc" id="L190">		}</span>
+<span class="nc" id="L192">			resetDerbyHome();</span>
+<span class="nc" id="L193">			throw new SQLException(&quot;Unable to initialize Derby driver class: &quot; + DERBY_EMBEDDED_DRIVER_CLASS, e);</span>
+<span class="fc" id="L194">		}</span>
 		// Create / Connect to the database
-<span class="fc" id="L192">		final Connection conn = DriverManager.getConnection(buildCreateJDBCUrl());</span>
+<span class="fc" id="L196">		final Connection conn = DriverManager.getConnection(buildCreateJDBCUrl());</span>
 		try {
 			// Post init scripts
-<span class="fc" id="L195">			executePostInitScripts(conn);</span>
+<span class="fc" id="L199">			executePostInitScripts(conn);</span>
 		} finally {
-<span class="fc" id="L197">			DerbyUtils.closeQuietly(conn);</span>
-<span class="fc" id="L198">		}</span>
-<span class="fc" id="L199">	}</span>
+<span class="fc" id="L201">			DerbyUtils.closeQuietly(conn);</span>
+<span class="fc" id="L202">		}</span>
+<span class="fc" id="L203">	}</span>
 
 	private void executePostInitScripts (final Connection conn) throws IOException {
-<span class="fc" id="L202">		final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(conn);</span>
-<span class="fc bfc" id="L203" title="All 2 branches covered.">		for (String postInitScript : config.getPostInitScripts()) {</span>
-<span class="fc" id="L204">			final File scriptLogFile = new File(derbySystemHome, &quot;post-init-&quot;</span>
-<span class="fc" id="L205">					+ postInitScript.replaceAll(&quot;/&quot;, &quot;_&quot;) + &quot;.log&quot;);</span>
+<span class="fc" id="L206">		final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(conn);</span>
+<span class="fc bfc" id="L207" title="All 2 branches covered.">		for (String postInitScript : config.getPostInitScripts()) {</span>
+<span class="fc" id="L208">			final File scriptLogFile = new File(derbySystemHome, &quot;post-init-&quot;</span>
+<span class="fc" id="L209">					+ postInitScript.replaceAll(&quot;/&quot;, &quot;_&quot;) + &quot;.log&quot;);</span>
 			try {
-<span class="fc" id="L207">				final int result = scriptRunner.executeScript(postInitScript, scriptLogFile);</span>
-<span class="fc bfc" id="L208" title="All 2 branches covered.">				if (result != 0) {</span>
-<span class="fc" id="L209">					log.warn(FileUtils.readFileToString(scriptLogFile));</span>
-<span class="fc" id="L210">					throw new IOException(&quot;Exceptions exist in script. See output for details&quot;);</span>
+<span class="fc" id="L211">				final int result = scriptRunner.executeScript(postInitScript, scriptLogFile);</span>
+<span class="fc bfc" id="L212" title="All 2 branches covered.">				if (result != 0) {</span>
+<span class="fc" id="L213">					log.warn(FileUtils.readFileToString(scriptLogFile));</span>
+<span class="fc" id="L214">					throw new IOException(&quot;Exceptions exist in script. See output for details&quot;);</span>
 				}
-<span class="fc" id="L212">			} catch (IOException e) {</span>
-<span class="fc" id="L213">				log.warn(FileUtils.readFileToString(scriptLogFile));</span>
-<span class="fc" id="L214">				throw new IOException(&quot;Exceptions exist in script. See output for details&quot;);</span>
-<span class="fc" id="L215">			}</span>
-<span class="fc" id="L216">		}</span>
-<span class="fc" id="L217">	}</span>
+<span class="fc" id="L216">			} catch (IOException e) {</span>
+<span class="fc" id="L217">				log.warn(FileUtils.readFileToString(scriptLogFile));</span>
+<span class="fc" id="L218">				throw new IOException(&quot;Exceptions exist in script. See output for details&quot;);</span>
+<span class="fc" id="L219">			}</span>
+<span class="fc" id="L220">		}</span>
+<span class="fc" id="L221">	}</span>
 	
 	private String buildCreateJDBCUrl () {
 		// TODO Will handle things here to restore from a backup, etc.
-<span class="fc" id="L221">		return new StringBuilder().append(jdbcUrl).append(URLPROP_DERBY_CREATE).toString();</span>
+<span class="fc" id="L225">		return new StringBuilder().append(jdbcUrl).append(URLPROP_DERBY_CREATE).toString();</span>
 	}
 
 	private void setupDerbyProperties () throws IOException {
-<span class="fc" id="L225">		final Properties derbyProps = new Properties();</span>
+<span class="fc" id="L229">		final Properties derbyProps = new Properties();</span>
 
 		// Logging
-<span class="pc bfc" id="L228" title="All 2 branches covered.">		switch (config.getErrorLoggingMode()) {</span>
+<span class="pc bfc" id="L232" title="All 2 branches covered.">		switch (config.getErrorLoggingMode()) {</span>
 			case Null:
-<span class="fc" id="L230">				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FIELD, DerbyUtils.DEV_NULL_FIELD_ID);</span>
-<span class="fc" id="L231">				break;</span>
+<span class="fc" id="L234">				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FIELD, DerbyUtils.DEV_NULL_FIELD_ID);</span>
+<span class="fc" id="L235">				break;</span>
 			case Default:
 			default:
-<span class="fc" id="L234">				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FILE, &quot;derby.log&quot;);</span>
+<span class="fc" id="L238">				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FILE, &quot;derby.log&quot;);</span>
 				break;
 		}
 
 		// Write it
-<span class="fc" id="L239">		final File derbyPropertyFile = new File(derbySystemHome, PROP_FILE_DERBY_PROPERTIES);</span>
-<span class="fc" id="L240">		final FileWriter derbyPropertyFileWriter = new FileWriter(derbyPropertyFile);</span>
-<span class="fc" id="L241">		derbyProps.store(derbyPropertyFileWriter, null);</span>
-<span class="fc" id="L242">		IOUtils.closeQuietly(derbyPropertyFileWriter);</span>
-<span class="fc" id="L243">	}</span>
+<span class="fc" id="L243">		final File derbyPropertyFile = new File(derbySystemHome, PROP_FILE_DERBY_PROPERTIES);</span>
+<span class="fc" id="L244">		final FileWriter derbyPropertyFileWriter = new FileWriter(derbyPropertyFile);</span>
+<span class="fc" id="L245">		derbyProps.store(derbyPropertyFileWriter, null);</span>
+<span class="fc" id="L246">		IOUtils.closeQuietly(derbyPropertyFileWriter);</span>
+<span class="fc" id="L247">	}</span>
 
 	/* (non-Javadoc)
 	 * @see org.junit.rules.ExternalResource#after()
 	 */
 	@Override
 	protected void after () {
-<span class="fc" id="L250">		super.after();</span>
+<span class="fc" id="L254">		super.after();</span>
 		try {
-<span class="fc" id="L252">			this.close();</span>
-<span class="nc" id="L253">		} catch (IOException e) {</span>
+<span class="fc" id="L256">			this.close();</span>
+<span class="nc" id="L257">		} catch (IOException e) {</span>
 			// Ignore
-<span class="nc" id="L255">			log.catching(Level.TRACE, e);</span>
-<span class="fc" id="L256">		}</span>
-<span class="fc" id="L257">	}</span>
+<span class="nc" id="L259">			log.catching(Level.TRACE, e);</span>
+<span class="fc" id="L260">		}</span>
+<span class="fc" id="L261">	}</span>
 
 	/* (non-Javadoc)
 	 * @see java.io.Closeable#close()
 	 */
 	@Override
 	public void close () throws IOException {
-<span class="fc" id="L264">		Connection conn = null;</span>
+<span class="fc" id="L268">		Connection conn = null;</span>
 		try {
-<span class="fc" id="L266">			final StringBuilder shutdownUrl = new StringBuilder(jdbcUrl);</span>
-<span class="fc bfc" id="L267" title="All 2 branches covered.">			if (JdbcDerbySubSubProtocol.Memory == config.getSubSubProtocol()) {</span>
-<span class="fc" id="L268">				shutdownUrl.append(URLPROP_DERBY_DROP);</span>
+<span class="fc" id="L270">			final StringBuilder shutdownUrl = new StringBuilder(jdbcUrl);</span>
+<span class="fc bfc" id="L271" title="All 2 branches covered.">			if (JdbcDerbySubSubProtocol.Memory == config.getSubSubProtocol()) {</span>
+<span class="fc" id="L272">				shutdownUrl.append(URLPROP_DERBY_DROP);</span>
 			} else {
-<span class="fc" id="L270">				shutdownUrl.append(URLPROP_DERBY_SHUTDOWN);</span>
+<span class="fc" id="L274">				shutdownUrl.append(URLPROP_DERBY_SHUTDOWN);</span>
 			}
-<span class="nc" id="L272">			conn = DriverManager.getConnection(shutdownUrl.toString());</span>
-<span class="fc" id="L273">		} catch (SQLException e) {</span>
+<span class="nc" id="L276">			conn = DriverManager.getConnection(shutdownUrl.toString());</span>
+<span class="fc" id="L277">		} catch (SQLException e) {</span>
 			// Ignore - there will always be an exception
-<span class="fc" id="L275">			log.catching(Level.TRACE, e);</span>
+<span class="fc" id="L279">			log.catching(Level.TRACE, e);</span>
 		} finally {
-<span class="pc" id="L277">			DerbyUtils.closeQuietly(conn);</span>
-<span class="pc" id="L278">		}</span>
+<span class="pc" id="L281">			DerbyUtils.closeQuietly(conn);</span>
+<span class="pc" id="L282">		}</span>
 		// Reset the Derby System Home property
-<span class="fc" id="L280">		resetDerbyHome();</span>
-<span class="fc" id="L281">	}</span>
+<span class="fc" id="L284">		resetDerbyHome();</span>
+<span class="fc" id="L285">	}</span>
 
 	private void resetDerbyHome () {
 		// Reset the Derby System Home property
-<span class="pc bpc" id="L285" title="1 of 4 branches missed.">		if (null != oldDerbySystemHomeValue &amp;&amp; !oldDerbySystemHomeValue.isEmpty()) {</span>
-<span class="fc" id="L286">			System.setProperty(PROP_DERBY_SYSTEM_HOME, oldDerbySystemHomeValue);</span>
-<span class="fc" id="L287">			oldDerbySystemHomeValue = null;</span>
+<span class="pc bpc" id="L289" title="1 of 4 branches missed.">		if (null != oldDerbySystemHomeValue &amp;&amp; !oldDerbySystemHomeValue.isEmpty()) {</span>
+<span class="fc" id="L290">			System.setProperty(PROP_DERBY_SYSTEM_HOME, oldDerbySystemHomeValue);</span>
+<span class="fc" id="L291">			oldDerbySystemHomeValue = null;</span>
 		} else {
-<span class="fc" id="L289">			System.clearProperty(PROP_DERBY_SYSTEM_HOME);</span>
+<span class="fc" id="L293">			System.clearProperty(PROP_DERBY_SYSTEM_HOME);</span>
 		}
-<span class="fc" id="L291">	}</span>
+<span class="fc" id="L295">	}</span>
 
 	/**
 	 * @return the derbySystemHome
 	 */
 	public File getDerbySystemHome () {
-<span class="fc" id="L297">		return derbySystemHome;</span>
+<span class="fc" id="L301">		return derbySystemHome;</span>
 	}
 
 	/**
 	 * @return the jdbcUrl
 	 */
 	public String getJdbcUrl () {
-<span class="fc" id="L304">		return jdbcUrl;</span>
+<span class="fc" id="L308">		return jdbcUrl;</span>
 	}
 
 	/**
@@ -310,7 +314,7 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 * @return The database path
 	 */
 	public String getDatabasePath () {
-<span class="fc" id="L313">		return config.getDatabasePath();</span>
+<span class="fc" id="L317">		return config.getDatabasePath();</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>

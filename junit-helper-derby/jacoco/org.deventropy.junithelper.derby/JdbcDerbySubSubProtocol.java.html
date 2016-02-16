@@ -32,7 +32,12 @@ package org.deventropy.junithelper.derby;
 	/**
 	 * Database in a directory.
 	 */
-<span class="fc" id="L35">	Directory (&quot;directory&quot;);</span>
+<span class="fc" id="L35">	Directory (&quot;directory&quot;),</span>
+
+	/**
+	 * Read only database in a Jar file.
+	 */
+<span class="fc" id="L40">	Jar (&quot;jar&quot;);</span>
 	
 	/*
 	 * Future support:
@@ -41,19 +46,15 @@ package org.deventropy.junithelper.derby;
 		 * Read only database on the classpath
 		 * /
 		classpath,
-		/**
-		 * Read only database in a jar file
-		 * /
-		jar;
 	 */
 	
 	private static final String JDBC_CONN_STR_PREFIX = &quot;jdbc:derby:&quot;;
 	
 	private final String jdbcConnectionPrefix;
 	
-<span class="fc" id="L54">	JdbcDerbySubSubProtocol (final String subprotocolcode) {</span>
-<span class="fc" id="L55">		jdbcConnectionPrefix = JDBC_CONN_STR_PREFIX + subprotocolcode + &quot;:&quot;;</span>
-<span class="fc" id="L56">	}</span>
+<span class="fc" id="L55">	JdbcDerbySubSubProtocol (final String subprotocolcode) {</span>
+<span class="fc" id="L56">		jdbcConnectionPrefix = JDBC_CONN_STR_PREFIX + subprotocolcode + &quot;:&quot;;</span>
+<span class="fc" id="L57">	}</span>
 	
 	/**
 	 * Get the JDBC connection string prefix to construct a JDBC connection string with this sub-protocol.
@@ -61,7 +62,7 @@ package org.deventropy.junithelper.derby;
 	 * @return A string of the format &lt;code&gt;jdbc:derby:sub-protocol:&lt;/code&gt;
 	 */
 	public String jdbcConnectionPrefix () {
-<span class="fc" id="L64">		return jdbcConnectionPrefix;</span>
+<span class="fc" id="L65">		return jdbcConnectionPrefix;</span>
 	}
 }
 </pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
