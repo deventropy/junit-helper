@@ -23,10 +23,16 @@ limitations under the License.
 	<body>
 		<release version="1.0-alpha.1" date="2099-12-31" description="Initial Release">
 			<action dev="bindul" type="add" issue="1" date="2016-01-09">
-				Support Apache Derby as a External Resource for JUnit tests
+				Support Apache Derby as a External Resource for JUnit tests; initially with in memory databases
 			</action>
 			<action dev="bindul" type="add" issue="4" date="2016-01-18">
 				Support Directory sub-sub protocol for Apache Derby External Resource
+			</action>
+			<action dev="bindul" type="add" issue="11" date="2016-02-15">
+				Support Jar sub-sub protocol for Apache Derby External Resource
+			</action>
+			<action dev="bindul" type="add" issue="10" date="2016-02-17">
+				Support Classpath sub-sub protocol for Apache Derby External Resource
 			</action>
 		</release>
 	</body>

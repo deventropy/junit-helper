@@ -128,6 +128,7 @@ public class DerbyResourceConfig {
 	 */
 	public DerbyResourceConfig useInMemoryDatabase () {
 		resetSubSubProtocolSpecificValues();
+
 		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;
 		this.databasePath = getDefaultDatabasePathName();
 		return this;
@@ -142,6 +143,7 @@ public class DerbyResourceConfig {
 	public DerbyResourceConfig useInMemoryDatabase (final String databaseName) {
 		ArgumentCheck.notNullOrEmpty(databaseName, "database name");
 		resetSubSubProtocolSpecificValues();
+
 		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;
 		this.databasePath = databaseName;
 		return this;
@@ -155,6 +157,7 @@ public class DerbyResourceConfig {
 	 */
 	public DerbyResourceConfig useDatabaseInDirectory () {
 		resetSubSubProtocolSpecificValues();
+
 		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;
 		this.databasePath = getDefaultDatabasePathName();
 		return this;
@@ -170,6 +173,7 @@ public class DerbyResourceConfig {
 	public DerbyResourceConfig useDatabaseInDirectory (final String directorpyDbPath) {
 		ArgumentCheck.notNullOrEmpty(directorpyDbPath, "database path");
 		resetSubSubProtocolSpecificValues();
+
 		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;
 		this.databasePath = directorpyDbPath;
 		return this;
@@ -181,7 +185,9 @@ public class DerbyResourceConfig {
 	 * <code>jarFilePath</code> is either relative or absolute as interpreted by the Derby engine.
 	 * 
 	 * <p>For more format information see <a href="http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html">
-	 * Accessing a read-only database in a zip/jar file</a>
+	 * Accessing a read-only database in a zip/jar file</a> and <a
+	 * href="http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp24155.html">Accessing databases from a jar or zip
+	 * file</a> in the Derby Developer's guide.
 	 * 
 	 * @param jarFilePath The relative or absolute path where the jar file with the read-only database.
 	 * @param dbPath The path of the database inside the jar file.
@@ -190,8 +196,35 @@ public class DerbyResourceConfig {
 	public DerbyResourceConfig useJarSubSubProtocol (final String jarFilePath, final String dbPath) {
 		ArgumentCheck.notNullOrEmpty(jarFilePath, "Jar database path");
 		ArgumentCheck.notNullOrEmpty(dbPath, "database path");
+		resetSubSubProtocolSpecificValues();
+
 		this.subSubProtocol = JdbcDerbySubSubProtocol.Jar;
 		this.jarDatabaseJarFile = jarFilePath;
+		this.databasePath = dbPath;
+		return this;
+	}
+	
+	/**
+	 * Use the <code>:classpath:</code> Derby sub sub protocol. This allows access to a read only database in the
+	 * classpath (see Derby documentation on <a href="http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp91854.html"
+	 * >Accessing databases from the classpath</a>). The database can be either in a Jar file or directly in the
+	 * classpath.
+	 * 
+	 * <p>The <code>dbPath</code> parameter designates the path to the database in the classpath. All databaseNames must
+	 * begin with at least a slash, because you specify them "relative" to the classpath directory or archive. See also
+	 * <a href="http://db.apache.org/derby/docs/10.12/ref/rrefjdbc37352.html">Syntax of database connection URLs for
+	 * applications with embedded databases</a> and <a
+	 * href="http://db.apache.org/derby/docs/10.12/devguide/tdevdeploy39856.html">Accessing databases within a jar file
+	 * using the classpath</a>.
+	 * 
+	 * @param dbPath The path of the database in the classpath
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useClasspathSubSubProtocol (final String dbPath) {
+		ArgumentCheck.notNullOrEmpty(dbPath, "database path");
+		resetSubSubProtocolSpecificValues();
+
+		this.subSubProtocol = JdbcDerbySubSubProtocol.Classpath;
 		this.databasePath = dbPath;
 		return this;
 	}

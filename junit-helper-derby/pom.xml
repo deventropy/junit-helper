@@ -23,7 +23,7 @@ limitations under the License.
 	</parent>
 	<artifactId>junit-helper-derby</artifactId>
 	<name>JUnit Helper :: Derby</name>
-	<description>JUnit resources classes for Derby in Memory DB</description>
+	<description>JUnit resources classes for Derby DB as an embedded resource</description>
 	<scm>
 		<connection>${project.parent.scm.connection}</connection>
 		<developerConnection>${project.parent.scm.developerConnection}</developerConnection>

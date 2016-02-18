@@ -53,7 +53,7 @@ public class JarDbSimpleTest extends AbstractJarEmbeddedDerbyResourceTest {
 	 */
 	@Before
 	public void createJarDatabase () throws Exception {
-		final File dbArchiveFile = createJarDbSimple01(tempFolder, DB_NAME, JAR_DB_NAME);
+		final File dbArchiveFile = createAndShutdownDbInJarSimple01(tempFolder, DB_NAME, JAR_DB_NAME);
 		embeddedDerbyResource = createAndstartJarDerbyResource(tempFolder, dbArchiveFile, JAR_DB_NAME);
 	}
 
@@ -73,10 +73,8 @@ public class JarDbSimpleTest extends AbstractJarEmbeddedDerbyResourceTest {
 	 * @throws Exception error shutting down the database
 	 */
 	@After
-	public void shutdownJarDatabase () throws Exception {
-		if (null != embeddedDerbyResource) {
-			embeddedDerbyResource.close();
-		}
+	public void closeJarDatabase () throws Exception {
+		closeEmbeddedDerbyResource(embeddedDerbyResource);
 	}
 
 	/**

@@ -1,5 +1,5 @@
 <!--
-Copyright 2016 JUnit Helper Contributors
+Copyright 2016 Development Entropy (deventropy.org) Contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -221,10 +221,11 @@ test as well; just make sure to completely shut down the derby system before cre
 The read only database is run from the jar file specified in the `jarFilePath` location. The path may be absolute or
 relative. The relative path is resolved by the Derby system relative to the `Derby System Directory`.
 
-The `databasePath` is thepath of the database directory inside the `jar` file archive.
+The `databasePath` is the path of the database directory inside the `jar` file archive.
 
 For further information on read only databases, see the Derby documentation at [Accessing a read-only database in a
-zip/jar file](http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html).
+zip/jar file](http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html) and [Accessing databases from a jar
+or zip file](http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp24155.html).
 
 If a `jar` database is configured with values of `jarFilePath` and `databasePath` as `/tmp/test/db.jar` and
 `/sample/product` respectively, it will open a read-only database `product` in the directory `sample` in the jar file.
@@ -232,6 +233,23 @@ The effective JDBC URL generated with these parameters is `jdbc:derby:jar:(/tmp/
 
 Due to lack of documentation on how to implement this, the tool currently does not support an `empty` or `null`
 `databasePath`; setting such a value will cause a `IllegalArgumentException` from the configuration class.
+
+### <a name="classpath"></a>Database from the classpath
+
+*Method to enable:* `#useClasspathSubSubProtocol(String)`
+*Enumeration Value:* Classpath
+*Derby JDBC URL prefix:* jdbc:derby:classpath:
+*Additional Configurations:* Database Path
+
+This is another type of Read Only database supported by Derby. The database exists on the classpath, either in a Jar
+file or directly in the classpath. The _Database Path_ mentioned above  designates the path to the database in the
+classpath. All databaseNames must begin with at least a slash, because you specify them _relative_ to the classpath
+directory or archive. See also [Syntax of database connection URLs for applications with embedded
+databases](http://db.apache.org/derby/docs/10.12/ref/rrefjdbc37352.html) and [Accessing databases within a jar file 
+using the classpath](http://db.apache.org/derby/docs/10.12/devguide/tdevdeploy39856.html).
+
+The Derby development guide has more on [Accessing databases from the
+classpath](http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp91854.html).
 
 ## <a name="post-init-script"></a>Post Init Scripts
 

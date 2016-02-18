@@ -1,5 +1,5 @@
 <!--
-Copyright 2016 JUnit Helper Contributors
+Copyright 2016 Development Entropy (deventropy.org) Contributors
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ limitations under the License.
 		* [In Memory database](./configuration.html#in-memory)
 		* [Database in Directory](./configuration.html#directory)
 		* [Database in a Jar](./configuration.html#jar)
+		* [Database in the Classpath](./configuration.html#classpath)
 	* [Post Init Scripts](./configuration.html#post-init-script)
 * [Managing Concurrency](./concurrency.html)
 * [Utilities](./utilities.html)

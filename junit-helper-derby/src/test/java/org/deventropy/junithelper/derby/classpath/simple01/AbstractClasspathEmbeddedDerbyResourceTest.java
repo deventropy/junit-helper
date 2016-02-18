@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby.jar.simple01;
+package org.deventropy.junithelper.derby.classpath.simple01;
 
 import java.io.File;
 import java.io.IOException;
@@ -26,28 +26,28 @@ import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Bindul Bhowmik
+ *
  */
-public abstract class AbstractJarEmbeddedDerbyResourceTest extends AbstractEmbeddedDerbyResourceTest {
+public abstract class AbstractClasspathEmbeddedDerbyResourceTest extends AbstractEmbeddedDerbyResourceTest {
 
 	/**
-	 * Creates an EmbeddedDerbyResource with Jar sub-sub protocol and starts it.
+	 * Creates and starts an embedded classpath DB at the given DB path.
 	 * 
 	 * @param tempFolder The temporary folder to use as a parent for Derby Home
-	 * @param dbArchiveFile The Jar file with the database
-	 * @param jarDatabasePath The database path in the jar
+	 * @param dbPath The database path in the classpath
 	 * @return The created embedded derby resource
 	 * @throws IOException Error with a file operation
 	 * @throws SQLException Error with a SQL operation
 	 */
-	protected EmbeddedDerbyResource createAndstartJarDerbyResource (final TemporaryFolder tempFolder,
-			final File dbArchiveFile, final String jarDatabasePath) throws IOException, SQLException {
-
+	protected EmbeddedDerbyResource setupClasspathDb (final TemporaryFolder tempFolder, final String dbPath)
+			throws IOException, SQLException {
 		final File derbySystemHomeDir = tempFolder.newFolder();
 		final DerbyResourceConfig derbyResourceConfig = DerbyResourceConfig.buildDefault()
-				.useJarSubSubProtocol(dbArchiveFile.getAbsolutePath(), jarDatabasePath);
+				.useClasspathSubSubProtocol(dbPath);
 		final EmbeddedDerbyResource embeddedDerbyResource = new EmbeddedDerbyResource(derbyResourceConfig,
 				derbySystemHomeDir);
 		embeddedDerbyResource.start();
 		return embeddedDerbyResource;
 	}
+	
 }

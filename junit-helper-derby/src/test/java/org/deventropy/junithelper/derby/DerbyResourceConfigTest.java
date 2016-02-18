@@ -103,6 +103,79 @@ public class DerbyResourceConfigTest {
 	}
 	
 	@Test
+	public void testJarProtocol () {
+		final String jarFile1 = "/tmp/file.jar";
+		final String dbPath1 = "/test/db";
+		final DerbyResourceConfig resourceConfig = DerbyResourceConfig.buildDefault()
+				.useJarSubSubProtocol(jarFile1, dbPath1);
+		assertEquals("Sub-sub protocol should be Jar", JdbcDerbySubSubProtocol.Jar, resourceConfig.getSubSubProtocol());
+		assertEquals("Jar file path should be as set", jarFile1, resourceConfig.getJarDatabaseJarFile());
+		assertEquals("DB file path should be as set", dbPath1, resourceConfig.getDatabasePath());
+
+		// Reset the config
+		resourceConfig.useJarSubSubProtocol("/tmp/file2.jar", "/test/db2");
+		assertEquals("Sub-sub protocol should be Jar", JdbcDerbySubSubProtocol.Jar, resourceConfig.getSubSubProtocol());
+		assertNotEquals("Jar file path should not be as last set", jarFile1, resourceConfig.getJarDatabaseJarFile());
+		assertNotEquals("DB file path should not be as last set", dbPath1, resourceConfig.getDatabasePath());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testJarNullJarPath () {
+		DerbyResourceConfig.buildDefault().useJarSubSubProtocol(null, "/db/path");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testJarEmptyJarPath () {
+		DerbyResourceConfig.buildDefault().useJarSubSubProtocol("", "/db/path");
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testJarNullDbPath () {
+		DerbyResourceConfig.buildDefault().useJarSubSubProtocol("/tmp/file.jar", null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testJarEmptyDbPath () {
+		DerbyResourceConfig.buildDefault().useJarSubSubProtocol("/tmp/file.jar", "");
+	}
+	
+	@Test
+	public void testAfterJarProtocol () {
+		final DerbyResourceConfig resourceConfig = DerbyResourceConfig.buildDefault()
+				.useJarSubSubProtocol("/tmp/file.jar", "/db/path");
+		// Reset it to something else
+		resourceConfig.useInMemoryDatabase();
+		// Make sure the Jar file path is nulled out
+		assertNull("Jar file path should be nulled out", resourceConfig.getJarDatabaseJarFile());
+	}
+	
+	@Test
+	public void testClasspathProtocol () {
+		final String dbPath1 = "/test/db";
+		final DerbyResourceConfig resourceConfig = DerbyResourceConfig.buildDefault()
+				.useClasspathSubSubProtocol(dbPath1);
+		assertEquals("Sub-sub protocol should be Classpath", JdbcDerbySubSubProtocol.Classpath,
+				resourceConfig.getSubSubProtocol());
+		assertEquals("DB file path should be as set", dbPath1, resourceConfig.getDatabasePath());
+
+		// Reset the config
+		resourceConfig.useClasspathSubSubProtocol("/test/db2");
+		assertEquals("Sub-sub protocol should be Classpath", JdbcDerbySubSubProtocol.Classpath,
+				resourceConfig.getSubSubProtocol());
+		assertNotEquals("DB file path should not be as last set", dbPath1, resourceConfig.getDatabasePath());
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testClasspathNullDbPath () {
+		DerbyResourceConfig.buildDefault().useClasspathSubSubProtocol(null);
+	}
+	
+	@Test(expected = IllegalArgumentException.class)
+	public void testClasspathEmptyDbPath () {
+		DerbyResourceConfig.buildDefault().useClasspathSubSubProtocol("");
+	}
+	
+	@Test
 	public void testErrorLoggingModes () {
 		// Default should be in memory, as should setting inMemory
 		final DerbyResourceConfig resourceConfig = DerbyResourceConfig.buildDefault();

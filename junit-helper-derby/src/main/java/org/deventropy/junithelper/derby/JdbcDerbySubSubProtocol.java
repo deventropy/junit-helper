@@ -37,16 +37,12 @@ public enum JdbcDerbySubSubProtocol {
 	/**
 	 * Read only database in a Jar file.
 	 */
-	Jar ("jar");
+	Jar ("jar"),
 	
-	/*
-	 * Future support:
-	 * 
-		/**
-		 * Read only database on the classpath
-		 * /
-		classpath,
+	/**
+	 * Read only database on the classpath.
 	 */
+	Classpath ("classpath");
 	
 	private static final String JDBC_CONN_STR_PREFIX = "jdbc:derby:";
 	
