@@ -100,6 +100,20 @@ public class DerbyResourceConfigTest {
 		assertEquals("Sub-sub protocol should be Directory", JdbcDerbySubSubProtocol.Directory,
 				resourceConfig.getSubSubProtocol());
 		assertEquals("Database path should be test directory", dbPath, resourceConfig.getDatabasePath());
+
+		// Set again with create false
+		resourceConfig.useDatabaseInDirectory(dbPath, true);
+		assertEquals("Sub-sub protocol should be Directory", JdbcDerbySubSubProtocol.Directory,
+				resourceConfig.getSubSubProtocol());
+		assertEquals("Database path should be test directory", dbPath, resourceConfig.getDatabasePath());
+		assertTrue("The skip create true", resourceConfig.isDirectoryDatabaseSkipCreate());
+
+		// Reset again and make sure it is false
+		resourceConfig.useDatabaseInDirectory(dbPath);
+		assertEquals("Sub-sub protocol should be Directory", JdbcDerbySubSubProtocol.Directory,
+				resourceConfig.getSubSubProtocol());
+		assertEquals("Database path should be test directory", dbPath, resourceConfig.getDatabasePath());
+		assertFalse("The skip create true", resourceConfig.isDirectoryDatabaseSkipCreate());
 	}
 	
 	@Test

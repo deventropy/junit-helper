@@ -26,6 +26,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.deventropy.shared.utils.DirectoryArchiverUtil;
+import org.junit.AfterClass;
 import org.junit.rules.TemporaryFolder;
 
 /**
@@ -112,7 +113,7 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 		final EmbeddedDerbyResource embeddedDerbyResource = new EmbeddedDerbyResource(derbyResourceConfig,
 			derbySystemHomeDir);
 		embeddedDerbyResource.start();
-		embeddedDerbyResource.close();
+		closeEmbeddedDerbyResource(embeddedDerbyResource);
 
 		// Shutdown Derby
 		DerbyUtils.shutdownDerbySystemQuitely(true);
@@ -128,6 +129,15 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 		if (null != embeddedDerbyResource) {
 			embeddedDerbyResource.close();
 		}
+	}
+	
+	/**
+	 * Cleanup stuff.
+	 */
+	@AfterClass
+	public static void cleanupDerbySystem () {
+		// Cleanup for next test
+		DerbyUtils.shutdownDerbySystemQuitely(true);
 	}
 
 }

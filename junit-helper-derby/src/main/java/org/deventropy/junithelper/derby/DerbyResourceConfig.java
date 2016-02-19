@@ -58,7 +58,14 @@ public class DerbyResourceConfig {
 	 */
 	private String jarDatabaseJarFile;
 	
-	// TODO have combined setters for the sub protocols (with other required values)
+	/**
+	 * Skip the <code>create=true</code> attribute in the connection URL
+	 */
+	private boolean directoryDatabaseSkipCreate = false;
+	
+	/**
+	 * The database subsubprotocol for the JDBC URL
+	 */
 	private JdbcDerbySubSubProtocol subSubProtocol;
 	
 	// TODO Complete configuring logging
@@ -113,6 +120,16 @@ public class DerbyResourceConfig {
 	}
 	
 	/**
+	 * For a database using the {@link JdbcDerbySubSubProtocol#Directory} subsubprotocol, skip the
+	 * <code>create=true</code> attribute.
+	 * 
+	 * @return the directoryDatabaseSkipCreate
+	 */
+	public boolean isDirectoryDatabaseSkipCreate () {
+		return directoryDatabaseSkipCreate;
+	}
+
+	/**
 	 * Returns the default database name value, which is a UUID string.
 	 * @return The default database name.
 	 */
@@ -162,7 +179,7 @@ public class DerbyResourceConfig {
 		this.databasePath = getDefaultDatabasePathName();
 		return this;
 	}
-
+	
 	/**
 	 * Use the <code>:directory:</code> Derby sub sub protocol, with the database in the specified
 	 * <code>directorpyDbPath</code>. The path is either relative or absolute as interpreted by the Derby engine.
@@ -171,11 +188,28 @@ public class DerbyResourceConfig {
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useDatabaseInDirectory (final String directorpyDbPath) {
+		return useDatabaseInDirectory(directorpyDbPath, false);
+	}
+
+	/**
+	 * Use the <code>:directory:</code> Derby sub sub protocol, with the database in the specified
+	 * <code>directorpyDbPath</code>. The path is either relative or absolute as interpreted by the Derby engine. If the
+	 * <code>skipCreateAttribute</code> attribute is set to <code>true</code>, the Database will be initialized without
+	 * the <code>create=true</code> attribute.
+	 * 
+	 * @param directorpyDbPath The relative or absolute path where the database is created.
+	 * @param skipCreateAttribute Skip the <code>create=true</code> attribute in the connection URL
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDatabaseInDirectory (final String directorpyDbPath,
+			final boolean skipCreateAttribute) {
+
 		ArgumentCheck.notNullOrEmpty(directorpyDbPath, "database path");
 		resetSubSubProtocolSpecificValues();
 
 		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;
 		this.databasePath = directorpyDbPath;
+		this.directoryDatabaseSkipCreate = skipCreateAttribute;
 		return this;
 	}
 
@@ -249,6 +283,7 @@ public class DerbyResourceConfig {
 	private void resetSubSubProtocolSpecificValues () {
 		this.databasePath = null;
 		this.jarDatabaseJarFile = null;
+		this.directoryDatabaseSkipCreate = false;
 	}
 	
 	/**

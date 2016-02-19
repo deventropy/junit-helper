@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.sql.SQLException;
 
-import org.deventropy.junithelper.derby.AbstractEmbeddedDerbyResourceTest;
 import org.deventropy.junithelper.derby.DerbyResourceConfig;
 import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
@@ -32,10 +31,11 @@ import org.junit.rules.TemporaryFolder;
 
 /**
  * @author Bindul Bhowmik
+ *
  */
-public class DatabaseDbTempDirTest extends AbstractEmbeddedDerbyResourceTest {
+public class DirectoryDbTempDirDirTest {
 	
-	private static final String DB_NAME = "test-db-dir-simple01-tmpfolder-nulllog";
+	private static final String DB_NAME = "test-db-dir-simple01-tmpfolder-dirtest-nulllog";
 	
 	private TemporaryFolder tempFolder = new TemporaryFolder();
 	private EmbeddedDerbyResource embeddedDerbyResource =
@@ -55,20 +55,24 @@ public class DatabaseDbTempDirTest extends AbstractEmbeddedDerbyResourceTest {
 		// Cleanup for next test
 		DerbyUtils.shutdownDerbySystemQuitely(true);
 	}
-	
+
 	@Test
-	public void testSimpleDirectoryDb () throws SQLException {
-		// Make sure derby loads up
-		final String jdbcUrl = embeddedDerbyResource.getJdbcUrl();
-		assertNotNull(jdbcUrl);
-		assertTrue(jdbcUrl.contains(DB_NAME));
+	public void testSimpleDirectory () throws SQLException {
+		final String databasePath = embeddedDerbyResource.getDatabasePath();
+		final File derbySystemHome = embeddedDerbyResource.getDerbySystemHome();
+		final File databaseDirectory = new File(derbySystemHome, databasePath);
 
-		simpleDb01Check01(jdbcUrl);
+		assertTrue("Database directory should exist", databaseDirectory.exists());
+		assertTrue("Database directory should be a directory", databaseDirectory.isDirectory());
 
-		// This test will fail in eclipse; see https://bugs.eclipse.org/bugs/show_bug.cgi?id=298061
-		final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
-		assertTrue(logFile.exists());
+		// Database segment directory
+		final File seg0Directory = new File(databaseDirectory, "seg0");
+		assertTrue("Database segment directory should exist and a directory",
+				seg0Directory.exists() && seg0Directory.isDirectory());
 
+		// Database lock file exists
+		final File dbLckFile = new File(databaseDirectory, "db.lck");
+		assertTrue("Database lock file exists", dbLckFile.exists() && !dbLckFile.isDirectory());
 	}
 
 }

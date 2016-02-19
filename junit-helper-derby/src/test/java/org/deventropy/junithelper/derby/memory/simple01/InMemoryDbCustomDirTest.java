@@ -94,9 +94,7 @@ public class InMemoryDbCustomDirTest extends AbstractEmbeddedDerbyResourceTest {
 			final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 			assertTrue(logFile.exists());
 		} finally {
-			if (null != embeddedDerbyResource) {
-				embeddedDerbyResource.close();
-			}
+			closeEmbeddedDerbyResource(embeddedDerbyResource);
 			if (null != tempFile) {
 				tempFile.delete();
 			}

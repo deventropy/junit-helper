@@ -34,6 +34,9 @@ limitations under the License.
 			<action dev="bindul" type="add" issue="10" date="2016-02-17">
 				Support Classpath sub-sub protocol for Apache Derby External Resource
 			</action>
+			<action dev="bindul" type="add" issue="15" date="2016-02-18">
+				Added support for skipping create attribute
+			</action>
 		</release>
 	</body>
 </document>

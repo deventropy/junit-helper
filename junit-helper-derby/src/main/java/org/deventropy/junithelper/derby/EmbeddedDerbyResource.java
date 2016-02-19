@@ -221,8 +221,15 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	}
 	
 	private String buildCreateJDBCUrl () {
+		final StringBuilder createDbJdbcUrl = new StringBuilder(jdbcUrl);
+		final JdbcDerbySubSubProtocol subSubProtocol = config.getSubSubProtocol();
+		// Only :memory: and :directory: databases need the 'create' flag.
+		if (JdbcDerbySubSubProtocol.Memory == subSubProtocol
+				|| (JdbcDerbySubSubProtocol.Directory == subSubProtocol && !config.isDirectoryDatabaseSkipCreate())) {
+			createDbJdbcUrl.append(URLPROP_DERBY_CREATE);
+		}
 		// TODO Will handle things here to restore from a backup, etc.
-		return new StringBuilder().append(jdbcUrl).append(URLPROP_DERBY_CREATE).toString();
+		return createDbJdbcUrl.toString();
 	}
 
 	private void setupDerbyProperties () throws IOException {

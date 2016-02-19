@@ -38,7 +38,7 @@ import org.junit.Test;
  * @author Bindul Bhowmik
  *
  */
-public class DatabaseDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTest {
+public class DirectoryDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTest {
 	
 	private static final String DB_NAME = "test-database-directory-test01-customdirectory";
 	private Logger log = LogManager.getFormatterLogger();
@@ -88,7 +88,7 @@ public class DatabaseDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTes
 	@After
 	public void afterTest () {
 		try {
-			embeddedDerbyResource.close();
+			closeEmbeddedDerbyResource(embeddedDerbyResource);
 		} catch (IOException e) {
 			log.catching(Level.TRACE, e);
 		}

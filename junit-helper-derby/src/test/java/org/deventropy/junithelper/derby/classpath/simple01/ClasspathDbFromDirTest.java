@@ -24,11 +24,9 @@ import java.net.URLClassLoader;
 import java.sql.SQLException;
 
 import org.apache.commons.io.FileUtils;
-import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
 import org.deventropy.shared.utils.ClassUtil;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -99,14 +97,5 @@ public class ClasspathDbFromDirTest extends AbstractClasspathEmbeddedDerbyResour
 	@After
 	public void cleanupAfterClasspathDbTest () throws Exception {
 		Thread.currentThread().setContextClassLoader(parentLoader);
-	}
-
-	/**
-	 * Cleanup stuff.
-	 */
-	@AfterClass
-	public static void cleanupDerbySystem () {
-		// Cleanup for next test
-		DerbyUtils.shutdownDerbySystemQuitely(true);
 	}
 }
