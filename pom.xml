@@ -239,6 +239,11 @@ limitations under the License.
 				<type>jar</type>
 			</dependency>
 			<dependency>
+				<groupId>org.apache.commons</groupId>
+				<artifactId>commons-compress</artifactId>
+				<version>1.10</version>
+			</dependency>
+			<dependency>
 				<groupId>org.deventropy.shared-utils</groupId>
 				<artifactId>shared-utils-java</artifactId>
 				<version>1.0-alpha.1-SNAPSHOT</version>
