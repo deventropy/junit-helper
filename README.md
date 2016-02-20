@@ -18,6 +18,7 @@ limitations under the License.
 
 [![License](https://img.shields.io/github/license/deventropy/junit-helper.svg)](./LICENSE)
 [![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
+[![Build status](https://ci.appveyor.com/api/projects/status/c7l2yq04a993a68i?svg=true)](https://ci.appveyor.com/project/deventropy/junit-helper)
 [![Coverage Status](https://coveralls.io/repos/github/deventropy/junit-helper/badge.svg?branch=master)](https://coveralls.io/github/deventropy/junit-helper)
 [![Codacy Badge](https://api.codacy.com/project/badge/grade/8f5779cce1c9479fa87316349321e9dd)](https://www.codacy.com/app/deventropy/junit-helper)
 [![Coverity Scan Status](https://scan.coverity.com/projects/7581/badge.svg)](https://scan.coverity.com/projects/deventropy-junit-helper)
