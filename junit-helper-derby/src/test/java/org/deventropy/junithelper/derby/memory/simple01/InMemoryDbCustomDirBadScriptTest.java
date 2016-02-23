@@ -89,7 +89,7 @@ public class InMemoryDbCustomDirBadScriptTest extends AbstractEmbeddedDerbyResou
 			assertNotNull(jdbcUrl);
 			assertTrue(jdbcUrl.contains(DB_NAME));
 
-			simpleDb01Check01(jdbcUrl);
+			simpleDb01Check01(embeddedDerbyResource);
 
 			final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 			assertTrue(logFile.exists());

@@ -37,6 +37,12 @@ limitations under the License.
 			<action dev="bindul" type="add" issue="15" date="2016-02-18">
 				Added support for skipping create attribute
 			</action>
+			<action dev="bindul" type="add" issue="6" date="2016-02-23">
+				Added support to create/restore/recover a Derby instance from a backup
+			</action>
+			<action dev="bindul" type="add" issue="23" date="2016-02-23">
+				Added support to perform an online backup of a Derby instance
+			</action>
 		</release>
 	</body>
 </document>

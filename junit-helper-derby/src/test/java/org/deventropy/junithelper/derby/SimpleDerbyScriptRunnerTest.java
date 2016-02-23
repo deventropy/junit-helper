@@ -22,7 +22,6 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.SQLException;
 
 import org.apache.commons.io.output.WriterOutputStream;
@@ -71,7 +70,7 @@ private static final String DB_NAME = "my-test-database-simple01-tmpfolder-nulll
 		Connection connection = null;
 
 		try {
-			connection = DriverManager.getConnection(embeddedDerbyResource.getJdbcUrl());
+			connection = embeddedDerbyResource.createConnection();
 			final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(connection);
 
 			scriptRunner.setDefaultScriptLogStream(wos1);
@@ -99,7 +98,7 @@ private static final String DB_NAME = "my-test-database-simple01-tmpfolder-nulll
 		Connection connection = null;
 
 		try {
-			connection = DriverManager.getConnection(embeddedDerbyResource.getJdbcUrl());
+			connection = embeddedDerbyResource.createConnection();
 			final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(connection, "UTF-64");
 
 			scriptRunner.executeScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql");

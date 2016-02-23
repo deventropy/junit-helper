@@ -103,6 +103,7 @@ limitations under the License.
 			<item name="Home" href="./index.html"/>
 			<item name="User Manual" href="./manual/index.html">
 				<item name="Configuration" href="./manual/configuration.html"/>
+				<item name="Backup and Restore" href="./manual/backup-restore.html"/>
 				<item name="Script Runner / Utilities" href="./manual/utilities.html"/>
 				<item name="Parallel Runs" href="./manual/concurrency.html"/>
 			</item>

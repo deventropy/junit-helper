@@ -19,6 +19,7 @@ limitations under the License.
 * [Getting Started](#getting-started)
 * [Managing Derby Instances](#instance)
 	* [Using JUnit Rules](#junit-rules)
+* [EmbeddedDerbyResource state](#resource-state)
 * [Application Logging](#logging)
 * [Configuration Options](./configuration.html)
 	* [Database Directory](./configuration.html#db-dir)
@@ -30,6 +31,12 @@ limitations under the License.
 		* [Database in a Jar](./configuration.html#jar)
 		* [Database in the Classpath](./configuration.html#classpath)
 	* [Post Init Scripts](./configuration.html#post-init-script)
+* [Backing up and Restoring a Database](./backup-restore.html)
+	* [Online Backup](./backup-restore.html#online-backup)
+	* [Using a Backup](./backup-restore.html#using-backup)
+		* [Create from](./backup-restore.html#create-from)
+		* [Restore to](./backup-restore.html#restore-to)
+		* [Roll-forward recovery](./backup-restore.html#roll-forward)
 * [Managing Concurrency](./concurrency.html)
 * [Utilities](./utilities.html)
 	* [Script Runner](./utilities.html#script-runner)
@@ -139,6 +146,16 @@ private EmbeddedDerbyResource embeddedDerbyResource =
 @ClassRule
 public RuleChain derbyRuleChain = RuleChain.outerRule(tempFolder).around(embeddedDerbyResource);
 ```
+
+## <a name="resource-state"></a>EmbeddedDerbyResource state
+
+The `EmbeddedDerbyResource` maintains an internal state which is set to active only between an invocation of `#before` /
+`#start` and `#after` / `#close`. Invoking methods to access the instance, including `#getJdbcUrl()`, `#createConnection()`,
+`#backupLiveDatabase` while the database is not active will cause the resource to throw an `IllegalStateException`.
+Invoking `#before` / #start` while the instance is active has no effect; similarly invoking `#after` / `#close` when the
+instance is not active has no effect.
+
+The current active state of the resource can be checked using the `#isActive` method.
 
 ## <a name="logging"></a>Application Logging
 

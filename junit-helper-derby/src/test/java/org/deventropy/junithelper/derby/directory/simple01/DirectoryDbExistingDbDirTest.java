@@ -41,10 +41,10 @@ public class DirectoryDbExistingDbDirTest extends AbstractEmbeddedDerbyResourceT
 
 	@Test
 	public void testStartingDbFromExistingDbDir () throws IOException, SQLException {
-		final File dbPathFile = createAndShutdownDbInDirSimple01(tempFolder, DB_NAME);
+		final DirDerbyHomeDbInfo dirDerbyHomeDbInfo = createAndShutdownDbInDirSimple01(tempFolder, DB_NAME, false);
 		final File derbyHome = tempFolder.newFolder();
 		final DerbyResourceConfig config = DerbyResourceConfig.buildDefault()
-				.useDatabaseInDirectory(dbPathFile.getAbsolutePath(), true);
+				.useDatabaseInDirectory(dirDerbyHomeDbInfo.getDbDirectory().getAbsolutePath(), true);
 		final EmbeddedDerbyResource embeddedDerbyResource = new EmbeddedDerbyResource(config, derbyHome);
 		embeddedDerbyResource.start();
 
@@ -52,7 +52,7 @@ public class DirectoryDbExistingDbDirTest extends AbstractEmbeddedDerbyResourceT
 		final String jdbcUrl = embeddedDerbyResource.getJdbcUrl();
 		assertNotNull(jdbcUrl);
 
-		simpleDb01Check01(jdbcUrl);
+		simpleDb01Check01(embeddedDerbyResource);
 
 		// Done, shut it down
 		closeEmbeddedDerbyResource(embeddedDerbyResource);

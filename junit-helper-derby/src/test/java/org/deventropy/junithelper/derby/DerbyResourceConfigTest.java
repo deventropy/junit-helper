@@ -17,6 +17,7 @@ package org.deventropy.junithelper.derby;
 
 import static org.junit.Assert.*;
 
+import java.io.File;
 import java.util.UUID;
 
 import org.junit.Test;
@@ -187,6 +188,78 @@ public class DerbyResourceConfigTest {
 	@Test(expected = IllegalArgumentException.class)
 	public void testClasspathEmptyDbPath () {
 		DerbyResourceConfig.buildDefault().useClasspathSubSubProtocol("");
+	}
+	
+	@Test
+	public void testCreateRestoreDatabaseFromDefaults () {
+		final DerbyResourceConfig derbyResourceConfig = DerbyResourceConfig.buildDefault();
+		assertNull("Should not have a recoveryMode set", derbyResourceConfig.getDbCreateFromRestoreMode());
+		assertNull("Should not have a backup directory set", derbyResourceConfig.getDbCreateFromRestoreFrom());
+		assertNull("Should not have a log device set", derbyResourceConfig.getDbRecoveryLogDevice());
+	}
+	
+	@Test
+	public void testRestoreDatabaseFrom () {
+		final File backupDir = new File("/tmp/dir");
+		final DerbyResourceConfig derbyResourceConfig = DerbyResourceConfig.buildDefault()
+				.restoreDatabaseFrom(backupDir);
+
+		assertEquals("Recovery mode should be is Restore", DbCreateFromRestroreMode.RestoreFrom,
+				derbyResourceConfig.getDbCreateFromRestoreMode());
+		assertEquals("Backup dir should be the same", backupDir, derbyResourceConfig.getDbCreateFromRestoreFrom());
+		assertNull("Should not have a log device set", derbyResourceConfig.getDbRecoveryLogDevice());
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testNullRestoreFromLocation () {
+		DerbyResourceConfig.buildDefault().restoreDatabaseFrom(null);
+	}
+	
+	@Test
+	public void testRestoreCreateFrom () {
+		final File backupDir = new File("/tmp/dir");
+		final DerbyResourceConfig derbyResourceConfig = DerbyResourceConfig.buildDefault()
+				.createDatabaseFrom(backupDir);
+
+		assertEquals("Recovery mode should be is Create", DbCreateFromRestroreMode.CreateFrom,
+				derbyResourceConfig.getDbCreateFromRestoreMode());
+		assertEquals("Backup dir should be the same", backupDir, derbyResourceConfig.getDbCreateFromRestoreFrom());
+		assertNull("Should not have a log device set", derbyResourceConfig.getDbRecoveryLogDevice());
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testNullCreateFromLocation () {
+		DerbyResourceConfig.buildDefault().createDatabaseFrom(null);
+	}
+	
+	@Test
+	public void testRecoverDatabaseFrom () {
+		final File backupDir = new File("/tmp/dir");
+		final File logDevice = new File("/tmp/dir/log");
+		final DerbyResourceConfig derbyResourceConfig = DerbyResourceConfig.buildDefault()
+				.recoverDatabaseFrom(backupDir, logDevice);
+
+		assertEquals("Recovery mode should be is Recover", DbCreateFromRestroreMode.RollForwardRecoveryFrom,
+				derbyResourceConfig.getDbCreateFromRestoreMode());
+		assertEquals("Backup dir should be the same", backupDir, derbyResourceConfig.getDbCreateFromRestoreFrom());
+		assertEquals("Should have a log device set", logDevice, derbyResourceConfig.getDbRecoveryLogDevice());
+
+		// Reset it
+		derbyResourceConfig.createDatabaseFrom(backupDir);
+		assertEquals("Recovery mode should be is Create", DbCreateFromRestroreMode.CreateFrom,
+				derbyResourceConfig.getDbCreateFromRestoreMode());
+		assertEquals("Backup dir should be the same", backupDir, derbyResourceConfig.getDbCreateFromRestoreFrom());
+		assertNull("Should not have a log device set", derbyResourceConfig.getDbRecoveryLogDevice());
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testNullRecoverFromLocation () {
+		DerbyResourceConfig.buildDefault().recoverDatabaseFrom(null, null);
+	}
+	
+	@Test (expected = IllegalArgumentException.class)
+	public void testNullRecoverFromLogDeviceLocation () {
+		DerbyResourceConfig.buildDefault().recoverDatabaseFrom(new File("/tmp/dir"), null);
 	}
 	
 	@Test

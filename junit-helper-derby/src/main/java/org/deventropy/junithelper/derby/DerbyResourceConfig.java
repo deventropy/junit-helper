@@ -15,6 +15,7 @@
  */
 package org.deventropy.junithelper.derby;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -43,6 +44,13 @@ import org.deventropy.shared.utils.ArgumentCheck;
  */
 public class DerbyResourceConfig {
 	
+	// ---------------------------------------------------------------------------------- Database location and protocol
+	
+	/**
+	 * The database subsubprotocol for the JDBC URL
+	 */
+	private JdbcDerbySubSubProtocol subSubProtocol;
+	
 	/**
 	 * This is a multi purpose field; it is used as the end of the JDBC URL.
 	 * <ul>
@@ -63,13 +71,29 @@ public class DerbyResourceConfig {
 	 */
 	private boolean directoryDatabaseSkipCreate = false;
 	
+	// --------------------------------------------- Parameters to control restoring a DB or creating one from a backup.
+	
 	/**
-	 * The database subsubprotocol for the JDBC URL
+	 * How are we restoring
 	 */
-	private JdbcDerbySubSubProtocol subSubProtocol;
+	private DbCreateFromRestroreMode dbCreateFromRestoreMode;
+	
+	/**
+	 * Where are we restoring from
+	 */
+	private File dbCreateFromRestoreFrom;
+	
+	/**
+	 * Where are the archive logs
+	 */
+	private File dbRecoveryLogDevice;
+	
+	// Logging controls
 	
 	// TODO Complete configuring logging
 	private ErrorLoggingMode errorLoggingMode;
+	
+	// Post init scripts
 	
 	private List<String> postInitScripts;
 	
@@ -86,6 +110,10 @@ public class DerbyResourceConfig {
 		// TODO Complete setting defaults
 		return config;
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Database location and protocol
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	/**
 	 * Returns the Jar database jar file path. Right now only used for the <code>:jar:</code> protocol for the jar file.
@@ -286,6 +314,121 @@ public class DerbyResourceConfig {
 		this.directoryDatabaseSkipCreate = false;
 	}
 	
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Database location and protocol
+	// -----------------------------------------------------------------------------------------------------------------
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Parameters to control restoring a DB or creating one from a backup.
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	
+	/**
+	 * Controls if the database should be created or restored from a backup. A <code>null</code> value returned from
+	 * this method means no restore. If this is not null, the location of the backup database is returned from
+	 * {@link #getDbCreateFromRestoreFrom()}; and for roll-forward recovery, the log device is at
+	 * {@link #getDbRecoveryLogDevice()}.
+	 * 
+	 * <p>See the <a href="http://db.apache.org/derby/docs/10.12/adminguide/cadminhubbkup98797.html">Backing up and
+	 * restoring a database</a> section of the Derby Administration guide for more information on means to backup and
+	 * restore a database.
+	 * 
+	 * @see EmbeddedDerbyResource#backupLiveDatabase(File, boolean, boolean, boolean)
+	 * 
+	 * @return The mode to create / restore a database from a backup.
+	 */
+	public DbCreateFromRestroreMode getDbCreateFromRestoreMode () {
+		return dbCreateFromRestoreMode;
+	}
+
+	/**
+	 * The location of the database backup to use. This is usually a full backup of the database.
+	 * 
+	 * @see #getDbCreateFromRestoreMode()
+	 * 
+	 * @return The database backup location.
+	 */
+	public File getDbCreateFromRestoreFrom () {
+		return dbCreateFromRestoreFrom;
+	}
+
+	/**
+	 * Archive log location for roll-forward database recovery. See
+	 * <a href="http://db.apache.org/derby/docs/10.12/adminguide/cadminrollforward.html">Roll-forward recovery</a> in
+	 * the Derby administration guide to learn more about archive logging.
+	 * 
+	 * @return The Database directory from which archive logs are available.
+	 */
+	public File getDbRecoveryLogDevice () {
+		return dbRecoveryLogDevice;
+	}
+	
+	/**
+	 * Restore a database from a backup location. If a database with the same name exists, the system will delete the
+	 * database, copy it from the backup and restart it.
+	 * 
+	 * @param dbBackupDir The backup location.
+	 * @return This instance.
+	 */
+	public DerbyResourceConfig restoreDatabaseFrom (final File dbBackupDir) {
+		ArgumentCheck.notNull(dbBackupDir, "Database backup directory");
+		resetDbCreateRestoreConfigs ();
+
+		this.dbCreateFromRestoreMode = DbCreateFromRestroreMode.RestoreFrom;
+		this.dbCreateFromRestoreFrom = dbBackupDir;
+		return this;
+	}
+	
+	/**
+	 * Create a new database from a backup copy. If there is already a database with the same name in derby.system.home,
+	 * an error will occur and the existing database will be left intact.
+	 * 
+	 * @param dbBackupDir The location of the database backup.
+	 * @return This instance.
+	 */
+	public DerbyResourceConfig createDatabaseFrom (final File dbBackupDir) {
+		ArgumentCheck.notNull(dbBackupDir, "Database backup directory");
+		resetDbCreateRestoreConfigs ();
+
+		this.dbCreateFromRestoreMode = DbCreateFromRestroreMode.CreateFrom;
+		this.dbCreateFromRestoreFrom = dbBackupDir;
+		return this;
+	}
+	
+	/**
+	 * Restore a database with roll forward recovery, optionally with archive logs. To see the steps involved in
+	 * performing a roll forward recovery, see
+	 * <a href="http://db.apache.org/derby/docs/10.12/adminguide/cadminrollforward.html">Roll Forward Recovery</a> in
+	 * the Derby Administrative Guide.
+	 * 
+	 * @param dbBackupDir The database backup location.
+	 * @param recoveryLogDevice The archive log location.
+	 * @return This instance.
+	 */
+	public DerbyResourceConfig recoverDatabaseFrom (final File dbBackupDir, final File recoveryLogDevice) {
+		ArgumentCheck.notNull(dbBackupDir, "Database backup directory");
+		ArgumentCheck.notNull(recoveryLogDevice, "Recovery log device");
+		resetDbCreateRestoreConfigs ();
+
+		this.dbCreateFromRestoreMode = DbCreateFromRestroreMode.RollForwardRecoveryFrom;
+		this.dbCreateFromRestoreFrom = dbBackupDir;
+		this.dbRecoveryLogDevice = recoveryLogDevice;
+		return this;
+	}
+	
+	private void resetDbCreateRestoreConfigs () {
+		this.dbCreateFromRestoreMode = null;
+		this.dbCreateFromRestoreFrom = null;
+		this.dbRecoveryLogDevice = null;
+	}
+
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Parameters to control restoring a DB or creating one from a backup.
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Logging controls
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	
 	/**
 	 * Sets the {@link #getErrorLoggingMode()} value to {@link ErrorLoggingMode#Null}; and clears other logging
 	 * properties.
@@ -326,6 +469,14 @@ public class DerbyResourceConfig {
 		return ErrorLoggingMode.Default;
 	}
 	
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Logging controls
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Post init scripts
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	
 	/**
 	 * Gets the configured post init scripts in the config; or an empty list.
 	 * @return Post init scripts to execute
@@ -355,4 +506,8 @@ public class DerbyResourceConfig {
 		postInitScripts.add(postInitScript);
 		return this;
 	}
+	
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Post init scripts
+	// -----------------------------------------------------------------------------------------------------------------
 }

@@ -59,11 +59,11 @@ public class ClasspathDbFromDirTest extends AbstractClasspathEmbeddedDerbyResour
 	public void createDbAndSetupClasspath () throws Exception {
 
 		// Create the directory with the DB
-		final File dbArchiveFile = createAndShutdownDbInDirSimple01(tempFolder, DB_NAME);
+		final DirDerbyHomeDbInfo dirDerbyHomeDbInfo = createAndShutdownDbInDirSimple01(tempFolder, DB_NAME, false);
 		final File cpDirectory = tempFolder.newFolder();
 		final File dbDirectory = new File(cpDirectory.getAbsolutePath() + File.separator + CLASSPATH_DB_NAME
 				+ File.separator);
-		FileUtils.copyDirectory(dbArchiveFile, dbDirectory);
+		FileUtils.copyDirectory(dirDerbyHomeDbInfo.getDbDirectory(), dbDirectory);
 
 		parentLoader = ClassUtil.getApplicableClassloader(this);
 		final URLClassLoader contextClassLoader = new URLClassLoader(new URL[]{cpDirectory.toURI().toURL()},
@@ -84,7 +84,7 @@ public class ClasspathDbFromDirTest extends AbstractClasspathEmbeddedDerbyResour
 			assertNotNull(jdbcUrl);
 			assertTrue(jdbcUrl.contains(CLASSPATH_DB_NAME));
 
-			simpleDb01Check01(jdbcUrl);
+			simpleDb01Check01(embeddedDerbyResource);
 		} finally {
 			closeEmbeddedDerbyResource(embeddedDerbyResource);
 		}

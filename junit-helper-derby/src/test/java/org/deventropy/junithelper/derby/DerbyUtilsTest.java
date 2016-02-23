@@ -25,7 +25,6 @@ import java.sql.CallableStatement;
 import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.DatabaseMetaData;
-import java.sql.DriverManager;
 import java.sql.NClob;
 import java.sql.PreparedStatement;
 import java.sql.SQLClientInfoException;
@@ -100,12 +99,12 @@ public class DerbyUtilsTest {
 	@Test
 	public void testCloseQuietly () throws SQLException {
 
-		final Connection conn = DriverManager.getConnection(embeddedDerbyResource.getJdbcUrl());
+		final Connection conn = embeddedDerbyResource.createConnection();
 		// First time - no failures
 		DerbyUtils.closeQuietly(conn);
 		assertTrue("Connection should be closed", conn.isClosed());
 
-		final Connection conn2 = DriverManager.getConnection(embeddedDerbyResource.getJdbcUrl());
+		final Connection conn2 = embeddedDerbyResource.createConnection();
 		// Calling connection twice is a No-Op (per documentation), so getting creative here
 		DerbyUtils.closeQuietly(new ExceptionOnCloseConnectionWrapper(conn2));
 		assertTrue("Connection should be closed", conn2.isClosed());

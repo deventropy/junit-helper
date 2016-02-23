@@ -89,15 +89,26 @@ public class InMemoryDbCustomDirTest extends AbstractEmbeddedDerbyResourceTest {
 			assertNotNull(jdbcUrl);
 			assertTrue(jdbcUrl.contains(DB_NAME));
 
-			simpleDb01Check01(jdbcUrl);
+			simpleDb01Check01(embeddedDerbyResource);
 
 			final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 			assertTrue(logFile.exists());
 		} finally {
 			closeEmbeddedDerbyResource(embeddedDerbyResource);
+			assertFalse("Resource should not be active", embeddedDerbyResource.isActive());
+			// Closing again should have no effect
+			embeddedDerbyResource.close();
 			if (null != tempFile) {
 				tempFile.delete();
 			}
+		}
+
+		// There should be an illegal state exception
+		try {
+			embeddedDerbyResource.getJdbcUrl();
+			fail("Should not come here");
+		} catch (IllegalStateException e) {
+			assertEquals("Derby resource is not active", e.getMessage());
 		}
 
 		assertEquals("Derby system home property should be reset", System.getProperty(PROP_DERBY_SYSTEM_HOME),

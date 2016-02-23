@@ -84,21 +84,12 @@ import org.junit.rules.TemporaryFolder;
  * <p>For further information and examples, see
  * <a href="http://www.deventropy.org/junit-helper/junit-helper-derby/manual/">User Manual on the Project Website</a>.
  * 
+ * @see DerbyResourceConfig
+ * 
  * @author Bindul Bhowmik
  */
 public class EmbeddedDerbyResource extends ExternalResource implements Closeable {
 
-	private static final String PROP_FILE_DERBY_PROPERTIES = "derby.properties";
-	private static final String PROP_DERBY_SYSTEM_HOME = "derby.system.home";
-	private static final String PROP_DERBY_STREAM_ERROR_FILE = "derby.stream.error.file";
-	private static final String PROP_DERBY_STREAM_ERROR_FIELD = "derby.stream.error.field";
-	
-	private static final String URLPROP_DERBY_CREATE = ";create=true";
-	private static final String URLPROP_DERBY_SHUTDOWN = ";shutdown=true";
-	private static final String URLPROP_DERBY_DROP = ";drop=true";
-	
-	private static final String DERBY_EMBEDDED_DRIVER_CLASS = "org.apache.derby.jdbc.EmbeddedDriver";
-	
 	private final Logger log = LogManager.getLogger();
 	
 	private final DerbyResourceConfig config;
@@ -106,8 +97,11 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	private TemporaryFolder derbySystemHomeParent;
 	
 	private final String jdbcUrl;
+	private boolean isActive = false;
 	
 	private String oldDerbySystemHomeValue;
+	
+	private final DerbyBackupOperationsHelper backupOperationsHelper = new DerbyBackupOperationsHelper(this);
 	
 	/**
 	 * Creates a new Derby resource. All configurable parameters for this resource come from the config object
@@ -169,31 +163,42 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 * <p><em>Note:</em> If using this instance as a JUnit {@linkplain org.junit.Rule}, do not call this method;
 	 * initialization is already handled from the {@linkplain org.junit.rules.ExternalResource#before()}.
 	 * 
+	 * <p>On successful completion (with the exception of failures in
+	 * {@linkplain DerbyResourceConfig#getPostInitScripts()}, the {@link #isActive()} state of this resource is set to
+	 * <code>true</code>. Further calls to this method while the resource is active has no effect.
+	 * 
 	 * @throws IOException IO exception creating or setting derby home
 	 * @throws SQLException SQL exception starting derby or running the init scripts
 	 */
 	public void start () throws IOException, SQLException {
+
+		if (isActive) {
+			return; // already started
+		}
+
 		// Validate and setup
 		if (null != derbySystemHomeParent) {
 			this.derbySystemHome = derbySystemHomeParent.newFolder();
 		}
 		FileUtils.forceMkdir(derbySystemHome);
-		oldDerbySystemHomeValue = System.getProperty(PROP_DERBY_SYSTEM_HOME); // Saving it to reset it later
-		System.setProperty(PROP_DERBY_SYSTEM_HOME, derbySystemHome.getAbsolutePath());
+		oldDerbySystemHomeValue = System.getProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME); // Save it to reset later
+		System.setProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME, derbySystemHome.getAbsolutePath());
 		setupDerbyProperties();
 
 		// Start the database
 		// Recommended Derby startup process,
 		// see https://db.apache.org/derby/docs/10.12/publishedapi/org/apache/derby/jdbc/EmbeddedDriver.html
 		try {
-			Class.forName(DERBY_EMBEDDED_DRIVER_CLASS).newInstance();
+			Class.forName(DerbyConstants.DERBY_EMBEDDED_DRIVER_CLASS).newInstance();
 		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
 			// Reset the Derby System Home property
 			resetDerbyHome();
-			throw new SQLException("Unable to initialize Derby driver class: " + DERBY_EMBEDDED_DRIVER_CLASS, e);
+			throw new SQLException(
+					"Unable to initialize Derby driver class: " + DerbyConstants.DERBY_EMBEDDED_DRIVER_CLASS, e);
 		}
 		// Create / Connect to the database
 		final Connection conn = DriverManager.getConnection(buildCreateJDBCUrl());
+		isActive = true;
 		try {
 			// Post init scripts
 			executePostInitScripts(conn);
@@ -223,12 +228,26 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	private String buildCreateJDBCUrl () {
 		final StringBuilder createDbJdbcUrl = new StringBuilder(jdbcUrl);
 		final JdbcDerbySubSubProtocol subSubProtocol = config.getSubSubProtocol();
-		// Only :memory: and :directory: databases need the 'create' flag.
-		if (JdbcDerbySubSubProtocol.Memory == subSubProtocol
+
+		if (null != config.getDbCreateFromRestoreMode()) {
+			// Database from a backup
+			final DbCreateFromRestroreMode dbCreateFromRestroreMode = config.getDbCreateFromRestoreMode();
+			createDbJdbcUrl.append(DerbyConstants.URLPROP_DERBY_SEPARATOR)
+					.append(dbCreateFromRestroreMode.urlAttribute()).append(DerbyConstants.URLPROP_DERBY_EQUAL)
+					.append(config.getDbCreateFromRestoreFrom().getAbsolutePath());
+			if (dbCreateFromRestroreMode.requiresLogDevice()) {
+				createDbJdbcUrl.append(DerbyConstants.URLPROP_DERBY_SEPARATOR)
+						.append(DbCreateFromRestroreMode.URLPROP_DERBY_LOGDEVICE)
+						.append(DerbyConstants.URLPROP_DERBY_EQUAL)
+						.append(config.getDbRecoveryLogDevice().getAbsolutePath());
+			}
+		} else if (JdbcDerbySubSubProtocol.Memory == subSubProtocol
 				|| (JdbcDerbySubSubProtocol.Directory == subSubProtocol && !config.isDirectoryDatabaseSkipCreate())) {
-			createDbJdbcUrl.append(URLPROP_DERBY_CREATE);
+			// Only :memory: and :directory: databases need the 'create' flag.
+			createDbJdbcUrl.append(DerbyConstants.URLPROP_DERBY_CREATE);
 		}
-		// TODO Will handle things here to restore from a backup, etc.
+
+		log.debug("Will use JDBC URL {} to start Derby", createDbJdbcUrl);
 		return createDbJdbcUrl.toString();
 	}
 
@@ -238,16 +257,16 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		// Logging
 		switch (config.getErrorLoggingMode()) {
 			case Null:
-				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FIELD, DerbyUtils.DEV_NULL_FIELD_ID);
+				derbyProps.setProperty(DerbyConstants.PROP_DERBY_STREAM_ERROR_FIELD, DerbyUtils.DEV_NULL_FIELD_ID);
 				break;
 			case Default:
 			default:
-				derbyProps.setProperty(PROP_DERBY_STREAM_ERROR_FILE, "derby.log");
+				derbyProps.setProperty(DerbyConstants.PROP_DERBY_STREAM_ERROR_FILE, "derby.log");
 				break;
 		}
 
 		// Write it
-		final File derbyPropertyFile = new File(derbySystemHome, PROP_FILE_DERBY_PROPERTIES);
+		final File derbyPropertyFile = new File(derbySystemHome, DerbyConstants.PROP_FILE_DERBY_PROPERTIES);
 		final FileWriter derbyPropertyFileWriter = new FileWriter(derbyPropertyFile);
 		derbyProps.store(derbyPropertyFileWriter, null);
 		IOUtils.closeQuietly(derbyPropertyFileWriter);
@@ -267,18 +286,30 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.io.Closeable#close()
+	/**
+	 * Shuts down and closes the Derby Instance. It also restores any previously set <code>derby.system.home</code>
+	 * system property. However, should another derby instance need to be created in the same JVM after this is shut
+	 * down, ensure the Derby system is properly shut down (see {@link DerbyUtils#shutdownDerbySystemQuitely(boolean)}.
+	 * 
+	 * <p>This method sets the {@link #isActive()} state of the resouce to false, and calls to this method when the
+	 * resource is not active are ignored.
+	 * 
+	 * {@inheritDoc}
 	 */
 	@Override
 	public void close () throws IOException {
+
+		if (!isActive) {
+			return;
+		}
+
 		Connection conn = null;
 		try {
 			final StringBuilder shutdownUrl = new StringBuilder(jdbcUrl);
 			if (JdbcDerbySubSubProtocol.Memory == config.getSubSubProtocol()) {
-				shutdownUrl.append(URLPROP_DERBY_DROP);
+				shutdownUrl.append(DerbyConstants.URLPROP_DERBY_DROP);
 			} else {
-				shutdownUrl.append(URLPROP_DERBY_SHUTDOWN);
+				shutdownUrl.append(DerbyConstants.URLPROP_DERBY_SHUTDOWN);
 			}
 			conn = DriverManager.getConnection(shutdownUrl.toString());
 		} catch (SQLException e) {
@@ -289,29 +320,38 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		}
 		// Reset the Derby System Home property
 		resetDerbyHome();
+		isActive = false;
 	}
 
 	private void resetDerbyHome () {
 		// Reset the Derby System Home property
 		if (null != oldDerbySystemHomeValue && !oldDerbySystemHomeValue.isEmpty()) {
-			System.setProperty(PROP_DERBY_SYSTEM_HOME, oldDerbySystemHomeValue);
+			System.setProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME, oldDerbySystemHomeValue);
 			oldDerbySystemHomeValue = null;
 		} else {
-			System.clearProperty(PROP_DERBY_SYSTEM_HOME);
+			System.clearProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME);
 		}
 	}
 
 	/**
+	 * Returns the file reference to the Derby system home.
+	 * 
 	 * @return the derbySystemHome
+	 * @throws IllegalStateException if the method is invoked when the database is not {@link #isActive()}.
 	 */
 	public File getDerbySystemHome () {
+		ensureActive();
 		return derbySystemHome;
 	}
 
 	/**
+	 * Returns a URL that can be used to create a connection to this database instance.
+	 * 
 	 * @return the jdbcUrl
+	 * @throws IllegalStateException if the method is invoked when the database is not {@link #isActive()}.
 	 */
 	public String getJdbcUrl () {
+		ensureActive();
 		return jdbcUrl;
 	}
 
@@ -322,5 +362,60 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	 */
 	public String getDatabasePath () {
 		return config.getDatabasePath();
+	}
+	
+	/**
+	 * Create and return a new connection for this resource. If the resource is a pooled datasource, it will be a pooled
+	 * connection.
+	 * 
+	 * @return A new basic or pooled connection for this database.
+	 * @throws SQLException If there is an error creating the connection
+	 * @throws IllegalStateException if the method is invoked when the database is not {@link #isActive()}.
+	 */
+	public Connection createConnection () throws SQLException {
+		ensureActive();
+		return DriverManager.getConnection(getJdbcUrl());
+	}
+	
+	/**
+	 * Returns true if the resource is started and not closed.
+	 * @return The current status of the resource.
+	 */
+	public boolean isActive () {
+		return isActive;
+	}
+	
+	/**
+	 * Checks if the Embedded Derby Resource is active, if not throws an {@link IllegalStateException}.
+	 */
+	protected void ensureActive () {
+		if (!isActive) {
+			throw new IllegalStateException("Derby resource is not active");
+		}
+	}
+
+	/**
+	 * Perform an online backup of the running instance. The online backup uses either the
+	 * <code>SYSCS_UTIL.SYSCS_BACKUP_DATABASE</code> if <code>enableArchiveLogging</code> is set to <code>false</code>
+	 * or <code>SYSCS_UTIL.SYSCS_BACKUP_DATABASE_AND_ENABLE_LOG_ARCHIVE_MODE</code> otherwise. If the
+	 * <code>waitForTransactions</code> parameter is set to <code>false</code> the <code>_NOWAIT</code> versions of the
+	 * procedures are used.
+	 * 
+	 * <p>For more information on backing up Derby database, see
+	 * <a href="http://db.apache.org/derby/docs/10.12/adminguide/cadminhubbkup01.html">Using the backup procedures to
+	 * perform an online backup</a> in the Derby Administrators guide.
+	 * 
+	 * @param backupDir The directory to which the database should be backed up.
+	 * @param waitForTransactions Wait for running transactions to complete.
+	 * @param enableArchiveLogging If archive logging should be enabled for the database.
+	 * @param deleteArchivedLogs Ask Derby to delete the old archive logs after the backup is successful.
+	 * @throws SQLException Exception from Derby when the backup fails.
+	 * @throws IllegalStateException if the method is invoked when the database is not {@link #isActive()}.
+	 */
+	public void backupLiveDatabase (final File backupDir, final boolean waitForTransactions,
+			final boolean enableArchiveLogging, final boolean deleteArchivedLogs) throws SQLException {
+		ensureActive();
+		backupOperationsHelper.backupLiveDatabase(backupDir, waitForTransactions, enableArchiveLogging,
+				deleteArchivedLogs);
 	}
 }

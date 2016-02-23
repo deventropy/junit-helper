@@ -61,7 +61,7 @@ public final class DerbyUtils {
 	public static void shutdownDerbySystemQuitely (final boolean supressLog) {
 		// See https://db.apache.org/derby/docs/10.12/devguide/tdevdvlp20349.html
 		try {
-			DriverManager.getConnection("jdbc:derby:;shutdown=true");
+			DriverManager.getConnection(DerbyConstants.DERBY_JDBC_URL_PREFIX + DerbyConstants.URLPROP_DERBY_SHUTDOWN);
 		} catch (SQLException e) {
 			if (!supressLog) {
 				log.catching(Level.DEBUG, e);

@@ -144,7 +144,11 @@ used to list the supported sub sub protocols.
 
 Some of the sub-sub protocols require additional configuration parameters, some required others optional. See the sub
 section below. Calling the `#useXXXDatabase()` methods on select any sub sub protocol will reset additional configurations
-set for any other sub-sub protocol. 
+set for any other sub-sub protocol.
+
+For the `In Memory` and `Directory` sub sub protocols, the resource also allows starting or restoring a database from a
+backup. For more information on those options, please see the [Backing up and Restoring a Database](./backup-restore.html)
+documentation.
 
 ### <a name="in-memory"></a>In Memory Database
 

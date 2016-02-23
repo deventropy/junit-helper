@@ -15,10 +15,10 @@
  */
 package org.deventropy.junithelper.derby;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
+import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -53,14 +53,19 @@ public class SimpleDerbyTest {
 	}
 
 	@Test
-	public void test () throws SQLException {
-		final String jdbcUrl = embeddedDerbyResource.getJdbcUrl();
+	public void test () throws SQLException, IOException {
 		Connection connection = null;
 		Statement stmt = null;
 		ResultSet rs = null;
 
 		try {
-			connection = DriverManager.getConnection(jdbcUrl);
+
+			assertTrue("Resource should be active", embeddedDerbyResource.isActive());
+
+			// Try to start again (should have no effect)
+			embeddedDerbyResource.start();
+
+			connection = embeddedDerbyResource.createConnection();
 	
 			// Check a value
 			stmt = connection.createStatement();

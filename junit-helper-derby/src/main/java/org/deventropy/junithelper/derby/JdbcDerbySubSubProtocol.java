@@ -44,12 +44,10 @@ public enum JdbcDerbySubSubProtocol {
 	 */
 	Classpath ("classpath");
 	
-	private static final String JDBC_CONN_STR_PREFIX = "jdbc:derby:";
-	
 	private final String jdbcConnectionPrefix;
 	
 	JdbcDerbySubSubProtocol (final String subprotocolcode) {
-		jdbcConnectionPrefix = JDBC_CONN_STR_PREFIX + subprotocolcode + ":";
+		jdbcConnectionPrefix = DerbyConstants.DERBY_JDBC_URL_PREFIX + subprotocolcode + ":";
 	}
 	
 	/**

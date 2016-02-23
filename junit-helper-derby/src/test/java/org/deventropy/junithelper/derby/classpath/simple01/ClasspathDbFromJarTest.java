@@ -78,7 +78,7 @@ public class ClasspathDbFromJarTest extends AbstractClasspathEmbeddedDerbyResour
 			assertNotNull(jdbcUrl);
 			assertTrue(jdbcUrl.contains(CLASSPATH_DB_NAME));
 
-			simpleDb01Check01(jdbcUrl);
+			simpleDb01Check01(embeddedDerbyResource);
 		} finally {
 			closeEmbeddedDerbyResource(embeddedDerbyResource);
 		}

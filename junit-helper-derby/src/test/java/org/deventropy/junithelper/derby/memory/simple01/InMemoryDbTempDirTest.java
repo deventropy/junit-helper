@@ -66,7 +66,7 @@ public class InMemoryDbTempDirTest extends AbstractEmbeddedDerbyResourceTest {
 		assertNotNull(jdbcUrl);
 		assertTrue(jdbcUrl.contains(DB_NAME));
 
-		simpleDb01Check01(jdbcUrl);
+		simpleDb01Check01(embeddedDerbyResource);
 
 		// This test will fail in eclipse; see https://bugs.eclipse.org/bugs/show_bug.cgi?id=298061
 		final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");

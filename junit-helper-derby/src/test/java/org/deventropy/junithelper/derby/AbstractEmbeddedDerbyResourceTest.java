@@ -20,7 +20,6 @@ import static org.junit.Assert.*;
 import java.io.File;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -38,16 +37,16 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 
 	/**
 	 * Runs simple checks on the contents of the database; based on SimpeDb01 setup.
-	 * @param jdbcUrl The JDBC url
+	 * @param embeddedDerbyResource The derby resource
 	 * @throws SQLException SQL exception running the checks
 	 */
-	protected void simpleDb01Check01 (final String jdbcUrl) throws SQLException {
+	protected void simpleDb01Check01 (final EmbeddedDerbyResource embeddedDerbyResource) throws SQLException {
 		Connection connection = null;
 		PreparedStatement stmt = null;
 		ResultSet rs = null;
 
 		try {
-			connection = DriverManager.getConnection(jdbcUrl);
+			connection = embeddedDerbyResource.createConnection();
 			assertNotNull(connection);
 	
 			// Check a value
@@ -82,11 +81,13 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 	protected File createAndShutdownDbInJarSimple01 (final TemporaryFolder tempFolder, final String dirDatabaseName,
 			final String jarDatabasePath) throws IOException, SQLException {
 
-		final File dbHomeDir = createAndShutdownDbInDirSimple01(tempFolder, dirDatabaseName);
+		final DirDerbyHomeDbInfo dirDerbyHomeDbInfo = createAndShutdownDbInDirSimple01(tempFolder, dirDatabaseName,
+				false);
 
 		// Create a Jar file nesting it down a folder.
 		final File dbArchiveFile = tempFolder.newFile(dirDatabaseName + ".jar");
-		DirectoryArchiverUtil.createJarArchiveOfDirectory(dbArchiveFile.getAbsolutePath(), dbHomeDir, jarDatabasePath);
+		DirectoryArchiverUtil.createJarArchiveOfDirectory(dbArchiveFile.getAbsolutePath(),
+				dirDerbyHomeDbInfo.getDbDirectory(), jarDatabasePath);
 		return dbArchiveFile;
 	}
 
@@ -95,29 +96,59 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 	 * 
 	 * @param tempFolder Parent temporary folder under which other files and folders are created.
 	 * @param dirDatabaseName The path/name of the database directory
-	 * @return File reference to the directory where the database is.
+	 * @param createDbInDerbyHome If the DB should be created as a child of the Derby system home
+	 * @return Directory Derby Info structure
 	 * @throws IOException Error with a file operation
 	 * @throws SQLException Error with a SQL operation
 	 */
-	protected File createAndShutdownDbInDirSimple01 (final TemporaryFolder tempFolder, final String dirDatabaseName)
-			throws IOException, SQLException {
+	protected DirDerbyHomeDbInfo createAndShutdownDbInDirSimple01 (final TemporaryFolder tempFolder,
+			final String dirDatabaseName, final boolean createDbInDerbyHome) throws IOException, SQLException {
+
+		final DirDerbyHomeDbInfo dirDerbyHomeDbInfo = createAndStartEmbeddedDerbyResourceSimple01(tempFolder,
+				dirDatabaseName, createDbInDerbyHome);
+		closeEmbeddedDerbyResource(dirDerbyHomeDbInfo.getEmbeddedDerbyResource());
+
+		dirDerbyHomeDbInfo.setEmbeddedDerbyResource(null);
+
+		// Shutdown Derby
+		DerbyUtils.shutdownDerbySystemQuitely(true);
+		return dirDerbyHomeDbInfo;
+	}
+	
+	/**
+	 * Create and start an Embedded Derby Resource with the Simple 01 scripts.
+	 * @param tempFolder The temporary folder provider
+	 * @param dirDatabaseName The directory name
+	 * @param createDbInDerbyHome Should the DB be created in the Derby Home directory or a random directory
+	 * @return Directory Derby Info structure
+	 * @throws IOException Error with a file operation
+	 * @throws SQLException Error with a SQL operation
+	 */
+	protected DirDerbyHomeDbInfo createAndStartEmbeddedDerbyResourceSimple01 (final TemporaryFolder tempFolder,
+			final String dirDatabaseName, final boolean createDbInDerbyHome) throws IOException, SQLException {
 		final File derbySystemHomeDir = tempFolder.newFolder();
 
-		final File dbHomeDir = tempFolder.newFolder(dirDatabaseName);
-		dbHomeDir.delete();
+		File dbHomeDir = null;
+		if (createDbInDerbyHome) {
+			dbHomeDir = new File(derbySystemHomeDir, dirDatabaseName);
+		} else {
+			dbHomeDir = tempFolder.newFolder(dirDatabaseName);
+			dbHomeDir.delete();
+		}
 
 		final DerbyResourceConfig derbyResourceConfig = DerbyResourceConfig.buildDefault()
-				.useDatabaseInDirectory(dbHomeDir.getAbsolutePath())
+				.useDatabaseInDirectory(createDbInDerbyHome ? dirDatabaseName : dbHomeDir.getAbsolutePath())
 				.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql")
 				.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql");
 		final EmbeddedDerbyResource embeddedDerbyResource = new EmbeddedDerbyResource(derbyResourceConfig,
 			derbySystemHomeDir);
 		embeddedDerbyResource.start();
-		closeEmbeddedDerbyResource(embeddedDerbyResource);
 
-		// Shutdown Derby
-		DerbyUtils.shutdownDerbySystemQuitely(true);
-		return dbHomeDir;
+		final DirDerbyHomeDbInfo dirDerbyHomeDbInfo = new DirDerbyHomeDbInfo(derbySystemHomeDir, dbHomeDir,
+				dirDatabaseName);
+		dirDerbyHomeDbInfo.setEmbeddedDerbyResource(embeddedDerbyResource);
+
+		return dirDerbyHomeDbInfo;
 	}
 
 	/**
@@ -140,4 +171,63 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 		DerbyUtils.shutdownDerbySystemQuitely(true);
 	}
 
+	/**
+	 * An internal structure to share multiple folders and database info.
+	 * 
+	 * @author Bindul Bhowmik
+	 */
+	protected class DirDerbyHomeDbInfo {
+		private final File derbySystemHome;
+		private final File dbDirectory;
+		private final String dbName;
+		private EmbeddedDerbyResource embeddedDerbyResource;
+
+		/**
+		 * A new DirDerbyHomeDbInfo instance.
+		 * 
+		 * @param derbySystemHome The derby system home
+		 * @param dbDirectory The directory where the DB exists
+		 * @param dbName The DB name.
+		 */
+		protected DirDerbyHomeDbInfo (final File derbySystemHome, final File dbDirectory, final String dbName) {
+			this.derbySystemHome = derbySystemHome;
+			this.dbDirectory = dbDirectory;
+			this.dbName = dbName;
+		}
+
+		/**
+		 * @return the derbySystemHome
+		 */
+		public File getDerbySystemHome () {
+			return derbySystemHome;
+		}
+
+		/**
+		 * @return the dbDirectory
+		 */
+		public File getDbDirectory () {
+			return dbDirectory;
+		}
+
+		/**
+		 * @return the dbName
+		 */
+		public String getDbName () {
+			return dbName;
+		}
+
+		/**
+		 * @return the embeddedDerbyResource
+		 */
+		public EmbeddedDerbyResource getEmbeddedDerbyResource () {
+			return embeddedDerbyResource;
+		}
+
+		/**
+		 * @param embeddedDerbyResource the embeddedDerbyResource to set
+		 */
+		public void setEmbeddedDerbyResource (final EmbeddedDerbyResource embeddedDerbyResource) {
+			this.embeddedDerbyResource = embeddedDerbyResource;
+		}
+	}
 }

@@ -65,7 +65,7 @@ public class JarDbSimpleTest extends AbstractJarEmbeddedDerbyResourceTest {
 		assertNotNull(jdbcUrl);
 		assertTrue(jdbcUrl.contains(JAR_DB_NAME));
 
-		simpleDb01Check01(jdbcUrl);
+		simpleDb01Check01(embeddedDerbyResource);
 	}
 	
 	/**
