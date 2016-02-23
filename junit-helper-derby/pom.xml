@@ -41,7 +41,7 @@ limitations under the License.
 					<!-- Between Surefire, JaCoCo and Travis CI, parallel tests seem to fail; force almost sequential -->
 					<threadCount>2</threadCount>
 					<forkCount>4</forkCount>
-					<reuseForks>true</reuseForks>
+					<reuseForks>false</reuseForks>
 					<redirectTestOutputToFile>true</redirectTestOutputToFile>
 				</configuration>
 			</plugin>

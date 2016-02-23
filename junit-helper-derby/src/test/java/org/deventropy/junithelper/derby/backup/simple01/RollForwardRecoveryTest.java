@@ -62,8 +62,7 @@ public class RollForwardRecoveryTest extends AbstractEmbeddedDerbyBackupTest {
 		FileUtils.deleteDirectory(originDbInfo.getDbDirectory());
 
 		// Start a database from the backup and back that up too
-		restoreDbFromBackupCheckAndShutdown(originDbInfo, backupBase, originDbBackupDir, originDbCopyForLogs,
-				DB_NAME_FIRST);
+		restoreDbFromBackupCheckAndShutdown(originDbInfo, originDbBackupDir, originDbCopyForLogs, DB_NAME_FIRST);
 
 		// Repeat backup, deleting old logs
 		final DirDerbyHomeDbInfo secondDbInfo = createAndStartEmbeddedDerbyResourceSimple01(tempFolder,
@@ -84,8 +83,7 @@ public class RollForwardRecoveryTest extends AbstractEmbeddedDerbyBackupTest {
 		FileUtils.deleteDirectory(secondDbInfo.getDbDirectory());
 
 		// Start a database from the backup and back that up too
-		restoreDbFromBackupCheckAndShutdown(secondDbInfo, secondBackupBase, secondDbBackupDir, secondDbCopyForLogs,
-				DB_NAME_SECOND);
+		restoreDbFromBackupCheckAndShutdown(secondDbInfo, secondDbBackupDir, secondDbCopyForLogs, DB_NAME_SECOND);
 	}
 	
 	private File backupDbWithArchiveLogsMakeChangesAndShutdown (final EmbeddedDerbyResource originDbResource,
@@ -103,7 +101,7 @@ public class RollForwardRecoveryTest extends AbstractEmbeddedDerbyBackupTest {
 		return originDbBackupDir;
 	}
 	
-	private void restoreDbFromBackupCheckAndShutdown (final DirDerbyHomeDbInfo originDbInfo, final File backupBase,
+	private void restoreDbFromBackupCheckAndShutdown (final DirDerbyHomeDbInfo originDbInfo,
 			final File originDbBackupDir, final File originDbCopyForLogs, final String dbName)
 					throws IOException, SQLException {
 		// Start a new DB with create From...

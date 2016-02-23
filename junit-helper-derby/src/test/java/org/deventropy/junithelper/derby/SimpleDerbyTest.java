@@ -71,7 +71,11 @@ public class SimpleDerbyTest {
 			stmt = connection.createStatement();
 			rs = stmt.executeQuery("SELECT 1 FROM SYSIBM.SYSDUMMY1");
 	
-			assertTrue(rs.next());
+			if (rs.next()) {
+				assertEquals("Should have one", 1, rs.getInt(1));
+			} else {
+				fail ("Should have one result");
+			}
 		} finally {
 			DerbyUtils.closeQuietly(rs);
 			DerbyUtils.closeQuietly(stmt);
