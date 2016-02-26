@@ -24,8 +24,16 @@ import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.Properties;
 
+import javax.sql.ConnectionPoolDataSource;
+import javax.sql.DataSource;
+import javax.sql.XADataSource;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource;
+import org.apache.derby.jdbc.EmbeddedDataSource;
+import org.apache.derby.jdbc.EmbeddedDataSourceInterface;
+import org.apache.derby.jdbc.EmbeddedXADataSource;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -102,6 +110,7 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	private String oldDerbySystemHomeValue;
 	
 	private final DerbyBackupOperationsHelper backupOperationsHelper = new DerbyBackupOperationsHelper(this);
+	private final EmbeddedDerbyDataSourceFactory dataSourceFactory = new EmbeddedDerbyDataSourceFactoryImpl();
 	
 	/**
 	 * Creates a new Derby resource. All configurable parameters for this resource come from the config object
@@ -140,12 +149,16 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 	
 	private String buildJdbcUrl () {
 		final StringBuilder jdbcUrlBldr = new StringBuilder().append(config.getSubSubProtocol().jdbcConnectionPrefix());
+		appendDbLocNameToUrl(jdbcUrlBldr);
+		return jdbcUrlBldr.toString();
+	}
+
+	private void appendDbLocNameToUrl (final StringBuilder jdbcUrlBldr) {
 		if (JdbcDerbySubSubProtocol.Jar == config.getSubSubProtocol()) {
 			// for :jar: protocol, see http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html
 			jdbcUrlBldr.append('(').append(config.getJarDatabaseJarFile()).append(')');
 		}
 		jdbcUrlBldr.append(config.getDatabasePath());
-		return jdbcUrlBldr.toString();
 	}
 
 	/* (non-Javadoc)
@@ -176,52 +189,63 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 			return; // already started
 		}
 
-		// Validate and setup
-		if (null != derbySystemHomeParent) {
-			this.derbySystemHome = derbySystemHomeParent.newFolder();
-		}
-		FileUtils.forceMkdir(derbySystemHome);
-		oldDerbySystemHomeValue = System.getProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME); // Save it to reset later
-		System.setProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME, derbySystemHome.getAbsolutePath());
-		setupDerbyProperties();
-
-		// Start the database
-		// Recommended Derby startup process,
-		// see https://db.apache.org/derby/docs/10.12/publishedapi/org/apache/derby/jdbc/EmbeddedDriver.html
+		Connection conn = null;
 		try {
-			Class.forName(DerbyConstants.DERBY_EMBEDDED_DRIVER_CLASS).newInstance();
-		} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+			// Validate and setup
+			if (null != derbySystemHomeParent) {
+				this.derbySystemHome = derbySystemHomeParent.newFolder();
+			}
+			FileUtils.forceMkdir(derbySystemHome);
+			// Save it to reset later
+			oldDerbySystemHomeValue = System.getProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME);
+			System.setProperty(DerbyConstants.PROP_DERBY_SYSTEM_HOME, derbySystemHome.getAbsolutePath());
+			setupDerbyProperties();
+	
+			// Start the database
+			// Recommended Derby startup process,
+			// see https://db.apache.org/derby/docs/10.12/publishedapi/org/apache/derby/jdbc/EmbeddedDriver.html
+			try {
+				Class.forName(DerbyConstants.DERBY_EMBEDDED_DRIVER_CLASS).newInstance();
+			} catch (InstantiationException | IllegalAccessException | ClassNotFoundException e) {
+				throw new SQLException(
+						"Unable to initialize Derby driver class: " + DerbyConstants.DERBY_EMBEDDED_DRIVER_CLASS, e);
+			}
+			// Create / Connect to the database
+			conn = DriverManager.getConnection(buildCreateJDBCUrl());
+			isActive = true;
+		} catch (IOException | SQLException e) {
 			// Reset the Derby System Home property
 			resetDerbyHome();
-			throw new SQLException(
-					"Unable to initialize Derby driver class: " + DerbyConstants.DERBY_EMBEDDED_DRIVER_CLASS, e);
-		}
-		// Create / Connect to the database
-		final Connection conn = DriverManager.getConnection(buildCreateJDBCUrl());
-		isActive = true;
-		try {
-			// Post init scripts
-			executePostInitScripts(conn);
+			throw e;
 		} finally {
 			DerbyUtils.closeQuietly(conn);
 		}
+
+		// Post init scripts
+		executePostInitScripts();
 	}
 
-	private void executePostInitScripts (final Connection conn) throws IOException {
-		final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(conn);
-		for (String postInitScript : config.getPostInitScripts()) {
-			final File scriptLogFile = new File(derbySystemHome, "post-init-"
-					+ postInitScript.replaceAll("/", "_") + ".log");
-			try {
-				final int result = scriptRunner.executeScript(postInitScript, scriptLogFile);
-				if (result != 0) {
+	private void executePostInitScripts () throws IOException, SQLException {
+		Connection conn = null;
+		try {
+			conn = createConnection();
+			final DerbyScriptRunner scriptRunner = new DerbyScriptRunner(conn);
+			for (String postInitScript : config.getPostInitScripts()) {
+				final File scriptLogFile = new File(derbySystemHome, "post-init-"
+						+ postInitScript.replaceAll("/", "_") + ".log");
+				try {
+					final int result = scriptRunner.executeScript(postInitScript, scriptLogFile);
+					if (result != 0) {
+						log.warn(FileUtils.readFileToString(scriptLogFile));
+						throw new IOException("Exceptions exist in script. See output for details");
+					}
+				} catch (IOException e) {
 					log.warn(FileUtils.readFileToString(scriptLogFile));
 					throw new IOException("Exceptions exist in script. See output for details");
 				}
-			} catch (IOException e) {
-				log.warn(FileUtils.readFileToString(scriptLogFile));
-				throw new IOException("Exceptions exist in script. See output for details");
 			}
+		} finally {
+			DerbyUtils.closeQuietly(conn);
 		}
 	}
 	
@@ -417,5 +441,95 @@ public class EmbeddedDerbyResource extends ExternalResource implements Closeable
 		ensureActive();
 		backupOperationsHelper.backupLiveDatabase(backupDir, waitForTransactions, enableArchiveLogging,
 				deleteArchivedLogs);
+	}
+	
+	/**
+	 * Returns the {@link EmbeddedDerbyDataSourceFactory} instance for this resource from which data sources can be
+	 * created / cached. The factory returned supports caching <code>ataSource</code>s created. It also checks the
+	 * state of <code>this</code> instance and will throw {@link IllegalStateException} if the resource is not
+	 * {@link #isActive()}.
+	 * 
+	 * @return Factory to create data sources for this instance.
+	 */
+	public EmbeddedDerbyDataSourceFactory getDataSourceFactory () {
+		return dataSourceFactory;
+	}
+	
+	private class EmbeddedDerbyDataSourceFactoryImpl implements EmbeddedDerbyDataSourceFactory {
+
+		private EmbeddedDataSource embeddedDataSource;
+		private EmbeddedConnectionPoolDataSource embeddedConnectionPoolDataSource;
+		private EmbeddedXADataSource embeddedXADataSource;
+
+		/* (non-Javadoc)
+		 * @see org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory#getDataSource(boolean)
+		 */
+		@Override
+		public DataSource getDataSource (final boolean cachedInstance) {
+			ensureActive();
+			if (cachedInstance) {
+				if (null == embeddedDataSource) {
+					embeddedDataSource = createEmbeddedDataSource();
+				}
+				return embeddedDataSource;
+			}
+			return createEmbeddedDataSource();
+		}
+
+		private EmbeddedDataSource createEmbeddedDataSource () {
+			final EmbeddedDataSource embeddedDs = new EmbeddedDataSource();
+			setupDataSource(embeddedDs);
+			return embeddedDs;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory#getConnectionPoolDataSource(boolean)
+		 */
+		@Override
+		public ConnectionPoolDataSource getConnectionPoolDataSource (final boolean cachedInstance) {
+			ensureActive();
+			if (cachedInstance) {
+				if (null == embeddedConnectionPoolDataSource) {
+					embeddedConnectionPoolDataSource = createEmbeddedConnectionPoolDataSource();
+				}
+				return embeddedConnectionPoolDataSource;
+			}
+			return createEmbeddedConnectionPoolDataSource();
+		}
+
+		private EmbeddedConnectionPoolDataSource createEmbeddedConnectionPoolDataSource () {
+			final EmbeddedConnectionPoolDataSource connectionPoolDataSource = new EmbeddedConnectionPoolDataSource();
+			setupDataSource(connectionPoolDataSource);
+			return connectionPoolDataSource;
+		}
+
+		/* (non-Javadoc)
+		 * @see org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory#getXADataSource(boolean)
+		 */
+		@Override
+		public XADataSource getXADataSource (final boolean cachedInstance) {
+			ensureActive();
+			if (cachedInstance) {
+				if (null == embeddedXADataSource) {
+					embeddedXADataSource = createEmbeddedXADataSource();
+				}
+				return embeddedXADataSource;
+			}
+			return createEmbeddedXADataSource();
+		}
+
+		private EmbeddedXADataSource createEmbeddedXADataSource () {
+			final EmbeddedXADataSource xaDataSource = new EmbeddedXADataSource();
+			setupDataSource(xaDataSource);
+			return xaDataSource;
+		}
+
+		private void setupDataSource (final EmbeddedDataSourceInterface dataSource) {
+			final StringBuilder dsDatabaseName = new StringBuilder()
+					.append(config.getSubSubProtocol().datasourceDatabaseNamePrefix());
+			appendDbLocNameToUrl(dsDatabaseName);
+			dataSource.setDatabaseName(dsDatabaseName.toString());
+		}
+
 	}
 }

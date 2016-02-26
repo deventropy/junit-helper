@@ -45,9 +45,11 @@ public enum JdbcDerbySubSubProtocol {
 	Classpath ("classpath");
 	
 	private final String jdbcConnectionPrefix;
+	private final String datasourceDatabaseNamePrefix;
 	
 	JdbcDerbySubSubProtocol (final String subprotocolcode) {
 		jdbcConnectionPrefix = DerbyConstants.DERBY_JDBC_URL_PREFIX + subprotocolcode + ":";
+		datasourceDatabaseNamePrefix = subprotocolcode + ":";
 	}
 	
 	/**
@@ -57,5 +59,15 @@ public enum JdbcDerbySubSubProtocol {
 	 */
 	public String jdbcConnectionPrefix () {
 		return jdbcConnectionPrefix;
+	}
+	
+	/**
+	 * Returns the database name prefix (with the sub-sub protocol) as required to set up a datasource for the database.
+	 * This does not include the {@value DerbyConstants#DERBY_JDBC_URL_PREFIX} prefix.
+	 * 
+	 * @return The database name prefix
+	 */
+	public String datasourceDatabaseNamePrefix () {
+		return datasourceDatabaseNamePrefix;
 	}
 }

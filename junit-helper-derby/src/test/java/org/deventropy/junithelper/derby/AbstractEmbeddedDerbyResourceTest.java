@@ -42,13 +42,28 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 	 */
 	protected void simpleDb01Check01 (final EmbeddedDerbyResource embeddedDerbyResource) throws SQLException {
 		Connection connection = null;
-		PreparedStatement stmt = null;
-		ResultSet rs = null;
 
 		try {
 			connection = embeddedDerbyResource.createConnection();
 			assertNotNull(connection);
 	
+			simpleDb01Check01(connection);
+
+		} finally {
+			DerbyUtils.closeQuietly(connection);
+		}
+	}
+	
+	/**
+	 * Runs simple checks on the contents of the database; based on SimpeDb01 setup.
+	 * @param connection The derby connection
+	 * @throws SQLException SQL exception running the checks
+	 */
+	protected void simpleDb01Check01 (final Connection connection) throws SQLException {
+		PreparedStatement stmt = null;
+		ResultSet rs = null;
+
+		try {
 			// Check a value
 			stmt = connection.prepareStatement("SELECT * FROM PEOPLE WHERE PERSON = ?");
 			stmt.setString(1, "John Doe");
@@ -63,7 +78,6 @@ public abstract class AbstractEmbeddedDerbyResourceTest {
 		} finally {
 			DerbyUtils.closeQuietly(rs);
 			DerbyUtils.closeQuietly(stmt);
-			DerbyUtils.closeQuietly(connection);
 		}
 	}
 	

@@ -31,6 +31,8 @@ limitations under the License.
 		* [Database in a Jar](./configuration.html#jar)
 		* [Database in the Classpath](./configuration.html#classpath)
 	* [Post Init Scripts](./configuration.html#post-init-script)
+* [Using DataSources](./datasources.html)
+	* [EmbeddedDerbyDataSourceFactory](./datasources.html#EmbeddedDerbyDataSourceFactory)
 * [Backing up and Restoring a Database](./backup-restore.html)
 	* [Online Backup](./backup-restore.html#online-backup)
 	* [Using a Backup](./backup-restore.html#using-backup)

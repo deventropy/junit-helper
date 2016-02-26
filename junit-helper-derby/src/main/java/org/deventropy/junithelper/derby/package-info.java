@@ -22,6 +22,14 @@
  * which can be added to a test class using the {@link org.junit.Rule} or {@link org.junit.ClassRule} annotation,
  * with initialization scripts; and JUnit managing the initialization and de-initialization of the database instance.
  * 
+ * <p>Embedded instances can be accessed using standard JDBC connections created through the
+ * {@link java.sql.DriverManager}, and convenience methods are provided to get the JDBC connection URL (see
+ * {@link org.deventropy.junithelper.derby.EmbeddedDerbyResource#getJdbcUrl()}. The implementation also supports
+ * creating {@link javax.sql.DataSource}s to connect to the database. An
+ * {@link org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory} is returned by the resource in the
+ * {@link org.deventropy.junithelper.derby.EmbeddedDerbyResource#getDataSourceFactory()} method to enable creating
+ * datasources.
+ * 
  * <p>The runtime instance can be configured using the {@link org.deventropy.junithelper.derby.DerbyResourceConfig}.
  * 
  * <p>The library also comes with some utilities to manage the running instance
