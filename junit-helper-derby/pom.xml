@@ -94,5 +94,6 @@ limitations under the License.
 		<!-- The Derby Major version is defined in the parent so it can be reused with the Javadoc URLs -->
 		<derby.version>${derby.version.major}.1.1</derby.version>
 		<test.reuse.forks>false</test.reuse.forks>
+		<codacy.project.prefix>junit-helper-derby/src/main/java/</codacy.project.prefix>
 	</properties>
 </project>
