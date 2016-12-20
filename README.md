@@ -1,5 +1,7 @@
 # JUnit Helper Utilities / Resources
 
+
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/8f5779cce1c9479fa87316349321e9dd)](https://www.codacy.com/app/deventropy/junit-helper?utm_source=github.com&utm_medium=referral&utm_content=deventropy/junit-helper&utm_campaign=badger)
 [![License](https://img.shields.io/github/license/deventropy/junit-helper.svg)](./LICENSE)
 [![Build Status](https://travis-ci.org/deventropy/junit-helper.svg?branch=master)](https://travis-ci.org/deventropy/junit-helper)
 [![Coverage Status](https://coveralls.io/repos/github/deventropy/junit-helper/badge.svg?branch=master)](https://coveralls.io/github/deventropy/junit-helper)
