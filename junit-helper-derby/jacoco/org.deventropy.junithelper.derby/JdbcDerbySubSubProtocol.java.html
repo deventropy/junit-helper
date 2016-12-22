@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>JdbcDerbySubSubProtocol.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JUnit Helper :: Derby</a> &gt; <a href="index.source.html" class="el_package">org.deventropy.junithelper.derby</a> &gt; <span class="el_source">JdbcDerbySubSubProtocol.java</span></div><h1>JdbcDerbySubSubProtocol.java</h1><pre class="source lang-java linenums">/* 
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JdbcDerbySubSubProtocol.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Deventropy JUnit Helper :: Derby</a> &gt; <a href="index.source.html" class="el_package">org.deventropy.junithelper.derby</a> &gt; <span class="el_source">JdbcDerbySubSubProtocol.java</span></div><h1>JdbcDerbySubSubProtocol.java</h1><pre class="source lang-java linenums">/* 
  * Copyright 2015 Development Entropy (deventropy.org) Contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -22,7 +22,7 @@ package org.deventropy.junithelper.derby;
  * 
  * @author Bindul Bhowmik
  */
-<span class="pc" id="L25">public enum JdbcDerbySubSubProtocol {</span>
+<span class="fc" id="L25">public enum JdbcDerbySubSubProtocol {</span>
 
 	/**
 	 * In Memory database.
@@ -37,24 +37,20 @@ package org.deventropy.junithelper.derby;
 	/**
 	 * Read only database in a Jar file.
 	 */
-<span class="fc" id="L40">	Jar (&quot;jar&quot;);</span>
+<span class="fc" id="L40">	Jar (&quot;jar&quot;),</span>
 	
-	/*
-	 * Future support:
-	 * 
-		/**
-		 * Read only database on the classpath
-		 * /
-		classpath,
+	/**
+	 * Read only database on the classpath.
 	 */
-	
-	private static final String JDBC_CONN_STR_PREFIX = &quot;jdbc:derby:&quot;;
+<span class="fc" id="L45">	Classpath (&quot;classpath&quot;);</span>
 	
 	private final String jdbcConnectionPrefix;
+	private final String datasourceDatabaseNamePrefix;
 	
-<span class="fc" id="L55">	JdbcDerbySubSubProtocol (final String subprotocolcode) {</span>
-<span class="fc" id="L56">		jdbcConnectionPrefix = JDBC_CONN_STR_PREFIX + subprotocolcode + &quot;:&quot;;</span>
-<span class="fc" id="L57">	}</span>
+<span class="fc" id="L50">	JdbcDerbySubSubProtocol (final String subprotocolcode) {</span>
+<span class="fc" id="L51">		jdbcConnectionPrefix = DerbyConstants.DERBY_JDBC_URL_PREFIX + subprotocolcode + &quot;:&quot;;</span>
+<span class="fc" id="L52">		datasourceDatabaseNamePrefix = subprotocolcode + &quot;:&quot;;</span>
+<span class="fc" id="L53">	}</span>
 	
 	/**
 	 * Get the JDBC connection string prefix to construct a JDBC connection string with this sub-protocol.
@@ -62,7 +58,17 @@ package org.deventropy.junithelper.derby;
 	 * @return A string of the format &lt;code&gt;jdbc:derby:sub-protocol:&lt;/code&gt;
 	 */
 	public String jdbcConnectionPrefix () {
-<span class="fc" id="L65">		return jdbcConnectionPrefix;</span>
+<span class="fc" id="L61">		return jdbcConnectionPrefix;</span>
+	}
+	
+	/**
+	 * Returns the database name prefix (with the sub-sub protocol) as required to set up a datasource for the database.
+	 * This does not include the {@value DerbyConstants#DERBY_JDBC_URL_PREFIX} prefix.
+	 * 
+	 * @return The database name prefix
+	 */
+	public String datasourceDatabaseNamePrefix () {
+<span class="fc" id="L71">		return datasourceDatabaseNamePrefix;</span>
 	}
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DerbyBackupOperationsHelper.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Deventropy JUnit Helper :: Derby</a> &gt; <a href="index.source.html" class="el_package">org.deventropy.junithelper.derby.util</a> &gt; <span class="el_source">DerbyBackupOperationsHelper.java</span></div><h1>DerbyBackupOperationsHelper.java</h1><pre class="source lang-java linenums">/* 
+ * Copyright 2016 Development Entropy (deventropy.org) Contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.deventropy.junithelper.derby.util;
+
+import java.io.File;
+import java.sql.CallableStatement;
+import java.sql.Connection;
+import java.sql.SQLException;
+
+import org.deventropy.junithelper.derby.DerbyConstants;
+import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.deventropy.shared.utils.ArgumentCheck;
+
+/**
+ * Helper class used by the {@link EmbeddedDerbyResource} to implement online backup operations on the instance.
+ * 
+ * @author Bindul Bhowmik
+ */
+public class DerbyBackupOperationsHelper {
+	
+	private final EmbeddedDerbyResource embeddedDerbyResource;
+	
+	/**
+	 * Initializes the backup operations helper with the derby resource.
+	 * @param embeddedDerbyResource The derby resource on which backup operations will be invoked.
+	 */
+<span class="fc" id="L40">	public DerbyBackupOperationsHelper (final EmbeddedDerbyResource embeddedDerbyResource) {</span>
+<span class="fc" id="L41">		this.embeddedDerbyResource = embeddedDerbyResource;</span>
+<span class="fc" id="L42">	}</span>
+
+	/**
+	 * Perform an online backup of the running instance. The online backup uses either the
+	 * &lt;code&gt;SYSCS_UTIL.SYSCS_BACKUP_DATABASE&lt;/code&gt; if &lt;code&gt;enableArchiveLogging&lt;/code&gt; is set to &lt;code&gt;false&lt;/code&gt;
+	 * or &lt;code&gt;SYSCS_UTIL.SYSCS_BACKUP_DATABASE_AND_ENABLE_LOG_ARCHIVE_MODE&lt;/code&gt; otherwise. If the
+	 * &lt;code&gt;waitForTransactions&lt;/code&gt; parameter is set to &lt;code&gt;false&lt;/code&gt; the &lt;code&gt;_NOWAIT&lt;/code&gt; versions of the
+	 * procedures are used.
+	 * 
+	 * &lt;p&gt;For more information on backing up Derby database, see
+	 * &lt;a href=&quot;http://db.apache.org/derby/docs/10.12/adminguide/cadminhubbkup01.html&quot;&gt;Using the backup procedures to
+	 * perform an online backup&lt;/a&gt; in the Derby Administrators guide.
+	 * 
+	 * @param backupDir The directory to which the database should be backed up.
+	 * @param waitForTransactions Wait for running transactions to complete.
+	 * @param enableArchiveLogging If archive logging should be enabled for the database.
+	 * @param deleteArchivedLogs Ask Derby to delete the old archive logs after the backup is successful.
+	 * @throws SQLException Exception from Derby when the backup fails.
+	 */
+	public void backupLiveDatabase (final File backupDir, final boolean waitForTransactions,
+			final boolean enableArchiveLogging, final boolean deleteArchivedLogs) throws SQLException {
+<span class="fc" id="L63">		ArgumentCheck.notNull(backupDir, &quot;Backup directory&quot;);</span>
+<span class="fc bfc" id="L64" title="All 2 branches covered.">		if (enableArchiveLogging) {</span>
+<span class="fc" id="L65">			backupLiveDatabaseArchiveLog(backupDir, waitForTransactions, deleteArchivedLogs);</span>
+		} else {
+<span class="fc" id="L67">			backupLiveDatabaseNoArchiveLog(backupDir, waitForTransactions);</span>
+		}
+<span class="fc" id="L69">	}</span>
+	
+	private void backupLiveDatabaseNoArchiveLog (final File backupDir, final boolean waitForTransactions)
+			throws SQLException {
+<span class="fc" id="L73">		Connection connection = null;</span>
+<span class="fc" id="L74">		CallableStatement callableStatement = null;</span>
+
+		try {
+<span class="fc" id="L77">			connection = embeddedDerbyResource.createConnection();</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">			callableStatement = connection.prepareCall(</span>
+					waitForTransactions ? DerbyConstants.SYSPROC_BACKUP_DB : DerbyConstants.SYSPROC_BACKUP_DB_NOWAIT);
+<span class="fc" id="L80">			callableStatement.setString(1, backupDir.getAbsolutePath());</span>
+<span class="fc" id="L81">			callableStatement.execute();</span>
+		} finally {
+<span class="fc" id="L83">			DerbyUtils.closeQuietly(callableStatement);</span>
+<span class="fc" id="L84">			DerbyUtils.closeQuietly(connection);</span>
+<span class="fc" id="L85">		}</span>
+<span class="fc" id="L86">	}</span>
+	
+	private void backupLiveDatabaseArchiveLog (final File backupDir, final boolean waitForTransactions,
+			final boolean deleteArchivedLogs) throws SQLException {
+<span class="fc" id="L90">		Connection connection = null;</span>
+<span class="fc" id="L91">		CallableStatement callableStatement = null;</span>
+
+		try {
+<span class="fc" id="L94">			connection = embeddedDerbyResource.createConnection();</span>
+<span class="fc bfc" id="L95" title="All 2 branches covered.">			callableStatement = connection</span>
+<span class="fc" id="L96">					.prepareCall(waitForTransactions ? DerbyConstants.SYSPROC_BACKUP_DB_ENABLE_LOG_ARCHIVE</span>
+							: DerbyConstants.SYSPROC_BACKUP_DB_ENABLE_LOG_ARCHIVE_NOWAIT);
+<span class="fc" id="L98">			callableStatement.setString(1, backupDir.getAbsolutePath());</span>
+<span class="fc bfc" id="L99" title="All 2 branches covered.">			callableStatement.setInt(2, deleteArchivedLogs ? 1 : 0);</span>
+<span class="fc" id="L100">			callableStatement.execute();</span>
+		} finally {
+<span class="fc" id="L102">			DerbyUtils.closeQuietly(callableStatement);</span>
+<span class="fc" id="L103">			DerbyUtils.closeQuietly(connection);</span>
+<span class="fc" id="L104">		}</span>
+<span class="fc" id="L105">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

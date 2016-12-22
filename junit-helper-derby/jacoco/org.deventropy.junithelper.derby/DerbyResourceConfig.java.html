@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>DerbyResourceConfig.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JUnit Helper :: Derby</a> &gt; <a href="index.source.html" class="el_package">org.deventropy.junithelper.derby</a> &gt; <span class="el_source">DerbyResourceConfig.java</span></div><h1>DerbyResourceConfig.java</h1><pre class="source lang-java linenums">/* 
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DerbyResourceConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Deventropy JUnit Helper :: Derby</a> &gt; <a href="index.source.html" class="el_package">org.deventropy.junithelper.derby</a> &gt; <span class="el_source">DerbyResourceConfig.java</span></div><h1>DerbyResourceConfig.java</h1><pre class="source lang-java linenums">/* 
  * Copyright 2015 Development Entropy (deventropy.org) Contributors
  * 
  * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
@@ -15,6 +15,7 @@
  */
 package org.deventropy.junithelper.derby;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -41,7 +42,14 @@ import org.deventropy.shared.utils.ArgumentCheck;
  * 
  * @author Bindul Bhowmik
  */
-<span class="fc" id="L44">public class DerbyResourceConfig {</span>
+<span class="fc" id="L45">public class DerbyResourceConfig {</span>
+	
+	// ---------------------------------------------------------------------------------- Database location and protocol
+	
+	/**
+	 * The database subsubprotocol for the JDBC URL
+	 */
+	private JdbcDerbySubSubProtocol subSubProtocol;
 	
 	/**
 	 * This is a multi purpose field; it is used as the end of the JDBC URL.
@@ -58,12 +66,36 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 */
 	private String jarDatabaseJarFile;
 	
-	// TODO have combined setters for the sub protocols (with other required values)
-	private JdbcDerbySubSubProtocol subSubProtocol;
+	/**
+	 * Skip the &lt;code&gt;create=true&lt;/code&gt; attribute in the connection URL
+	 */
+<span class="fc" id="L72">	private boolean directoryDatabaseSkipCreate = false;</span>
+	
+	// --------------------------------------------- Parameters to control restoring a DB or creating one from a backup.
+	
+	/**
+	 * How are we restoring
+	 */
+	private DbCreateFromRestroreMode dbCreateFromRestoreMode;
+	
+	/**
+	 * Where are we restoring from
+	 */
+	private File dbCreateFromRestoreFrom;
+	
+	/**
+	 * Where are the archive logs
+	 */
+	private File dbRecoveryLogDevice;
+	
+	// Logging controls
 	
 	// TODO Complete configuring logging
 	private ErrorLoggingMode errorLoggingMode;
 	
+	/**
+	 * Post init scripts
+	 */
 	private List&lt;String&gt; postInitScripts;
 	
 	/**
@@ -73,12 +105,16 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return A config setup with defaults.
 	 */
 	public static DerbyResourceConfig buildDefault () {
-<span class="fc" id="L76">		final DerbyResourceConfig config = new DerbyResourceConfig();</span>
-<span class="fc" id="L77">		config.useInMemoryDatabase();</span>
-<span class="fc" id="L78">		config.errorLoggingMode = getDefaultErrorLoggingMode();</span>
+<span class="fc" id="L108">		final DerbyResourceConfig config = new DerbyResourceConfig();</span>
+<span class="fc" id="L109">		config.useInMemoryDatabase();</span>
+<span class="fc" id="L110">		config.errorLoggingMode = getDefaultErrorLoggingMode();</span>
 		// TODO Complete setting defaults
-<span class="fc" id="L80">		return config;</span>
+<span class="fc" id="L112">		return config;</span>
 	}
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Database location and protocol
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 
 	/**
 	 * Returns the Jar database jar file path. Right now only used for the &lt;code&gt;:jar:&lt;/code&gt; protocol for the jar file.
@@ -90,7 +126,7 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * in a zip/jar file&lt;/a&gt;
 	 */
 	public String getJarDatabaseJarFile () {
-<span class="fc" id="L93">		return jarDatabaseJarFile;</span>
+<span class="fc" id="L129">		return jarDatabaseJarFile;</span>
 	}
 	
 	/**
@@ -109,15 +145,25 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @see &lt;a href=&quot;http://db.apache.org/derby/docs/10.11/ref/rrefjdbc37352.html&quot;&gt;Syntax of db connection URLs&lt;/a&gt;
 	 */
 	public String getDatabasePath () {
-<span class="fc" id="L112">		return databasePath;</span>
+<span class="fc" id="L148">		return databasePath;</span>
 	}
 	
+	/**
+	 * For a database using the {@link JdbcDerbySubSubProtocol#Directory} subsubprotocol, skip the
+	 * &lt;code&gt;create=true&lt;/code&gt; attribute.
+	 * 
+	 * @return the directoryDatabaseSkipCreate
+	 */
+	public boolean isDirectoryDatabaseSkipCreate () {
+<span class="fc" id="L158">		return directoryDatabaseSkipCreate;</span>
+	}
+
 	/**
 	 * Returns the default database name value, which is a UUID string.
 	 * @return The default database name.
 	 */
 	public static String getDefaultDatabasePathName () {
-<span class="fc" id="L120">		return UUID.randomUUID().toString();</span>
+<span class="fc" id="L166">		return UUID.randomUUID().toString();</span>
 	}
 	
 	/**
@@ -127,10 +173,11 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useInMemoryDatabase () {
-<span class="fc" id="L130">		resetSubSubProtocolSpecificValues();</span>
-<span class="fc" id="L131">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
-<span class="fc" id="L132">		this.databasePath = getDefaultDatabasePathName();</span>
-<span class="fc" id="L133">		return this;</span>
+<span class="fc" id="L176">		resetSubSubProtocolSpecificValues();</span>
+
+<span class="fc" id="L178">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
+<span class="fc" id="L179">		this.databasePath = getDefaultDatabasePathName();</span>
+<span class="fc" id="L180">		return this;</span>
 	}
 	
 	/**
@@ -140,11 +187,12 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useInMemoryDatabase (final String databaseName) {
-<span class="fc" id="L143">		ArgumentCheck.notNullOrEmpty(databaseName, &quot;database name&quot;);</span>
-<span class="fc" id="L144">		resetSubSubProtocolSpecificValues();</span>
-<span class="fc" id="L145">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
-<span class="fc" id="L146">		this.databasePath = databaseName;</span>
-<span class="fc" id="L147">		return this;</span>
+<span class="fc" id="L190">		ArgumentCheck.notNullOrEmpty(databaseName, &quot;database name&quot;);</span>
+<span class="fc" id="L191">		resetSubSubProtocolSpecificValues();</span>
+
+<span class="fc" id="L193">		this.subSubProtocol = JdbcDerbySubSubProtocol.Memory;</span>
+<span class="fc" id="L194">		this.databasePath = databaseName;</span>
+<span class="fc" id="L195">		return this;</span>
 	}
 
 	/**
@@ -154,12 +202,13 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useDatabaseInDirectory () {
-<span class="fc" id="L157">		resetSubSubProtocolSpecificValues();</span>
-<span class="fc" id="L158">		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;</span>
-<span class="fc" id="L159">		this.databasePath = getDefaultDatabasePathName();</span>
-<span class="fc" id="L160">		return this;</span>
-	}
+<span class="fc" id="L205">		resetSubSubProtocolSpecificValues();</span>
 
+<span class="fc" id="L207">		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;</span>
+<span class="fc" id="L208">		this.databasePath = getDefaultDatabasePathName();</span>
+<span class="fc" id="L209">		return this;</span>
+	}
+	
 	/**
 	 * Use the &lt;code&gt;:directory:&lt;/code&gt; Derby sub sub protocol, with the database in the specified
 	 * &lt;code&gt;directorpyDbPath&lt;/code&gt;. The path is either relative or absolute as interpreted by the Derby engine.
@@ -168,11 +217,29 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useDatabaseInDirectory (final String directorpyDbPath) {
-<span class="fc" id="L171">		ArgumentCheck.notNullOrEmpty(directorpyDbPath, &quot;database path&quot;);</span>
-<span class="fc" id="L172">		resetSubSubProtocolSpecificValues();</span>
-<span class="fc" id="L173">		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;</span>
-<span class="fc" id="L174">		this.databasePath = directorpyDbPath;</span>
-<span class="fc" id="L175">		return this;</span>
+<span class="fc" id="L220">		return useDatabaseInDirectory(directorpyDbPath, false);</span>
+	}
+
+	/**
+	 * Use the &lt;code&gt;:directory:&lt;/code&gt; Derby sub sub protocol, with the database in the specified
+	 * &lt;code&gt;directorpyDbPath&lt;/code&gt;. The path is either relative or absolute as interpreted by the Derby engine. If the
+	 * &lt;code&gt;skipCreateAttribute&lt;/code&gt; attribute is set to &lt;code&gt;true&lt;/code&gt;, the Database will be initialized without
+	 * the &lt;code&gt;create=true&lt;/code&gt; attribute.
+	 * 
+	 * @param directorpyDbPath The relative or absolute path where the database is created.
+	 * @param skipCreateAttribute Skip the &lt;code&gt;create=true&lt;/code&gt; attribute in the connection URL
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useDatabaseInDirectory (final String directorpyDbPath,
+			final boolean skipCreateAttribute) {
+
+<span class="fc" id="L236">		ArgumentCheck.notNullOrEmpty(directorpyDbPath, &quot;database path&quot;);</span>
+<span class="fc" id="L237">		resetSubSubProtocolSpecificValues();</span>
+
+<span class="fc" id="L239">		this.subSubProtocol = JdbcDerbySubSubProtocol.Directory;</span>
+<span class="fc" id="L240">		this.databasePath = directorpyDbPath;</span>
+<span class="fc" id="L241">		this.directoryDatabaseSkipCreate = skipCreateAttribute;</span>
+<span class="fc" id="L242">		return this;</span>
 	}
 
 	/**
@@ -181,19 +248,48 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * &lt;code&gt;jarFilePath&lt;/code&gt; is either relative or absolute as interpreted by the Derby engine.
 	 * 
 	 * &lt;p&gt;For more format information see &lt;a href=&quot;http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html&quot;&gt;
-	 * Accessing a read-only database in a zip/jar file&lt;/a&gt;
+	 * Accessing a read-only database in a zip/jar file&lt;/a&gt; and &lt;a
+	 * href=&quot;http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp24155.html&quot;&gt;Accessing databases from a jar or zip
+	 * file&lt;/a&gt; in the Derby Developer's guide.
 	 * 
 	 * @param jarFilePath The relative or absolute path where the jar file with the read-only database.
 	 * @param dbPath The path of the database inside the jar file.
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useJarSubSubProtocol (final String jarFilePath, final String dbPath) {
-<span class="fc" id="L191">		ArgumentCheck.notNullOrEmpty(jarFilePath, &quot;Jar database path&quot;);</span>
-<span class="fc" id="L192">		ArgumentCheck.notNullOrEmpty(dbPath, &quot;database path&quot;);</span>
-<span class="fc" id="L193">		this.subSubProtocol = JdbcDerbySubSubProtocol.Jar;</span>
-<span class="fc" id="L194">		this.jarDatabaseJarFile = jarFilePath;</span>
-<span class="fc" id="L195">		this.databasePath = dbPath;</span>
-<span class="fc" id="L196">		return this;</span>
+<span class="fc" id="L260">		ArgumentCheck.notNullOrEmpty(jarFilePath, &quot;Jar database path&quot;);</span>
+<span class="fc" id="L261">		ArgumentCheck.notNullOrEmpty(dbPath, &quot;database path&quot;);</span>
+<span class="fc" id="L262">		resetSubSubProtocolSpecificValues();</span>
+
+<span class="fc" id="L264">		this.subSubProtocol = JdbcDerbySubSubProtocol.Jar;</span>
+<span class="fc" id="L265">		this.jarDatabaseJarFile = jarFilePath;</span>
+<span class="fc" id="L266">		this.databasePath = dbPath;</span>
+<span class="fc" id="L267">		return this;</span>
+	}
+	
+	/**
+	 * Use the &lt;code&gt;:classpath:&lt;/code&gt; Derby sub sub protocol. This allows access to a read only database in the
+	 * classpath (see Derby documentation on &lt;a href=&quot;http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp91854.html&quot;
+	 * &gt;Accessing databases from the classpath&lt;/a&gt;). The database can be either in a Jar file or directly in the
+	 * classpath.
+	 * 
+	 * &lt;p&gt;The &lt;code&gt;dbPath&lt;/code&gt; parameter designates the path to the database in the classpath. All databaseNames must
+	 * begin with at least a slash, because you specify them &quot;relative&quot; to the classpath directory or archive. See also
+	 * &lt;a href=&quot;http://db.apache.org/derby/docs/10.12/ref/rrefjdbc37352.html&quot;&gt;Syntax of database connection URLs for
+	 * applications with embedded databases&lt;/a&gt; and &lt;a
+	 * href=&quot;http://db.apache.org/derby/docs/10.12/devguide/tdevdeploy39856.html&quot;&gt;Accessing databases within a jar file
+	 * using the classpath&lt;/a&gt;.
+	 * 
+	 * @param dbPath The path of the database in the classpath
+	 * @return This instance
+	 */
+	public DerbyResourceConfig useClasspathSubSubProtocol (final String dbPath) {
+<span class="fc" id="L287">		ArgumentCheck.notNullOrEmpty(dbPath, &quot;database path&quot;);</span>
+<span class="fc" id="L288">		resetSubSubProtocolSpecificValues();</span>
+
+<span class="fc" id="L290">		this.subSubProtocol = JdbcDerbySubSubProtocol.Classpath;</span>
+<span class="fc" id="L291">		this.databasePath = dbPath;</span>
+<span class="fc" id="L292">		return this;</span>
 	}
 	
 	/**
@@ -202,7 +298,7 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return A valid Derby sub-sub protocol
 	 */
 	public JdbcDerbySubSubProtocol getSubSubProtocol () {
-<span class="fc" id="L205">		return this.subSubProtocol;</span>
+<span class="fc" id="L301">		return this.subSubProtocol;</span>
 	}
 	
 	/**
@@ -210,13 +306,129 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return {@link JdbcDerbySubSubProtocol#Memory}
 	 */
 	public static JdbcDerbySubSubProtocol getDefaultSubSubProtocol () {
-<span class="fc" id="L213">		return JdbcDerbySubSubProtocol.Memory;</span>
+<span class="fc" id="L309">		return JdbcDerbySubSubProtocol.Memory;</span>
 	}
 
 	private void resetSubSubProtocolSpecificValues () {
-<span class="fc" id="L217">		this.databasePath = null;</span>
-<span class="fc" id="L218">		this.jarDatabaseJarFile = null;</span>
-<span class="fc" id="L219">	}</span>
+<span class="fc" id="L313">		this.databasePath = null;</span>
+<span class="fc" id="L314">		this.jarDatabaseJarFile = null;</span>
+<span class="fc" id="L315">		this.directoryDatabaseSkipCreate = false;</span>
+<span class="fc" id="L316">	}</span>
+	
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Database location and protocol
+	// -----------------------------------------------------------------------------------------------------------------
+
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Parameters to control restoring a DB or creating one from a backup.
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	
+	/**
+	 * Controls if the database should be created or restored from a backup. A &lt;code&gt;null&lt;/code&gt; value returned from
+	 * this method means no restore. If this is not null, the location of the backup database is returned from
+	 * {@link #getDbCreateFromRestoreFrom()}; and for roll-forward recovery, the log device is at
+	 * {@link #getDbRecoveryLogDevice()}.
+	 * 
+	 * &lt;p&gt;See the &lt;a href=&quot;http://db.apache.org/derby/docs/10.12/adminguide/cadminhubbkup98797.html&quot;&gt;Backing up and
+	 * restoring a database&lt;/a&gt; section of the Derby Administration guide for more information on means to backup and
+	 * restore a database.
+	 * 
+	 * @see EmbeddedDerbyResource#backupLiveDatabase(File, boolean, boolean, boolean)
+	 * 
+	 * @return The mode to create / restore a database from a backup.
+	 */
+	public DbCreateFromRestroreMode getDbCreateFromRestoreMode () {
+<span class="fc" id="L341">		return dbCreateFromRestoreMode;</span>
+	}
+
+	/**
+	 * The location of the database backup to use. This is usually a full backup of the database.
+	 * 
+	 * @see #getDbCreateFromRestoreMode()
+	 * 
+	 * @return The database backup location.
+	 */
+	public File getDbCreateFromRestoreFrom () {
+<span class="fc" id="L352">		return dbCreateFromRestoreFrom;</span>
+	}
+
+	/**
+	 * Archive log location for roll-forward database recovery. See
+	 * &lt;a href=&quot;http://db.apache.org/derby/docs/10.12/adminguide/cadminrollforward.html&quot;&gt;Roll-forward recovery&lt;/a&gt; in
+	 * the Derby administration guide to learn more about archive logging.
+	 * 
+	 * @return The Database directory from which archive logs are available.
+	 */
+	public File getDbRecoveryLogDevice () {
+<span class="fc" id="L363">		return dbRecoveryLogDevice;</span>
+	}
+	
+	/**
+	 * Restore a database from a backup location. If a database with the same name exists, the system will delete the
+	 * database, copy it from the backup and restart it.
+	 * 
+	 * @param dbBackupDir The backup location.
+	 * @return This instance.
+	 */
+	public DerbyResourceConfig restoreDatabaseFrom (final File dbBackupDir) {
+<span class="fc" id="L374">		ArgumentCheck.notNull(dbBackupDir, &quot;Database backup directory&quot;);</span>
+<span class="fc" id="L375">		resetDbCreateRestoreConfigs ();</span>
+
+<span class="fc" id="L377">		this.dbCreateFromRestoreMode = DbCreateFromRestroreMode.RestoreFrom;</span>
+<span class="fc" id="L378">		this.dbCreateFromRestoreFrom = dbBackupDir;</span>
+<span class="fc" id="L379">		return this;</span>
+	}
+	
+	/**
+	 * Create a new database from a backup copy. If there is already a database with the same name in derby.system.home,
+	 * an error will occur and the existing database will be left intact.
+	 * 
+	 * @param dbBackupDir The location of the database backup.
+	 * @return This instance.
+	 */
+	public DerbyResourceConfig createDatabaseFrom (final File dbBackupDir) {
+<span class="fc" id="L390">		ArgumentCheck.notNull(dbBackupDir, &quot;Database backup directory&quot;);</span>
+<span class="fc" id="L391">		resetDbCreateRestoreConfigs ();</span>
+
+<span class="fc" id="L393">		this.dbCreateFromRestoreMode = DbCreateFromRestroreMode.CreateFrom;</span>
+<span class="fc" id="L394">		this.dbCreateFromRestoreFrom = dbBackupDir;</span>
+<span class="fc" id="L395">		return this;</span>
+	}
+	
+	/**
+	 * Restore a database with roll forward recovery, optionally with archive logs. To see the steps involved in
+	 * performing a roll forward recovery, see
+	 * &lt;a href=&quot;http://db.apache.org/derby/docs/10.12/adminguide/cadminrollforward.html&quot;&gt;Roll Forward Recovery&lt;/a&gt; in
+	 * the Derby Administrative Guide.
+	 * 
+	 * @param dbBackupDir The database backup location.
+	 * @param recoveryLogDevice The archive log location.
+	 * @return This instance.
+	 */
+	public DerbyResourceConfig recoverDatabaseFrom (final File dbBackupDir, final File recoveryLogDevice) {
+<span class="fc" id="L409">		ArgumentCheck.notNull(dbBackupDir, &quot;Database backup directory&quot;);</span>
+<span class="fc" id="L410">		ArgumentCheck.notNull(recoveryLogDevice, &quot;Recovery log device&quot;);</span>
+<span class="fc" id="L411">		resetDbCreateRestoreConfigs ();</span>
+
+<span class="fc" id="L413">		this.dbCreateFromRestoreMode = DbCreateFromRestroreMode.RollForwardRecoveryFrom;</span>
+<span class="fc" id="L414">		this.dbCreateFromRestoreFrom = dbBackupDir;</span>
+<span class="fc" id="L415">		this.dbRecoveryLogDevice = recoveryLogDevice;</span>
+<span class="fc" id="L416">		return this;</span>
+	}
+	
+	private void resetDbCreateRestoreConfigs () {
+<span class="fc" id="L420">		this.dbCreateFromRestoreMode = null;</span>
+<span class="fc" id="L421">		this.dbCreateFromRestoreFrom = null;</span>
+<span class="fc" id="L422">		this.dbRecoveryLogDevice = null;</span>
+<span class="fc" id="L423">	}</span>
+
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Parameters to control restoring a DB or creating one from a backup.
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Logging controls
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	
 	/**
 	 * Sets the {@link #getErrorLoggingMode()} value to {@link ErrorLoggingMode#Null}; and clears other logging
@@ -225,9 +437,9 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useDevNullErrorLogging () {
-<span class="fc" id="L228">		this.errorLoggingMode = ErrorLoggingMode.Null;</span>
+<span class="fc" id="L440">		this.errorLoggingMode = ErrorLoggingMode.Null;</span>
 		//TODO clean out other values?
-<span class="fc" id="L230">		return this;</span>
+<span class="fc" id="L442">		return this;</span>
 	}
 	
 	/**
@@ -237,9 +449,9 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return This instance
 	 */
 	public DerbyResourceConfig useDefaultErrorLogging () {
-<span class="fc" id="L240">		this.errorLoggingMode = ErrorLoggingMode.Default;</span>
+<span class="fc" id="L452">		this.errorLoggingMode = ErrorLoggingMode.Default;</span>
 		//TODO clean out other values?
-<span class="fc" id="L242">		return this;</span>
+<span class="fc" id="L454">		return this;</span>
 	}
 	
 	/**
@@ -247,7 +459,7 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return the configured error logging mode
 	 */
 	public ErrorLoggingMode getErrorLoggingMode () {
-<span class="fc" id="L250">		return errorLoggingMode;</span>
+<span class="fc" id="L462">		return errorLoggingMode;</span>
 	}
 	
 	/**
@@ -255,18 +467,26 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return {@link ErrorLoggingMode#Default}
 	 */
 	public static ErrorLoggingMode getDefaultErrorLoggingMode () {
-<span class="fc" id="L258">		return ErrorLoggingMode.Default;</span>
+<span class="fc" id="L470">		return ErrorLoggingMode.Default;</span>
 	}
+	
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Logging controls
+	// -----------------------------------------------------------------------------------------------------------------
+	
+	// -----------------------------------------------------------------------------------------------------------------
+	// START: Post init scripts
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
 	
 	/**
 	 * Gets the configured post init scripts in the config; or an empty list.
 	 * @return Post init scripts to execute
 	 */
 	public List&lt;String&gt; getPostInitScripts () {
-<span class="fc bfc" id="L266" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
-<span class="fc" id="L267">			return Collections.emptyList();</span>
+<span class="fc bfc" id="L486" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
+<span class="fc" id="L487">			return Collections.emptyList();</span>
 		}
-<span class="fc" id="L269">		return postInitScripts;</span>
+<span class="fc" id="L489">		return postInitScripts;</span>
 	}
 	
 	/**
@@ -280,12 +500,16 @@ import org.deventropy.shared.utils.ArgumentCheck;
 	 * @return this object
 	 */
 	public DerbyResourceConfig addPostInitScript (final String postInitScript) {
-<span class="fc" id="L283">		ArgumentCheck.notNullOrEmpty(postInitScript, &quot;Post Init Script&quot;);</span>
-<span class="fc bfc" id="L284" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
-<span class="fc" id="L285">			postInitScripts = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L503">		ArgumentCheck.notNullOrEmpty(postInitScript, &quot;Post Init Script&quot;);</span>
+<span class="fc bfc" id="L504" title="All 2 branches covered.">		if (null == postInitScripts) {</span>
+<span class="fc" id="L505">			postInitScripts = new ArrayList&lt;&gt;();</span>
 		}
-<span class="fc" id="L287">		postInitScripts.add(postInitScript);</span>
-<span class="fc" id="L288">		return this;</span>
+<span class="fc" id="L507">		postInitScripts.add(postInitScript);</span>
+<span class="fc" id="L508">		return this;</span>
 	}
+	
+	// - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - -
+	// END: Post init scripts
+	// -----------------------------------------------------------------------------------------------------------------
 }
-</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.5.201505241946</span></div></body></html>
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

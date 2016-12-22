@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>EmbeddedDerbyDataSourceResource.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Deventropy JUnit Helper :: Derby</a> &gt; <a href="index.source.html" class="el_package">org.deventropy.junithelper.derby.datasource</a> &gt; <span class="el_source">EmbeddedDerbyDataSourceResource.java</span></div><h1>EmbeddedDerbyDataSourceResource.java</h1><pre class="source lang-java linenums">/* 
+ * Copyright 2016 Development Entropy (deventropy.org) Contributors
+ * 
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ * 
+ *  http://www.apache.org/licenses/LICENSE-2.0
+ * 
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.deventropy.junithelper.derby.datasource;
+
+import java.io.File;
+
+import javax.sql.ConnectionPoolDataSource;
+import javax.sql.DataSource;
+import javax.sql.XADataSource;
+
+import org.apache.derby.jdbc.EmbeddedConnectionPoolDataSource;
+import org.apache.derby.jdbc.EmbeddedDataSource;
+import org.apache.derby.jdbc.EmbeddedDataSourceInterface;
+import org.apache.derby.jdbc.EmbeddedXADataSource;
+import org.deventropy.junithelper.derby.DerbyResourceConfig;
+import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.junit.rules.TemporaryFolder;
+
+/**
+ * Provides an in-memory Derby resource capable of providing different kinds of {@link DataSource}s supported by Derby.
+ * An instance of this class is initialized with the {@link DerbyResourceConfig configuration} and a
+ * {@link #getDerbySystemHome() Derby System Home}.
+ * 
+ * &lt;p&gt;This resource extends {@link EmbeddedDerbyResource} and all functionality in that class are available here, please
+ * consult the documentation of that class on initialization, control of the resource and the underlying Derby
+ * database.
+ * 
+ * &lt;p&gt;Example of usage:
+ * &lt;pre&gt;
+ * public class SimpleDerbyTest {
+ * 
+ *  private static final String DB_NAME = &quot;test-database&quot;;
+ * 
+ *  private TemporaryFolder tempFolder = new TemporaryFolder();
+ *  private EmbeddedDerbyDataSourceResource embeddedDerbyResource =
+ *  	new EmbeddedDerbyDataSourceResource(DerbyResourceConfig.buildDefault().useInMemoryDatabase(DB_NAME),
+ *  	tempFolder);
+ * 
+ *  &amp;#064;Rule
+ *  public RuleChain derbyRuleChain = RuleChain.outerRule(tempFolder).around(embeddedDerbyResource);
+ * 
+ * 	&amp;#064;Test
+ * 	public void test () throws SQLException {
+ * 		final String jdbcUrl = embeddedDerbyResource.getJdbcUrl();
+ * 		DataSource dataSource = null;
+ * 		Connection connection = null;
+ * 		Statement stmt = null;
+ * 		ResultSet rs = null;
+ * 
+ * 		try {
+ * 			final EmbeddedDerbyDataSourceFactory dsFactory = embeddedDerbyDataSourceResource.getDataSourceFactory();
+ * 			assertNotNull(dsFactory);
+ * 
+ * 			dataSource = dsFactory.getDataSource(true);
+ * 			connection = dataSource.getConnection();
+ * 
+ * 			// Check a value
+ * 			stmt = connection.createStatement();
+ * 			rs = stmt.executeQuery(&quot;SELECT 1 FROM SYSIBM.SYSDUMMY1&quot;);
+ * 
+ * 			assertTrue(rs.next());
+ * 		} finally {
+ * 			// Close resources
+ * 		}
+ * 	}
+ * }
+ * &lt;/pre&gt;
+ * 
+ * &lt;p&gt;For further information and examples, see
+ * &lt;a href=&quot;http://www.deventropy.org/junit-helper/junit-helper-derby/manual/&quot;&gt;User Manual on the Project Website&lt;/a&gt;.
+ * 
+ * @see EmbeddedDerbyResource
+ * @see DerbyResourceConfig
+ * 
+ * @author Bindul Bhowmik
+ */
+public class EmbeddedDerbyDataSourceResource extends EmbeddedDerbyResource {
+	
+<span class="fc" id="L92">	private final EmbeddedDerbyDataSourceFactory dataSourceFactory = new EmbeddedDerbyDataSourceFactoryImpl();</span>
+
+	/**
+	 * Creates a new Derby resource.
+	 * 
+	 * @see EmbeddedDerbyResource#EmbeddedDerbyResource(DerbyResourceConfig, File)
+	 * 
+	 * @param dbResourceConfig Configurations to setup this resource
+	 * @param derbySystemHomeDir A folder to use as the derby system home
+	 */
+	public EmbeddedDerbyDataSourceResource (final DerbyResourceConfig dbResourceConfig, final File derbySystemHomeDir) {
+<span class="fc" id="L103">		super (dbResourceConfig, derbySystemHomeDir);</span>
+<span class="fc" id="L104">	}</span>
+
+	/**
+	 * Creates a new Derby resource.
+	 * 
+	 * @see EmbeddedDerbyResource#EmbeddedDerbyResource(DerbyResourceConfig, TemporaryFolder)
+	 * 
+	 * @param dbResourceConfig Configurations to setup this resource
+	 * @param derbySystemHomeParentTmpFolder A temporary folder to use as the derby system home
+	 */
+	public EmbeddedDerbyDataSourceResource (final DerbyResourceConfig dbResourceConfig,
+			final TemporaryFolder derbySystemHomeParentTmpFolder) {
+<span class="fc" id="L116">		super (dbResourceConfig, derbySystemHomeParentTmpFolder);</span>
+<span class="fc" id="L117">	}</span>
+	
+	/**
+	 * Returns the {@link EmbeddedDerbyDataSourceFactory} instance for this resource from which data sources can be
+	 * created / cached. The factory returned supports caching &lt;code&gt;ataSource&lt;/code&gt;s created. It also checks the
+	 * state of &lt;code&gt;this&lt;/code&gt; instance and will throw {@link IllegalStateException} if the resource is not
+	 * {@link #isActive()}.
+	 * 
+	 * @return Factory to create data sources for this instance.
+	 */
+	public EmbeddedDerbyDataSourceFactory getDataSourceFactory () {
+<span class="fc" id="L128">		return dataSourceFactory;</span>
+	}
+	
+<span class="fc" id="L131">	private class EmbeddedDerbyDataSourceFactoryImpl implements EmbeddedDerbyDataSourceFactory {</span>
+
+		private EmbeddedDataSource embeddedDataSource;
+		private EmbeddedConnectionPoolDataSource embeddedConnectionPoolDataSource;
+		private EmbeddedXADataSource embeddedXADataSource;
+
+		/* (non-Javadoc)
+		 * @see org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory#getDataSource(boolean)
+		 */
+		@Override
+		public DataSource getDataSource (final boolean cachedInstance) {
+<span class="fc" id="L142">			ensureActive();</span>
+<span class="fc bfc" id="L143" title="All 2 branches covered.">			if (cachedInstance) {</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">				if (null == embeddedDataSource) {</span>
+<span class="fc" id="L145">					embeddedDataSource = createEmbeddedDataSource();</span>
+				}
+<span class="fc" id="L147">				return embeddedDataSource;</span>
+			}
+<span class="fc" id="L149">			return createEmbeddedDataSource();</span>
+		}
+
+		private EmbeddedDataSource createEmbeddedDataSource () {
+<span class="fc" id="L153">			final EmbeddedDataSource embeddedDs = new EmbeddedDataSource();</span>
+<span class="fc" id="L154">			setupDataSource(embeddedDs);</span>
+<span class="fc" id="L155">			return embeddedDs;</span>
+		}
+
+		/* (non-Javadoc)
+		 * @see org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory#getConnectionPoolDataSource(boolean)
+		 */
+		@Override
+		public ConnectionPoolDataSource getConnectionPoolDataSource (final boolean cachedInstance) {
+<span class="fc" id="L163">			ensureActive();</span>
+<span class="fc bfc" id="L164" title="All 2 branches covered.">			if (cachedInstance) {</span>
+<span class="fc bfc" id="L165" title="All 2 branches covered.">				if (null == embeddedConnectionPoolDataSource) {</span>
+<span class="fc" id="L166">					embeddedConnectionPoolDataSource = createEmbeddedConnectionPoolDataSource();</span>
+				}
+<span class="fc" id="L168">				return embeddedConnectionPoolDataSource;</span>
+			}
+<span class="fc" id="L170">			return createEmbeddedConnectionPoolDataSource();</span>
+		}
+
+		private EmbeddedConnectionPoolDataSource createEmbeddedConnectionPoolDataSource () {
+<span class="fc" id="L174">			final EmbeddedConnectionPoolDataSource connectionPoolDataSource = new EmbeddedConnectionPoolDataSource();</span>
+<span class="fc" id="L175">			setupDataSource(connectionPoolDataSource);</span>
+<span class="fc" id="L176">			return connectionPoolDataSource;</span>
+		}
+
+		/* (non-Javadoc)
+		 * @see org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory#getXADataSource(boolean)
+		 */
+		@Override
+		public XADataSource getXADataSource (final boolean cachedInstance) {
+<span class="fc" id="L184">			ensureActive();</span>
+<span class="fc bfc" id="L185" title="All 2 branches covered.">			if (cachedInstance) {</span>
+<span class="fc bfc" id="L186" title="All 2 branches covered.">				if (null == embeddedXADataSource) {</span>
+<span class="fc" id="L187">					embeddedXADataSource = createEmbeddedXADataSource();</span>
+				}
+<span class="fc" id="L189">				return embeddedXADataSource;</span>
+			}
+<span class="fc" id="L191">			return createEmbeddedXADataSource();</span>
+		}
+
+		private EmbeddedXADataSource createEmbeddedXADataSource () {
+<span class="fc" id="L195">			final EmbeddedXADataSource xaDataSource = new EmbeddedXADataSource();</span>
+<span class="fc" id="L196">			setupDataSource(xaDataSource);</span>
+<span class="fc" id="L197">			return xaDataSource;</span>
+		}
+
+		private void setupDataSource (final EmbeddedDataSourceInterface dataSource) {
+<span class="fc" id="L201">			final StringBuilder dsDatabaseName = new StringBuilder()</span>
+<span class="fc" id="L202">					.append(getConfig().getSubSubProtocol().datasourceDatabaseNamePrefix());</span>
+<span class="fc" id="L203">			appendDbLocNameToUrl(dsDatabaseName);</span>
+<span class="fc" id="L204">			dataSource.setDatabaseName(dsDatabaseName.toString());</span>
+<span class="fc" id="L205">		}</span>
+	}
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.7.201606060606</span></div></body></html>

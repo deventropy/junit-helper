@@ -1,1 +1,3 @@
 org.deventropy.junithelper.derby
+org.deventropy.junithelper.derby.datasource
+org.deventropy.junithelper.derby.util

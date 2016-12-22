@@ -1,0 +1,35 @@
+# Auto detect text files and perform LF normalization
+* text=auto
+
+# Known text files
+*.java text
+*.properties text
+*.xml text
+*.yml text
+*.md text
+*.sh text
+*.html text
+*.css text
+*.js text
+*.rss text
+*.csv text
+*.txt text
+*.nojekyll text
+*.package-list text
+
+# Known binary files
+*.gif binary
+*.jar binary
+*.png binary
+
+# Standard to msysgit
+*.doc	 diff=astextplain
+*.DOC	 diff=astextplain
+*.docx diff=astextplain
+*.DOCX diff=astextplain
+*.dot  diff=astextplain
+*.DOT  diff=astextplain
+*.pdf  diff=astextplain
+*.PDF	 diff=astextplain
+*.rtf	 diff=astextplain
+*.RTF	 diff=astextplain
