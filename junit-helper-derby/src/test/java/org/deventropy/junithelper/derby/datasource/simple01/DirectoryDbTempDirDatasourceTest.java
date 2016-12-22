@@ -13,16 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.datasource.simple01;
 
 import static org.junit.Assert.*;
 
-import java.io.IOException;
-import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Statement;
 
+import org.deventropy.junithelper.derby.DerbyResourceConfig;
+import org.deventropy.junithelper.derby.datasource.AbstractDatasourceEmbeddedDerbyResourceTest;
+import org.deventropy.junithelper.derby.datasource.EmbeddedDerbyDataSourceResource;
 import org.deventropy.junithelper.derby.util.DerbyUtils;
 import org.junit.AfterClass;
 import org.junit.Rule;
@@ -33,17 +32,20 @@ import org.junit.rules.TemporaryFolder;
 /**
  * @author Bindul Bhowmik
  */
-public class SimpleDerbyTest {
+public class DirectoryDbTempDirDatasourceTest extends AbstractDatasourceEmbeddedDerbyResourceTest {
+	
+	private static final String DB_NAME = "test-db-dir-simple01-tmpfolder-nulllog";
 	
 	private TemporaryFolder tempFolder = new TemporaryFolder();
-	private EmbeddedDerbyResource embeddedDerbyResource =
-		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault()
-			.useDevNullErrorLogging(),
+	private EmbeddedDerbyDataSourceResource embeddedDerbyResource =
+		new EmbeddedDerbyDataSourceResource(DerbyResourceConfig.buildDefault().useDatabaseInDirectory(DB_NAME)
+			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql")
+			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql"),
 		tempFolder);
 	
 	@Rule
 	public RuleChain derbyRuleChain = RuleChain.outerRule(tempFolder).around(embeddedDerbyResource);
-	
+
 	/**
 	 * Cleanup stuff.
 	 */
@@ -52,36 +54,14 @@ public class SimpleDerbyTest {
 		// Cleanup for next test
 		DerbyUtils.shutdownDerbySystemQuitely(true);
 	}
-
+	
 	@Test
-	public void test () throws SQLException, IOException {
-		Connection connection = null;
-		Statement stmt = null;
-		ResultSet rs = null;
+	public void testDataSourceFromSimpleDirectoryDb () throws SQLException {
+		// Make sure derby loads up
+		simpleDb01Check01(embeddedDerbyResource);
+		assertTrue(embeddedDerbyResource.isActive());
 
-		try {
-
-			assertTrue("Resource should be active", embeddedDerbyResource.isActive());
-
-			// Try to start again (should have no effect)
-			embeddedDerbyResource.start();
-
-			connection = embeddedDerbyResource.createConnection();
-	
-			// Check a value
-			stmt = connection.createStatement();
-			rs = stmt.executeQuery("SELECT 1 FROM SYSIBM.SYSDUMMY1");
-	
-			if (rs.next()) {
-				assertEquals("Should have one", 1, rs.getInt(1));
-			} else {
-				fail ("Should have one result");
-			}
-		} finally {
-			DerbyUtils.closeQuietly(rs);
-			DerbyUtils.closeQuietly(stmt);
-			DerbyUtils.closeQuietly(connection);
-		}
+		testDifferentDataSources(embeddedDerbyResource);
 	}
 
 }

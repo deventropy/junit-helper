@@ -43,6 +43,9 @@ limitations under the License.
 			<action dev="bindul" type="add" issue="23" date="2016-02-23">
 				Added support to perform an online backup of a Derby instance
 			</action>
+			<action dev="bindul" type="add" issue="24" date="2016-02-25">
+				Support returning JDBC Datasources for Derby
+			</action>
 		</release>
 	</body>
 </document>

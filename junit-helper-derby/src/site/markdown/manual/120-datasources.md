@@ -17,23 +17,32 @@ limitations under the License.
 [&#x21ab; User Guide Home](./index.html)
 # User Guide :: Using DataSources
 
-Derby JDBC classes include support for `javax.sql.DataSource` and related APIs (see [DataSource classes](http://db.apache.org/derby/docs/10.12/ref/rrefapi1003363.html)
+Derby JDBC classes include support for `javax.sql.DataSource` and related APIs (see [DataSource classes](http://db.apache.org/derby/docs/10.13/ref/rrefapi1003363.html)
 for more information). When writing JUnit tests involving Derby classes, if the tests require classes that would access
 the database through a `DataSource`, you are free to write code to initialize the DataSources, connection pools, etc.
 independent of any JUnit Helper code. However, JUnit Helper includes some convenience mechanisms of accessing such
-resources without additional code. This page discusses using `DataSrouces` from the `EmbeddedDerbyResource`.
+resources without additional code. This page discusses using `DataSrouces` from the `EmbeddedDerbyDataSourceResource`.
 
-The utility classes provided in this library support all three different kinds of `DataSource` interfaces in JDBC and
+The classes provided in this library support all three different kinds of `DataSource` interfaces in JDBC and
 supported by Derby.
+
+## <a name="EmbeddedDerbyDataSourceResource"></a>EmbeddedDerbyDataSourceResource
+
+The module provides a resource `EmbeddedDerbyDataSourceResource` which provides additional mechanisms for creating and
+accessing data sources. The class provides an in-memory Derby resource capable of providing different kinds of 
+`DataSource`s supported by Derby. Access to the `EmbeddedDerbyDataSourceFactory` for accessing the datasources is
+provided through the `#getDataSourceFactory()` method.
+
+This resource extends `EmbeddedDerbyResource` and all configuration and functionality in that class are available here.
 
 ## <a name="EmbeddedDerbyDataSourceFactory"></a>EmbeddedDerbyDataSourceFactory
 
-[EmbeddedDerbyDataSourceFactory](../apidocs/org/deventropy/junithelper/derby/EmbeddedDerbyDataSourceFactory.html)
-interface defines a factory that is implemented by the `EmbeddedDerbyResource` which can create the different kinds of
-data sources. The factory instance can be accessed from
-[EmbeddedDerbyResource#getDataSourceFactory()](../apidocs/org/deventropy/junithelper/derby/EmbeddedDerbyResource.html#getDataSourceFactory--).
+[EmbeddedDerbyDataSourceFactory](../apidocs/org/deventropy/junithelper/derby/datasource/EmbeddedDerbyDataSourceFactory.html)
+interface defines a factory that is implemented by the `EmbeddedDerbyDataSourceResource` which can create the different
+kinds of data sources. The factory instance can be accessed from
+[EmbeddedDerbyDataSourceResource#getDataSourceFactory()](../apidocs/org/deventropy/junithelper/derby/datasource/EmbeddedDerbyDataSourceResource.html#getDataSourceFactory--).
 
-The factory will return data source instances only while the `EmbeddedDerbyResource` is active, other times an
+The factory will return data source instances only while the `EmbeddedDerbyDataSourceResource` is active, other times an
 `IllegalStateException` is returned.
 
 The following table shows the `DataSource` instances returned by the different factory methods:
@@ -55,5 +64,5 @@ the first call for a cached `DataSource` instance).
 Since Java SE version 8, Oracle JRE has provided [compact profiles](https://docs.oracle.com/javase/8/docs/technotes/guides/compactprofiles/compactprofiles.html).
 `compact2` profile has JDBC support, but leaves out certain classes required for full `DataSource` support. Derby
 provides support for `DataSource`s for use with the `compact2` profile (using `org.apache.derby.jdbc.BasicEmbedded*`
-classes); however at this time the Derby JUnit Helper library does not provide support for those data sources  in the
+classes); however at this time the Derby JUnit Helper library does not provide support for those data sources in the
 provided factory. 

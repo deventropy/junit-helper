@@ -93,7 +93,16 @@ limitations under the License.
 			<item name="Development Guide" href="../development.html" />
 			<item name="Issues" href="https://github.com/deventropy/junit-helper/issues" />
 			<item name="Fork on GitHub" href="https://github.com/deventropy/junit-helper#fork-destination-box" />
-			<item name="Continuous Integration" href="https://travis-ci.org/deventropy/junit-helper" />
+			<item name="Code Quality / Continuous Integration" href="#">
+				<item name="CI - Travis" href="https://travis-ci.org/deventropy/junit-helper" />
+				<item name="CI - Appveyor" href="https://ci.appveyor.com/project/deventropy/junit-helper" />
+				<item name="Coveralls" href="https://coveralls.io/github/deventropy/junit-helper" />
+				<item name="Codacy" href="https://www.codacy.com/app/deventropy/junit-helper" />
+				<item name="Coverity Scan" href="https://scan.coverity.com/projects/deventropy-junit-helper" />
+				<item name="VersionEye" href="https://www.versioneye.com/user/projects/56b160c93d82b9003761e470" />
+			</item>
+			<item name="JFrog Bintray" href="https://dl.bintray.com/deventropy/repository" />
+			<item name="Mailing Lists" href="https://sourceforge.net/p/deventropy/lists/" />
 		</menu>
 		<menu name="Legal" inherit="bottom">
 			<item name="License" href="license.html" />

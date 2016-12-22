@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.util;
 
 import java.io.File;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.SQLException;
 
+import org.deventropy.junithelper.derby.DerbyConstants;
+import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
 import org.deventropy.shared.utils.ArgumentCheck;
 
 /**

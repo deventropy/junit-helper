@@ -93,8 +93,9 @@ public class DerbyResourceConfig {
 	// TODO Complete configuring logging
 	private ErrorLoggingMode errorLoggingMode;
 	
-	// Post init scripts
-	
+	/**
+	 * Post init scripts
+	 */
 	private List<String> postInitScripts;
 	
 	/**

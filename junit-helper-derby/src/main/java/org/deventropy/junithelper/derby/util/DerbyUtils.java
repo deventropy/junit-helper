@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.util;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.deventropy.junithelper.derby.DerbyConstants;
 
 /**
  * Random utilities for this library and also useful when writing JDBC test cases.

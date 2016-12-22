@@ -24,7 +24,7 @@ limitations under the License.
 	<groupId>org.deventropy.junit-helper</groupId>
 	<artifactId>junit-helper</artifactId>
 	<packaging>pom</packaging>
-	<name>JUnit Helper</name>
+	<name>Deventropy JUnit Helper</name>
 	<version>1.0-alpha.1-SNAPSHOT</version>
 	<description>JUnit Helper Classes</description>
 	<url>http://www.deventropy.org/junit-helper/</url>
@@ -50,6 +50,24 @@ limitations under the License.
 						<version>1.0-beta.1-SNAPSHOT</version>
 					</dependency>
 				</dependencies>
+				<executions>
+					<execution>
+						<id>checkstyle-verify-main</id>
+						<phase>validate</phase>
+						<goals>
+							<goal>check</goal>
+						</goals>
+						<configuration>
+							<configLocation>deventropy/code-quality/checkstyle/deventropy-checkstyle.xml</configLocation>
+							<headerLocation>deventropy/code-quality/checkstyle/license-header.txt</headerLocation>
+							<linkXRef>false</linkXRef>
+							<consoleOutput>true</consoleOutput>
+							<includeResources>true</includeResources>
+							<includeTestSourceDirectory>true</includeTestSourceDirectory>
+							<includeTestResources>true</includeTestResources>
+						</configuration>
+					</execution>
+				</executions>
 			</plugin>
 			<!--  See http://www.petrikainulainen.net/programming/maven/creating-code-coverage-reports-for-unit-and-integration-tests-with-the-jacoco-maven-plugin/ -->
 			<plugin>
@@ -107,6 +125,7 @@ limitations under the License.
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-site-plugin</artifactId>
+					<!-- Have to stick with 3.4 for now. See https://github.com/andriusvelykis/reflow-maven-skin/issues/49 -->
 					<version>3.4</version>
 					<dependencies>
 						<!-- See https://github.com/andriusvelykis/reflow-maven-skin -->
@@ -170,14 +189,14 @@ limitations under the License.
 				<configuration>
 					<bottom><![CDATA[Copyright &#169; {inceptionYear}-{currentYear} Development Entropy (deventropy.org) Contributors]]></bottom>
 					<charset>${project.build.sourceEncoding}</charset>
-					<javadocVersion>1.7</javadocVersion>
+					<javadocVersion>${dev.java.version}</javadocVersion>
 					<keywords>true</keywords>
 					<quiet>true</quiet>
 					<encoding>${project.build.sourceEncoding}</encoding>
 					<docEncoding>${project.build.sourceEncoding}</docEncoding>
 					<links>
 						<link>http://docs.oracle.com/javase/8/docs/api/</link>
-						<link>http://junit.org/javadoc/latest/</link>
+						<link>http://junit.org/junit4/javadoc/latest/</link>
 						<link>http://db.apache.org/derby/docs/${derby.version.major}/publishedapi/</link>
 					</links>
 					<archive>
@@ -235,13 +254,13 @@ limitations under the License.
 			<dependency>
 				<groupId>commons-io</groupId>
 				<artifactId>commons-io</artifactId>
-				<version>2.4</version>
+				<version>2.5</version>
 				<type>jar</type>
 			</dependency>
 			<dependency>
 				<groupId>org.apache.commons</groupId>
 				<artifactId>commons-compress</artifactId>
-				<version>1.10</version>
+				<version>1.11</version>
 			</dependency>
 			<dependency>
 				<groupId>org.deventropy.shared-utils</groupId>
@@ -251,7 +270,7 @@ limitations under the License.
 		</dependencies>
 	</dependencyManagement>
 	<properties>
-		<derby.version.major>10.12</derby.version.major>
+		<derby.version.major>10.13</derby.version.major>
 	</properties>
 	<modules>
 		<module>junit-helper-derby</module>

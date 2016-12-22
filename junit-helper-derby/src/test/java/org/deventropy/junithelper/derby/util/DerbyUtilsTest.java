@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.util;
 
 import static org.junit.Assert.*;
 
@@ -38,6 +38,8 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.Executor;
 
+import org.deventropy.junithelper.derby.DerbyResourceConfig;
+import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -68,8 +70,8 @@ public class DerbyUtilsTest {
 	}
 	
 	/**
-	 * Test method for {@link org.deventropy.junithelper.derby.DerbyUtils#DEV_NULL} and
-	 * {@link org.deventropy.junithelper.derby.DerbyUtils#DEV_NULL_FIELD_ID}.
+	 * Test method for {@link org.deventropy.junithelper.derby.util.DerbyUtils#DEV_NULL} and
+	 * {@link org.deventropy.junithelper.derby.util.DerbyUtils#DEV_NULL_FIELD_ID}.
 	 * @throws Exception test failure
 	 */
 	@Test
@@ -93,7 +95,7 @@ public class DerbyUtilsTest {
 	}
 
 	/**
-	 * Test method for {@link org.deventropy.junithelper.derby.DerbyUtils#closeQuietly(java.lang.AutoCloseable)}.
+	 * Test method for {@link org.deventropy.junithelper.derby.util.DerbyUtils#closeQuietly(java.lang.AutoCloseable)}.
 	 * @throws SQLException Error getting conn
 	 */
 	@Test

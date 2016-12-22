@@ -102,10 +102,12 @@ limitations under the License.
 		<menu name="Junit Helper Derby" inherit="top">
 			<item name="Home" href="./index.html"/>
 			<item name="User Manual" href="./manual/index.html">
-				<item name="Configuration" href="./manual/configuration.html"/>
-				<item name="Backup and Restore" href="./manual/backup-restore.html"/>
-				<item name="Script Runner / Utilities" href="./manual/utilities.html"/>
-				<item name="Parallel Runs" href="./manual/concurrency.html"/>
+				<item name="Getting Started" href="./manual/010-getting-started.html" />
+				<item name="Configuration" href="./manual/110-configuration.html"/>
+				<item name="Datasources" href="./manual/120-datasources.html"/>
+				<item name="Backup and Restore" href="./manual/210-backup-restore.html"/>
+				<item name="Parallel Runs" href="./manual/310-concurrency.html"/>
+				<item name="Script Runner / Utilities" href="./manual/510-utilities.html"/>
 			</item>
 		</menu>
 	</body>

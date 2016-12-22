@@ -14,8 +14,8 @@
  * limitations under the License.
  */
 /**
- * JUnit Helper is a utility to allow testing JDBC related code against Apache Derby embedded instances using JUnit
- * version 4.x.
+ * JUnit Helper Derby is a utility to allow testing JDBC related code against Apache Derby embedded instances using
+ * JUnit version 4.x.
  * 
  * <p>The library allows the user to configure an embedded Derby instance
  * ({@link org.deventropy.junithelper.derby.EmbeddedDerbyResource}) as an {@link org.junit.rules.ExternalResource}
@@ -24,17 +24,14 @@
  * 
  * <p>Embedded instances can be accessed using standard JDBC connections created through the
  * {@link java.sql.DriverManager}, and convenience methods are provided to get the JDBC connection URL (see
- * {@link org.deventropy.junithelper.derby.EmbeddedDerbyResource#getJdbcUrl()}. The implementation also supports
- * creating {@link javax.sql.DataSource}s to connect to the database. An
- * {@link org.deventropy.junithelper.derby.EmbeddedDerbyDataSourceFactory} is returned by the resource in the
- * {@link org.deventropy.junithelper.derby.EmbeddedDerbyResource#getDataSourceFactory()} method to enable creating
- * datasources.
+ * {@link org.deventropy.junithelper.derby.EmbeddedDerbyResource#getJdbcUrl()} and
+ * {@link org.deventropy.junithelper.derby.EmbeddedDerbyResource#createConnection()}.
  * 
  * <p>The runtime instance can be configured using the {@link org.deventropy.junithelper.derby.DerbyResourceConfig}.
  * 
- * <p>The library also comes with some utilities to manage the running instance
- * (see {@link org.deventropy.junithelper.derby.DerbyUtils}), running SQL scripts against the instance (or any derby
- * instance for that matter) - {@link org.deventropy.junithelper.derby.DerbyScriptRunner}, etc.
+ * <p>Specific packages provide additional functionality, {@link org.deventropy.junithelper.derby.datasource} for
+ * {@link javax.sql.DataSource} related functionality. {@link org.deventropy.junithelper.derby.util} has some hopefully
+ * useful utility classes.
  * 
  * <p>More details are in the <a href="http://www.deventropy.org/junit-helper/junit-helper-derby/">Project Website</a>.
  * 

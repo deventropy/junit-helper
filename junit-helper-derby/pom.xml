@@ -22,7 +22,7 @@ limitations under the License.
 		<version>1.0-alpha.1-SNAPSHOT</version>
 	</parent>
 	<artifactId>junit-helper-derby</artifactId>
-	<name>JUnit Helper :: Derby</name>
+	<name>Deventropy JUnit Helper :: Derby</name>
 	<description>JUnit resources classes for Derby DB as an embedded resource</description>
 	<scm>
 		<connection>${project.parent.scm.connection}</connection>

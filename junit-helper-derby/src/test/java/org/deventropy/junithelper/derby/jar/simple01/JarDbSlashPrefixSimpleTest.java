@@ -21,8 +21,8 @@ import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
 
-import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.deventropy.junithelper.derby.util.DerbyUtils;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;

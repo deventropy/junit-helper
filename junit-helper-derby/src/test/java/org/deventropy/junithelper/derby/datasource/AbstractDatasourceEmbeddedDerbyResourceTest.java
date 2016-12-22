@@ -13,11 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.datasource;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 import java.sql.Connection;
 import java.sql.SQLException;
@@ -27,6 +25,9 @@ import javax.sql.DataSource;
 import javax.sql.PooledConnection;
 import javax.sql.XADataSource;
 
+import org.deventropy.junithelper.derby.AbstractEmbeddedDerbyResourceTest;
+import org.deventropy.junithelper.derby.util.DerbyUtils;
+
 /**
  * @author Bindul Bhowmik
  *
@@ -34,12 +35,12 @@ import javax.sql.XADataSource;
 public abstract class AbstractDatasourceEmbeddedDerbyResourceTest extends AbstractEmbeddedDerbyResourceTest {
 	/**
 	 * Run various tests on the datasources in the resource.
-	 * @param embeddedDerbyResource Derby resource to test
+	 * @param embeddedDerbyDataSourceResource Derby resource to test
 	 * @throws SQLException SQL exception
 	 */
-	protected void testDifferentDataSources (final EmbeddedDerbyResource embeddedDerbyResource)
+	protected void testDifferentDataSources (final EmbeddedDerbyDataSourceResource embeddedDerbyDataSourceResource)
 			throws SQLException {
-		final EmbeddedDerbyDataSourceFactory dataSourceFactory = embeddedDerbyResource.getDataSourceFactory();
+		final EmbeddedDerbyDataSourceFactory dataSourceFactory = embeddedDerbyDataSourceResource.getDataSourceFactory();
 		assertNotNull(dataSourceFactory);
 		testRegularDataSource(dataSourceFactory);
 		testConnectionPoolDataSource(dataSourceFactory);

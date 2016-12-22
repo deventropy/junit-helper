@@ -24,6 +24,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import org.deventropy.junithelper.derby.util.DerbyUtils;
 import org.deventropy.shared.utils.DirectoryArchiverUtil;
 import org.junit.AfterClass;
 import org.junit.rules.TemporaryFolder;

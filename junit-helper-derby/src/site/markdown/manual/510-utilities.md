@@ -17,14 +17,15 @@ limitations under the License.
 [&#x21ab; User Guide Home](./index.html)
 # User Guide :: Utilities
 
-The library comes with some utilities which may be used in your test code. However, these classes are *not* considered
-part of the public API of the library and they may change without notice even between minor releases.
+The library comes with some utilities which may be used in your test code in the `util` subpackage. However, these
+classes are *not* considered part of the public API of the library and they may change without notice even between minor
+releases.
 
 ## <a name="script-runner"></a>Script Runner
 
-`org.deventropy.junithelper.derby.DerbyScriptRunner` may be used to execute a SQL script against a Derby database (the
+`org.deventropy.junithelper.derby.util.DerbyScriptRunner` may be used to execute a SQL script against a Derby database (the
 database need not be created or managed by this library). The utility internally uses the Derby 
-[ij](http://db.apache.org/derby/docs/10.12/tools/ctoolsij34525.html) tool to execute the scripts.
+[ij](http://db.apache.org/derby/docs/10.13/tools/ctoolsij34525.html) tool to execute the scripts.
 
 An instance of this utility is expected to be used against a single connection; and the connection is a required parameter
 when creating a new instance.
@@ -68,11 +69,11 @@ is initialized with `DerbyUtils#DEV_NULL` stream, which simply discards all log 
 ### Scripts
 
 Scripts sent to this utility should be identified as resources in a format supported by
-[UrlResourceUtil](../../junit-helper-utils/apidocs/index.html?org/deventropy/junithelper/utils/UrlResourceUtil.html).
+[UrlResourceUtil](../../../shared-utils/shared-utils-java/resource-location-formats.html).
 
 ## <a name="derby-utils"></a>Derby Utils
 
-This class provides some random utilities:
+This `org.deventropy.junithelper.derby.util.DerbyUtils` class provides some random utilities:
 
 ### DEV_NULL
 
@@ -87,6 +88,6 @@ The `#closeQuietly(java.lang.AutoCloseable)` tries to close any non-null objects
 ### Shut down Derby System Quitely
 
 Shuts down the derby system so it can be reloaded; per Derby developer guide. For more information see
-[Derby System](https://db.apache.org/derby/docs/10.12/devguide/tdevdvlp20349.html). This method also ignores any
+[Derby System](https://db.apache.org/derby/docs/10.13/devguide/tdevdvlp20349.html). This method also ignores any
 exception generated (which always is).
 

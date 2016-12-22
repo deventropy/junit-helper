@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.enums;
+
+import org.deventropy.junithelper.derby.DbCreateFromRestroreMode;
 
 /**
  * @author Bindul Bhowmik

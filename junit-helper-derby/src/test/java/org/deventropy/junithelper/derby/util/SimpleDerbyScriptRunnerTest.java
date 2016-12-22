@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.util;
 
 import static org.junit.Assert.*;
 
@@ -25,6 +25,8 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import org.apache.commons.io.output.WriterOutputStream;
+import org.deventropy.junithelper.derby.DerbyResourceConfig;
+import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;

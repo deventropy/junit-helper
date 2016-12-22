@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.enums;
+
+import org.deventropy.junithelper.derby.ErrorLoggingMode;
 
 /**
  * @author Bindul Bhowmik
  *
  */
-public class JdbcDerbySubSubProtocolEnumTest extends AbstractEnumTest<JdbcDerbySubSubProtocol> {
+public class ErrorLoggingModeTest extends AbstractEnumTest<ErrorLoggingMode> {
 
 	/**
-	 * JdbcDerbySubSubProtocol enum test.
+	 * ErrorLoggingMode enum test.
 	 * @throws Exception reflection errors
 	 */
-	public JdbcDerbySubSubProtocolEnumTest () throws Exception {
-		super (JdbcDerbySubSubProtocol.class, new String[]{"Memory", "Directory", "Jar", "Classpath"});
+	public ErrorLoggingModeTest () throws Exception {
+		super (ErrorLoggingMode.class, new String[]{"Default", "Null"});
 	}
+
 }

@@ -25,7 +25,7 @@ The library can also perform online backups on a database started with the `Embe
 [backupLiveDatabase](../apidocs/org/deventropy/junithelper/derby/EmbeddedDerbyResource.html#backupLiveDatabase-java.io.File-boolean-boolean-boolean-) 
 Javadocs.
 
-For more information on backup and restore of Derby Instances, see the [Backing up and restoring databases](http://db.apache.org/derby/docs/10.12/adminguide/cadminhubbkup98797.html)
+For more information on backup and restore of Derby Instances, see the [Backing up and restoring databases](http://db.apache.org/derby/docs/10.13/adminguide/cadminhubbkup98797.html)
 section in the Derby Server and Administration Guide.
 
 ## <a name="online-backup"></a>Online Backup
@@ -66,7 +66,7 @@ To create a database from a full backup copy at a specified location, use the `D
 configuration method with the file parameter pointing to a full backup of a database. If there is already a database
 with the same name in the Derby system, an error will occur and the existing database will be left intact. Internally,
 the `EmbeddedDerbyResource` uses the `createFrom=path` attribute in the boot-time connection URL. More information on
-this mode in the Derby documentation at [Creating a database from a backup copy](http://db.apache.org/derby/docs/10.12/adminguide/tadmincrtdbbkup.html).
+this mode in the Derby documentation at [Creating a database from a backup copy](http://db.apache.org/derby/docs/10.13/adminguide/tadmincrtdbbkup.html).
 
 ### <a name="restore-to"></a>Restoring to
 
@@ -74,7 +74,7 @@ To restore a database by using a full backup from a specified location, use the 
 onfiguration method with the file parameter pointing to a full backup of a database. If a database with the same name
 exists in the Derby system, the system will delete the database, copy it from the backup location, and then restart it.
 Internally, the `EmbeddedDerbyResource` uses the `restoreFrom=path` attribute in the boot-time connection URL. More information on
-this mode in the Derby documentation at [Restoring a database from a backup copy](http://db.apache.org/derby/docs/10.12/adminguide/tadminhubbkup44.html).
+this mode in the Derby documentation at [Restoring a database from a backup copy](http://db.apache.org/derby/docs/10.13/adminguide/tadminhubbkup44.html).
 
 ### <a name="roll-forward"></a>Roll-forward Recovery
 
@@ -90,4 +90,4 @@ backup are required to replay the transactions after the backup. In roll-forward
 that all old log files are available. The log files are available only from the time that the log archival mode is
 enabled.
 
-Further reading in the Derby documentation at [Roll-forward recovery](http://db.apache.org/derby/docs/10.12/adminguide/cadminrollforward.html).
+Further reading in the Derby documentation at [Roll-forward recovery](http://db.apache.org/derby/docs/10.13/adminguide/cadminrollforward.html).

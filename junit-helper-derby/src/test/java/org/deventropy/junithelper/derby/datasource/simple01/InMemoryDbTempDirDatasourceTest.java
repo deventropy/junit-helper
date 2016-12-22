@@ -13,16 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby.memory.simple01;
+package org.deventropy.junithelper.derby.datasource.simple01;
 
 import static org.junit.Assert.*;
 
 import java.sql.SQLException;
 
-import org.deventropy.junithelper.derby.AbstractDatasourceEmbeddedDerbyResourceTest;
 import org.deventropy.junithelper.derby.DerbyResourceConfig;
-import org.deventropy.junithelper.derby.DerbyUtils;
-import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.deventropy.junithelper.derby.datasource.AbstractDatasourceEmbeddedDerbyResourceTest;
+import org.deventropy.junithelper.derby.datasource.EmbeddedDerbyDataSourceResource;
+import org.deventropy.junithelper.derby.util.DerbyUtils;
 import org.junit.AfterClass;
 import org.junit.Rule;
 import org.junit.Test;
@@ -40,8 +40,8 @@ public class InMemoryDbTempDirDatasourceTest extends AbstractDatasourceEmbeddedD
 	private static final String DB_NAME = "my-test-database-simple05-tmpfolder-ds";
 	
 	private TemporaryFolder tempFolder = new TemporaryFolder();
-	private EmbeddedDerbyResource embeddedDerbyResource =
-		new EmbeddedDerbyResource(DerbyResourceConfig.buildDefault().useInMemoryDatabase(DB_NAME)
+	private EmbeddedDerbyDataSourceResource embeddedDerbyResource =
+		new EmbeddedDerbyDataSourceResource(DerbyResourceConfig.buildDefault().useInMemoryDatabase(DB_NAME)
 			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql")
 			.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql"),
 		tempFolder);

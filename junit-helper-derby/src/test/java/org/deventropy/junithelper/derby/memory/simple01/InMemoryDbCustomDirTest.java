@@ -23,8 +23,8 @@ import java.sql.SQLException;
 
 import org.deventropy.junithelper.derby.AbstractEmbeddedDerbyResourceTest;
 import org.deventropy.junithelper.derby.DerbyResourceConfig;
-import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.deventropy.junithelper.derby.util.DerbyUtils;
 import org.junit.AfterClass;
 import org.junit.Test;
 

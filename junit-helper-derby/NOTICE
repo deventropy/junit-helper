@@ -1,0 +1,8 @@
+Development Entropy JUnit Helper
+Copyright (c) 2015-2016 Development Entropy (deventropy.org) Contributors
+
+This product includes software developed at the Deventropy Project (https://github.com/deventropy). Licensed under the 
+Apache License, Version 2.0. You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+
+The JNDI DataSource implementation is inspired by Randy Carver's post at 
+https://blogs.oracle.com/randystuph/entry/injecting_jndi_datasources_for_junit

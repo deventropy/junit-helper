@@ -24,9 +24,9 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.deventropy.junithelper.derby.AbstractEmbeddedDerbyResourceTest;
-import org.deventropy.junithelper.derby.DerbyScriptRunner;
-import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.deventropy.junithelper.derby.util.DerbyScriptRunner;
+import org.deventropy.junithelper.derby.util.DerbyUtils;
 
 /**
  * @author Bindul Bhowmik

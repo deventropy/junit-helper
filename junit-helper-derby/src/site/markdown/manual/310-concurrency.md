@@ -19,7 +19,7 @@ limitations under the License.
 
 While a running instance of Derby is perfectly happy to support multiple concurrent consumers; it does not like running
 multiple instances of Derby in a single JVM (see Derby System documentation
-[One Derby instance for each Java Virtual Machine (JVM)](https://db.apache.org/derby/docs/10.12/devguide/cdevdvlp96597.html).
+[One Derby instance for each Java Virtual Machine (JVM)](https://db.apache.org/derby/docs/10.13/devguide/cdevdvlp96597.html).
 This makes sharing a Derby instance across multiple instances a little challenging.
 
 So, first if multiple test classes are required to use this library or Derby instances in general every attempt should
@@ -42,7 +42,7 @@ test runner supporting **forked JVMs** (like Surefire) may be used to executed i
 
 If multiple test classes executed sequentially in a JVM need to initialize a new instance of Derby (after a previous run
 by the same/different class started, then stopped a Derby instance) may run into issues unless the previous instance
-was shut down properly (see [Shutting down the system](https://db.apache.org/derby/docs/10.12/devguide/tdevdvlp20349.html)
+was shut down properly (see [Shutting down the system](https://db.apache.org/derby/docs/10.13/devguide/tdevdvlp20349.html)
 in the Derby Developer Guide.
 
 It is therefore important to *clean up after oneself*. The `DerbyUtil` class in this library provides a convenient method

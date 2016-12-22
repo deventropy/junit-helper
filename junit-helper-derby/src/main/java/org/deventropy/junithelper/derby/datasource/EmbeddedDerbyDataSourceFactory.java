@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby;
+package org.deventropy.junithelper.derby.datasource;
 
 import javax.sql.ConnectionPoolDataSource;
 import javax.sql.DataSource;
@@ -49,7 +49,7 @@ public interface EmbeddedDerbyDataSourceFactory {
 	 * @return A DataSource instance
 	 * @throws IllegalStateException If the underlying implementation does state checking and the resource is not active
 	 */
-	DataSource getDataSource (final boolean cachedInstance);
+	DataSource getDataSource (boolean cachedInstance);
 	
 	/**
 	 * Returns a new or cached {@link ConnectionPoolDataSource} instance with parameters set up to create connections to
@@ -62,7 +62,7 @@ public interface EmbeddedDerbyDataSourceFactory {
 	 * @return A ConnectionPoolDataSource instance
 	 * @throws IllegalStateException If the underlying implementation does state checking and the resource is not active
 	 */
-	ConnectionPoolDataSource getConnectionPoolDataSource (final boolean cachedInstance);
+	ConnectionPoolDataSource getConnectionPoolDataSource (boolean cachedInstance);
 	
 	/**
 	 * Returns a new or cached {@link XADataSource} instance with parameters set up to create connections to
@@ -75,5 +75,5 @@ public interface EmbeddedDerbyDataSourceFactory {
 	 * @return A XADataSource instance
 	 * @throws IllegalStateException If the underlying implementation does state checking and the resource is not active
 	 */
-	XADataSource getXADataSource (final boolean cachedInstance);
+	XADataSource getXADataSource (boolean cachedInstance);
 }

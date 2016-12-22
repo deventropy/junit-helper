@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.deventropy.junithelper.derby.directory.simple01;
+package org.deventropy.junithelper.derby.datasource.simple01;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.File;
 import java.io.IOException;
@@ -25,9 +26,9 @@ import org.apache.commons.io.FileUtils;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import org.deventropy.junithelper.derby.AbstractEmbeddedDerbyResourceTest;
 import org.deventropy.junithelper.derby.DerbyResourceConfig;
-import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.deventropy.junithelper.derby.datasource.AbstractDatasourceEmbeddedDerbyResourceTest;
+import org.deventropy.junithelper.derby.datasource.EmbeddedDerbyDataSourceResource;
 import org.deventropy.junithelper.derby.util.DerbyUtils;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,11 +39,11 @@ import org.junit.Test;
  * @author Bindul Bhowmik
  *
  */
-public class DirectoryDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTest {
+public class DirectoryDbCustomDirDatasourceTest extends AbstractDatasourceEmbeddedDerbyResourceTest {
 	
-	private static final String DB_NAME = "test-database-directory-test01-customdirectory";
+	private static final String DB_NAME = "test-datasource-database-directory-test01-customdirectory";
 	private Logger log = LogManager.getFormatterLogger();
-	private EmbeddedDerbyResource embeddedDerbyResource;
+	private EmbeddedDerbyDataSourceResource embeddedDerbyResource;
 	private File derbySystemHomeDir;
 	private File dbHomeDir;
 	
@@ -64,7 +65,7 @@ public class DirectoryDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTe
 				.useDatabaseInDirectory(dbHomeDir.getAbsolutePath())
 				.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/ddl.sql")
 				.addPostInitScript("classpath:/org/deventropy/junithelper/derby/simple01/dml.sql");
-		embeddedDerbyResource = new EmbeddedDerbyResource(derbyResourceConfig, derbySystemHomeDir);
+		embeddedDerbyResource = new EmbeddedDerbyDataSourceResource(derbyResourceConfig, derbySystemHomeDir);
 		embeddedDerbyResource.start();
 	}
 
@@ -76,6 +77,9 @@ public class DirectoryDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTe
 		assertTrue(jdbcUrl.contains(DB_NAME));
 
 		simpleDb01Check01(embeddedDerbyResource);
+		assertTrue(embeddedDerbyResource.isActive());
+
+		testDifferentDataSources(embeddedDerbyResource);
 
 		final File logFile = new File(embeddedDerbyResource.getDerbySystemHome(),  "derby.log");
 		assertTrue(logFile.exists());
@@ -120,4 +124,5 @@ public class DirectoryDbCustomDirAllTest extends AbstractEmbeddedDerbyResourceTe
 		// Cleanup for next test
 		DerbyUtils.shutdownDerbySystemQuitely(true);
 	}
+
 }

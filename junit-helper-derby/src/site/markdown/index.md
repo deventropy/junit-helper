@@ -20,7 +20,7 @@ Derby JUnit Helper is a utility to allow testing JDBC related code against [Apac
 using [JUnit][junit] version 4.x.
 
 The library allows the user to configure an embedded Derby instance as an External Resource which can be added to a
-test class using the [Rules](https://github.com/junit-team/junit/wiki/Rules) annotation, with initialization scripts;
+test class using the [Rules](https://github.com/junit-team/junit4/wiki/Rules) annotation, with initialization scripts;
 and JUnit managing the initialization and de-initialization of the database instance.
 
 The library also comes with some utilities to manage the running instance, running `SQL scripts` against the instance (or
@@ -51,6 +51,9 @@ of the [Apache Software Foundation](http://www.apache.org/ "ASF") in the United 
 
 JUnit is a simple framework to write repeatable tests. It is an instance of the xUnit architecture for unit testing
 frameworks. Copyright owned by [JUnit][junit].
+
+The JNDI DataSource implementation is inspired by Randy Carver's post [Injecting JNDI datasources for JUnit Tests
+outside of a container](https://blogs.oracle.com/randystuph/entry/injecting_jndi_datasources_for_junit).
 
 [derby]: http://db.apache.org/derby/ "Apache Derby"
 [junit]: http://junit.org/ "JUnit"

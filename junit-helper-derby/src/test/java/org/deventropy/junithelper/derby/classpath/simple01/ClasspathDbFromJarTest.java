@@ -23,8 +23,8 @@ import java.net.URL;
 import java.net.URLClassLoader;
 import java.sql.SQLException;
 
-import org.deventropy.junithelper.derby.DerbyUtils;
 import org.deventropy.junithelper.derby.EmbeddedDerbyResource;
+import org.deventropy.junithelper.derby.util.DerbyUtils;
 import org.deventropy.shared.utils.ClassUtil;
 import org.junit.After;
 import org.junit.AfterClass;

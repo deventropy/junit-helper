@@ -30,7 +30,7 @@ side effects of a call.
 **Note:** This property cannot be configured using the `DerbyResourceConfig`, but needs to be set up using one of the
 constructors of `EmbeddedDerbyResource`.
 
-The Derby System Home (**[derby.system.home](https://db.apache.org/derby/docs/10.12/ref/rrefproper32066.html)**) is the
+The Derby System Home (**[derby.system.home](https://db.apache.org/derby/docs/10.13/ref/rrefproper32066.html)**) is the
 directory used by Derby to read the derby properties file from, store database files (for non in-memory databases) and is
 the default location of the derby log file.
 
@@ -41,7 +41,7 @@ The Derby JUnit Helper allows two different options to set the directory in the 
 
 ### TemporaryFolder
 
-The `EmbeddedDerbyResource` supports using a JUnit [TemporaryFolder Rule](https://github.com/junit-team/junit/wiki/Rules#temporaryfolder-rule)
+The `EmbeddedDerbyResource` supports using a JUnit [TemporaryFolder Rule](https://github.com/junit-team/junit4/wiki/Rules#temporaryfolder-rule)
 as a parent directory for the database directory. When using a temporary folder:
 
 * The `EmbeddedDerbyResource` will not call the `#before()` or `#after()` methods on the `TemporaryFolder`. If the 
@@ -99,7 +99,8 @@ To set the selected database directory on Derby, the `EmbeddedDerbyResource` doe
 	* If an old value was saved in the `#start()` method, set that back to the `derby.system.home`
 
 The additional consequence of this behavior of Derby is that only a single instance of Derby (and `EmbeddedDerbyResource`)
-can be running in a single JVM. See [Managing Concurrency](./concurrency.html) for options of running multiple instances.
+can be running in a single JVM. See [Managing Concurrency](./310-concurrency.html) for options of running multiple
+instances.
 
 ## <a name="db-path"></a>Database Path
 
@@ -118,24 +119,25 @@ The resource supports configuring one of the Derby Error Logging modes from the 
 
 ### Default
 
-*Method to enable:* `#useDefaultErrorLogging()`
-*Enumeration Value:* Default
+* *Method to enable:* `#useDefaultErrorLogging()`  
+* *Enumeration Value:* Default
 
 This is the default setting; derby will write to `derby.log` file in the `derby.system.home`.
 
 ### No Logging
 
-*Method to enable:* `#useDevNullErrorLogging()`
-*Enumeration Value:* Null
+* *Method to enable:* `#useDevNullErrorLogging()`  
+* *Enumeration Value:* Null
 
-All error log entries will be eaten up using an `OutputStream` which simply ignores all writes (see [DerbyUtils#DEV_NULL](../apidocs/org/deventropy/junithelper/derby/DerbyUtils.html#DEV_NULL)
-stream), equivalent to redirecting logs to `/dev/null` on a *nix system.
+All error log entries will be eaten up using an `OutputStream` which simply ignores all writes (see
+[DerbyUtils#DEV_NULL](../apidocs/org/deventropy/junithelper/derby/util/DerbyUtils.html#DEV_NULL) stream), equivalent to
+redirecting logs to `/dev/null` on a *nix system.
 
 ## <a name="sub-sub-protocols"></a>Derby Sub-Sub Protocols
 
 *This configuration defaults to* `Memory` *sub sub protocol*
 
-In Derby speak [subsubprotocol](http://db.apache.org/derby/docs/10.12/ref/rrefjdbc37352.html) specifies where Derby looks
+In Derby speak [subsubprotocol](http://db.apache.org/derby/docs/10.13/ref/rrefjdbc37352.html) specifies where Derby looks
 for a database: in a directory, in memory, in a classpath, or in a jar file. The Derby JUnit Helper currently supports
 the sub sub protocols listed in the following sub sections.
 
@@ -147,21 +149,21 @@ section below. Calling the `#useXXXDatabase()` methods on select any sub sub pro
 set for any other sub-sub protocol.
 
 For the `In Memory` and `Directory` sub sub protocols, the resource also allows starting or restoring a database from a
-backup. For more information on those options, please see the [Backing up and Restoring a Database](./backup-restore.html)
+backup. For more information on those options, please see the [Backing up and Restoring a Database](./210-backup-restore.html)
 documentation.
 
 ### <a name="in-memory"></a>In Memory Database
 
-*Method to enable:* `#useInMemoryDatabase() or #useInMemoryDatabase(String)`<br />
-*Enumeration Value:* Memory<br />
-*Derby JDBC URL prefix:* jdbc:derby:memory:<br />
-*Additional Configurations:* Database Name<br />
+* *Method to enable:* `#useInMemoryDatabase() or #useInMemoryDatabase(String)`  
+* *Enumeration Value:* Memory  
+* *Derby JDBC URL prefix:* jdbc:derby:memory:  
+* *Additional Configurations:* Database Name  
 
 Databases exist only in main memory and are not written to disk.
 
 #### <a name="in-memory-db-path"></a>Database Path
 
-The `DerbyResourceConfig` lets you set the [Database Path](https://db.apache.org/derby/docs/10.12/ref/rrefattrib17246.html)
+The `DerbyResourceConfig` lets you set the [Database Path](https://db.apache.org/derby/docs/10.13/ref/rrefattrib17246.html)
 using the `#useInMemoryDatabase(String)` method.
 
 If the database name is not set, an automatic database name is generated using a `java.util.UUID` object. The method
@@ -169,14 +171,14 @@ If the database name is not set, an automatic database name is generated using a
 
 ### <a name="directory"></a>Database in Directory
 
-*Method to enable:* `#useDatabaseInDirectory() or #useDatabaseInDirectory(String) or #useDatabaseInDirectory(String,
-boolean)`<br />
-*Enumeration Value:* Directory<br />
-*Derby JDBC URL prefix:* jdbc:derby:directory:<br />
-*Additional Configurations:* Database Path, Skip create attribute<br />
+* *Method to enable:* `#useDatabaseInDirectory() or #useDatabaseInDirectory(String) or #useDatabaseInDirectory(String,
+boolean)`  
+* *Enumeration Value:* Directory  
+* *Derby JDBC URL prefix:* jdbc:derby:directory:  
+* *Additional Configurations:* Database Path, Skip create attribute  
 
 The database runs in a specified directory, either a relative directory under the `Derby System Directory` or an
-absolute directory outside the system directory. See [Connecting to databases](http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp34964.html)
+absolute directory outside the system directory. See [Connecting to databases](http://db.apache.org/derby/docs/10.13/devguide/cdevdvlp34964.html)
 in the Derby Development Reference for more information.
 
 #### <a name="directory-db-path"></a>Database Path
@@ -189,14 +191,14 @@ Directory`.
 #### Skip `create` attribute
 
 By default, for the `memory` and `directory` databases, the `EmbeddedDerbyResource` starts the Derby instance with the
-[create=true attribute](http://db.apache.org/derby/docs/10.12/ref/rrefattrib26867.html). The configuration allows the
+[create=true attribute](http://db.apache.org/derby/docs/10.13/ref/rrefattrib26867.html). The configuration allows the
 user to skip this attribute using the `#useDatabaseInDirectory(String, boolean)` method with the `skipCreateAttribute`
 attribute set to `true`.
 
 #### Existing (non-database) existing directory
 
 When the `EmbeddedDerbyResource` starts the database with the `;create=true` JDBC URL parameter, and it seems like Derby
-[likes to create its own directory](http://mail-archives.apache.org/mod_mbox/db-derby-user/200912.mbox/%3C4B3C845A.3050104@gmx.ch%3E).
+[likes to create its own directory](https://lists.apache.org/thread.html/0282837cf594107c0aad7f38783ad1872e28e3df77423439eeb9dca5@1262257242@%3Cderby-user.db.apache.org%3E).
 If the directory (relative or absolute) specified as the `#getDatabasePath()` already exists, the Derby startup will
 fail with an error similar to:
 
@@ -217,14 +219,14 @@ So, if a directory path is specified in `#useDatabaseInDirectory(String)`, ensur
 
 ### <a name="jar"></a>Database in a Jar
 
-*Method to enable:* `#useJarSubSubProtocol(String, String)`<br />
-*Enumeration Value:* Jar<br />
-*Derby JDBC URL prefix:* jdbc:derby:jar:<br />
-*Additional Configurations:* Path to Jar file &amp; Database Path<br />
+* *Method to enable:* `#useJarSubSubProtocol(String, String)`  
+* *Enumeration Value:* Jar  
+* *Derby JDBC URL prefix:* jdbc:derby:jar:  
+* *Additional Configurations:* Path to Jar file &amp; Database Path
 
 Derby supports creating and using Read Only databases; which may be pre-existing database setup and data that is used
 in tests. For instructions on how to create read only database, see the Derby documentation
-[Creating Derby databases for read-only use](https://db.apache.org/derby/docs/10.12/devguide/cdevdeploy15325.html).
+[Creating Derby databases for read-only use](https://db.apache.org/derby/docs/10.13/devguide/cdevdeploy15325.html).
 Though not required, but a read only database in a jar file may be created during a test execution and used in a future
 test as well; just make sure to completely shut down the derby system before creating the archive.
 
@@ -234,8 +236,8 @@ relative. The relative path is resolved by the Derby system relative to the `Der
 The `databasePath` is the path of the database directory inside the `jar` file archive.
 
 For further information on read only databases, see the Derby documentation at [Accessing a read-only database in a
-zip/jar file](http://db.apache.org/derby/docs/10.12/devguide/cdevdeploy11201.html) and [Accessing databases from a jar
-or zip file](http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp24155.html).
+zip/jar file](http://db.apache.org/derby/docs/10.13/devguide/cdevdeploy11201.html) and [Accessing databases from a jar
+or zip file](http://db.apache.org/derby/docs/10.13/devguide/cdevdvlp24155.html).
 
 If a `jar` database is configured with values of `jarFilePath` and `databasePath` as `/tmp/test/db.jar` and
 `/sample/product` respectively, it will open a read-only database `product` in the directory `sample` in the jar file.
@@ -246,20 +248,20 @@ Due to lack of documentation on how to implement this, the tool currently does n
 
 ### <a name="classpath"></a>Database from the classpath
 
-*Method to enable:* `#useClasspathSubSubProtocol(String)`<br />
-*Enumeration Value:* Classpath<br />
-*Derby JDBC URL prefix:* jdbc:derby:classpath:<br />
-*Additional Configurations:* Database Path<br />
+* *Method to enable:* `#useClasspathSubSubProtocol(String)`  
+* *Enumeration Value:* Classpath  
+* *Derby JDBC URL prefix:* jdbc:derby:classpath:  
+* *Additional Configurations:* Database Path
 
 This is another type of Read Only database supported by Derby. The database exists on the classpath, either in a Jar
 file or directly in the classpath. The _Database Path_ mentioned above  designates the path to the database in the
 classpath. All databaseNames must begin with at least a slash, because you specify them _relative_ to the classpath
 directory or archive. See also [Syntax of database connection URLs for applications with embedded
-databases](http://db.apache.org/derby/docs/10.12/ref/rrefjdbc37352.html) and [Accessing databases within a jar file 
-using the classpath](http://db.apache.org/derby/docs/10.12/devguide/tdevdeploy39856.html).
+databases](http://db.apache.org/derby/docs/10.13/ref/rrefjdbc37352.html) and [Accessing databases within a jar file 
+using the classpath](http://db.apache.org/derby/docs/10.13/devguide/tdevdeploy39856.html).
 
 The Derby development guide has more on [Accessing databases from the
-classpath](http://db.apache.org/derby/docs/10.12/devguide/cdevdvlp91854.html).
+classpath](http://db.apache.org/derby/docs/10.13/devguide/cdevdvlp91854.html).
 
 ## <a name="post-init-script"></a>Post Init Scripts
 
@@ -271,5 +273,5 @@ method.
 *Note:* Exceptions when executing these scripts may cause the database to fail to start up.
 
 The script URLs configured in this method should be in formats supported by
-[UrlResourceUtil](../../junit-helper-utils/apidocs/index.html?org/deventropy/junithelper/utils/UrlResourceUtil.html).
+[UrlResourceUtil](../../../shared-utils/shared-utils-java/resource-location-formats.html).
 
